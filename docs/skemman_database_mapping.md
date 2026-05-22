@@ -120,8 +120,16 @@ erDiagram
 | `related_url` | `Tengd vefslóð`, `Related URL`, `DCTERMS.relation` | Stored as text. |
 | `raw_keywords` | `DCTERMS.subject`, `citation_keywords`, `Efnisorð`, `dc.subject` | Original joined keyword text after splitting and deduplication. |
 | `pdf_url` | file table rows, `citation_pdf_url`, `PDF`, `Bitstream` | Stored as metadata only; PDF download/text extraction is not part of the current workflow. |
-| `university`, `faculty`, `study_category`, `thesis_type_label` | breadcrumb trail | Breadcrumb levels 1 through 4. |
-| `institution`, `school` | breadcrumb trail | Mirrors `university` and `faculty` for convenience. |
+| `university`, `school`, `study_category`, `thesis_type_label` | breadcrumb trail | Breadcrumb levels 1 through 4. |
+| `institution` | breadcrumb trail | Mirrors `university` for convenience. |
+| `faculty` | not populated yet | Reserved for a later derivation step, likely from PDF text or keyword evidence such as `*deild` or `*department` terms. |
+
+For an existing database created before this mapping change, clear the old copied values once:
+
+```sql
+update thesis_metadata
+set faculty = null;
+```
 
 ## People
 
