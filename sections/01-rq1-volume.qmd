@@ -38,6 +38,68 @@ ggplot(masters_by_year, aes(yr, n, colour = uni)) +
   labs(x = NULL, y = "Fjöldi ritgerða", colour = NULL)
 ```
 
+## Hvenær er skilað?
+
+Skil dreifast ekki jafnt yfir árið heldur hrannast upp í kringum brautskráningar. Myndin
+sýnir í hvaða mánuði ritgerðir berast Skemmunni, sem hlutfall af ársskilum hvors skóla.
+
+```{r rq1-season}
+#| fig-cap: >
+#|   Hlutfall ársskila eftir mánuði, 2012–2025. Jaðarárin eru undanskilin því 2010–2011
+#|   og 2026 eru ekki heil ár.
+manudir <- c("jan", "feb", "mar", "apr", "maí", "jún",
+             "júl", "ágú", "sep", "okt", "nóv", "des")
+
+season <- dbGetQuery(con, "
+  select month(t.date_accepted) as man,
+         m.university           as uni,
+         count(*)               as n
+  from thesis t
+  join thesis_metadata m on m.thesis_id = t.id
+  where m.degree_level = 'master'
+    and year(t.date_accepted) between 2012 and 2025
+  group by 1, 2
+") |>
+  mutate(man = factor(manudir[man], levels = manudir)) |>
+  group_by(uni) |>
+  mutate(hlutfall = n / sum(n)) |>
+  ungroup()
+
+ggplot(season, aes(man, hlutfall, fill = uni)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.75) +
+  scale_fill_manual(values = hi_colors) +
+  scale_y_continuous(labels = percent) +
+  labs(x = NULL, y = "Hlutfall ársskila", fill = NULL)
+```
+
+Þrjár brautskráningarlotur sjást skýrt: vor (maí–júní), haust (ágúst–október) og vetur
+(janúar–febrúar). Skólarnir haga sér þó ólíkt. HÍ dreifir vorskilum á maí og júní og á
+umtalsverð haustskil í september og október. HR þjappar tæpum helmingi ársins í júní einan
+og á sérstakan ágústtopp sem HÍ hefur nánast ekki.
+
+```{r rq1-truncation}
+dbGetQuery(con, "
+  select m.university as skoli,
+         count(*)     as \"Ritgerðir á ári\",
+         round(
+           100.0 * sum(case when dayofyear(t.date_accepted) > dayofyear(date '2020-06-18')
+                            then 1 else 0 end) / count(*), 1
+         ) as \"% eftir 18. júní\"
+  from thesis t
+  join thesis_metadata m on m.thesis_id = t.id
+  where m.degree_level = 'master'
+    and year(t.date_accepted) between 2012 and 2025
+  group by 1
+") |>
+  knitr::kable(caption = "Hlutfall ársskila sem berst eftir 18. júní, dagsetningu nýjustu ritgerðar í grunninum.")
+```
+
+::: {.callout-important title="Skerðingin á 2026 er ekki sú sama fyrir báða skóla"}
+Gögnin ná til 18. júní 2026. Á venjulegu ári á HR þá eftir að skila helmingi ársins en HÍ
+rúmum fjórðungi. Lokapunktur tímaraðarinnar vantelur því HR nærri tvöfalt meira en HÍ, og
+árin eru ekki samanburðarhæf fyrr en haustlotan 2026 er komin inn.
+:::
+
 ## Niðurstöður
 
 ```{r rq1-findings}

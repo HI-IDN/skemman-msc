@@ -41,6 +41,24 @@ theme_set(
     )
 )
 
+# Newest thesis in the database, used to date the "final year is incomplete" caveat.
+latest_thesis <- dbGetQuery(con, "select max(date_accepted) as d from thesis")$d[1]
+
+# Icelandic long date. Built by hand rather than via format(), which depends on
+# the machine locale and silently falls back to English on the CI runner.
+format_is_date <- function(d) {
+  manudir <- c(
+    "janúar", "febrúar", "mars", "apríl", "maí", "júní",
+    "júlí", "ágúst", "september", "október", "nóvember", "desember"
+  )
+  sprintf(
+    "%d. %s %d",
+    as.integer(format(d, "%d")),
+    manudir[as.integer(format(d, "%m"))],
+    as.integer(format(d, "%Y"))
+  )
+}
+
 # Master's theses in scope, one row per thesis.
 #
 # NOTE: this is not yet the population defined in the research plan. HÍ's

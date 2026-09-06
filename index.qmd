@@ -88,7 +88,7 @@ nothæfur grunnpunktur fyrir HR.
 :::
 
 ::: {.callout-note title="2026 er ókláruð"}
-Síðasta árið í gögnunum er í gangi. Lækkun í lokapunkti tímaraða er ekki þróun.
+Nýjasta ritgerðin í grunninum er frá **`r format_is_date(latest_thesis)`**, svo gögnin ná
+til júníbrautskráningar 2026 en ekki lengra. Síðasta árið er því í gangi og lækkun í
+lokapunkti tímaraða er ekki þróun.
 :::
-
-Byrjaðu á [RQ1](sections/01-rq1-volume.qmd) eða veldu kafla í hliðarstiku.
