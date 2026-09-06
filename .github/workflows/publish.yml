@@ -1,0 +1,51 @@
+name: Publish book
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check freeze cache is present
+        run: |
+          if [ ! -d _freeze ]; then
+            echo "::error::_freeze/ is missing. thesis.db is not in the repository, so the"
+            echo "::error::book can only build in CI from frozen results. Render locally"
+            echo "::error::(quarto render) and commit _freeze/ before pushing."
+            exit 1
+          fi
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      # No R and no database here on purpose: every chunk is served from _freeze/,
+      # which is committed. Renders that need fresh data must be run locally.
+      - name: Render book
+        run: quarto render --no-execute-daemon
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
