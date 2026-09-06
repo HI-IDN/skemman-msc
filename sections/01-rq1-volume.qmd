@@ -21,33 +21,21 @@ masters_by_year |>
 
 ```{r rq1-ggplot}
 #| fig-cap: >
-#|   Fjöldi meistararitgerða á ári. Athugið að 2010 er ekki nothæfur grunnpunktur
-#|   fyrir HR og að 2026 er ókláruð.
+#|   Fjöldi meistararitgerða á ári. Brotalínan markar 2020, þegar heimsfaraldurinn
+#|   raskaði námi. Athugið að 2010 er ekki nothæfur grunnpunktur fyrir HR og að
+#|   2026 er ókláruð.
 ggplot(masters_by_year, aes(yr, n, colour = uni)) +
+  geom_vline(xintercept = 2020, linetype = "dashed", colour = "grey55") +
+  annotate(
+    "text", x = 2020, y = 0, label = "Covid-19",
+    angle = 90, hjust = -0.08, vjust = -0.5, size = 3.4, colour = "grey40"
+  ) +
   geom_line(linewidth = 1) +
   geom_point(size = 2) +
   scale_colour_manual(values = hi_colors) +
   scale_y_continuous(labels = comma, limits = c(0, NA)) +
   scale_x_continuous(breaks = seq(2010, 2026, 2)) +
   labs(x = NULL, y = "Fjöldi ritgerða", colour = NULL)
-```
-
-Sama mynd teiknuð með [ggsql](https://ggsql.org), til samanburðar við `ggplot2`:
-
-```{r rq1-ggsql}
-ggsql_plot("
-  select year(t.date_accepted) as yr,
-         count(*)              as n,
-         m.university          as uni
-  from thesis t
-  join thesis_metadata m on m.thesis_id = t.id
-  where m.degree_level = 'master'
-    and year(t.date_accepted) between 2010 and 2026
-  group by 1, 3
-  VISUALISE yr AS x, n AS y, uni AS color
-  DRAW line
-  DRAW point
-")
 ```
 
 ## Niðurstöður

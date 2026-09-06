@@ -53,6 +53,7 @@ format:
     toc-depth: 3
     number-sections: true
     code-fold: true
+    code-summary: "Sýna kóðann"
     code-copy: true
     code-overflow: wrap
     smooth-scroll: true
@@ -61,7 +62,7 @@ format:
     embed-resources: false
 
 execute:
-  echo: false
+  echo: true
   warning: false
   message: false
   freeze: auto

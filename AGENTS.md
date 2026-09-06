@@ -118,27 +118,19 @@ Three caveats apply throughout and are stated once in `index.qmd` rather than re
 - HR's 2010 count reflects when the school began depositing in Skemman, not real output.
 - The final year is incomplete.
 
-## ggsql
+## Figures are ggplot2
 
-Charts can be drawn with [ggsql](https://ggsql.org), a grammar-of-graphics SQL extension
-for DuckDB, alongside ggplot2. Hard-won details:
+[ggsql](https://ggsql.org) was evaluated and dropped. Do not reintroduce it without a
+reason that answers the following:
 
-- **Builds exist only for DuckDB ≥ 1.5.2.** 1.5.0 and 1.5.1 return 404 from the community
-  extension repo.
-- **It cannot work in DataGrip or DataSpell's SQL console.** The newest DuckDB JDBC driver
-  on Maven Central is 1.3.1.0, two minor versions below the floor. This is not fixable by
-  configuration. Use R or Python.
-- `VISUALISE` requires explicit `AS x` / `AS y`; positional mapping is not inferred.
-- `ggsql_output` defaults to `silent`, which **opens a browser** and returns no rows. Use
-  `spec` (Vega-Lite JSON, ~9 KB) for embedding in the book. `html` returns a standalone
-  ~850 KB document that cannot nest inside a rendered page.
+- It is alpha and has **no theming**, so its output cannot be made to match the rest of the
+  book.
+- It renders through Vega-Lite, which means three `<script src>` tags to a CDN. ggsql
+  figures break without network access; ggplot2 figures are inlined PNGs and do not.
+- It cannot run in a JetBrains SQL console at all. Builds exist only for DuckDB 1.5.2+,
+  and the newest DuckDB JDBC driver on Maven Central is 1.3.1.0.
 
-`ggsql_plot()` in `scripts/report_setup.R` handles the spec-mode dance. It emits three
-`<script src>` tags to a CDN, so ggsql figures need network access to display; ggplot2
-figures are inlined PNGs and do not.
-
-ggsql is alpha and has no theming. Prefer **ggplot2 for figures that matter**, and use
-ggsql where the SQL-native expression is genuinely clearer.
+Nothing it offered was worth those three costs for charts ggplot2 already draws well.
 
 ## Figures
 

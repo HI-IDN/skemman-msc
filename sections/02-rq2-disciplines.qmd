@@ -57,6 +57,32 @@ Hjá HÍ eru leitarorðin efnisleg (*Vélaverkfræði*, *Iðnaðarverkfræði*).
 orðin safnheiti (*Meistaraprófsritgerðir*, *Tækni- og verkfræðideild*) sem segja ekkert um
 viðfangsefnið og þarf að sía burt.
 
+Taflan sýnir líka hvers vegna ekki má telja leitarorð beint. *MPM* er skammstöfun fyrir
+*Master of Project Management*, svo þessar tvær raðir lýsa sömu námsleiðinni:
+
+```{r rq2-mpm}
+dbGetQuery(con, "
+  with tagged as (
+    select tk.thesis_id,
+           max(case when k.keyword_norm = 'mpm' then 1 else 0 end)                          as mpm,
+           max(case when k.keyword_norm = 'master of project management' then 1 else 0 end) as mopm,
+           max(case when k.keyword_norm = 'verkefnastjórnun' then 1 else 0 end)             as vst
+    from thesis_keywords tk
+    join keywords k on k.id = tk.keyword_id
+    group by 1
+  )
+  select sum(mpm)                                        as \"MPM\",
+         sum(mopm)                                       as \"Master of project management\",
+         sum(vst)                                        as \"Verkefnastjórnun\",
+         sum(case when mpm + mopm + vst > 0 then 1 else 0 end) as \"Ólíkar ritgerðir\"
+  from tagged
+") |>
+  knitr::kable(caption = "Þrjú leitarorð um sömu námsleið. Samtala þeirra er 945 en ritgerðirnar eru 399.")
+```
+
+Bein samlagning tvítelur því ritgerðirnar meira en tvöfalt. Vörpunin leysir þetta með því
+að senda öll þrjú orðin á `Verkefnastjórnun`.
+
 ## Næstu skref
 
 1. Búa til `config/disciplines.yaml` sem varpar leitarorðum á samræmdan greinalista.
