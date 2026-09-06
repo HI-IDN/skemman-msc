@@ -53,3 +53,4 @@ Thumbs.db
 *.quarto_ipynb
 
 **/*.quarto_ipynb
+*.knit.md
