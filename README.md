@@ -66,8 +66,25 @@ skemman metadata-load --db data/processed/thesis.db --ids 4445,25337
 
 Raw item HTML is cached under `data/raw/items/`. If `data/raw/items/<thesis_id>.html` exists, the loader reuses it instead of fetching the page again.
 
+Clean already-loaded people rows if old metadata loads left years or parenthesized roles in names:
+
+```bash
+skemman clean-people --db data/processed/thesis.db
+```
+
 ## Documentation
 
-The database mapping is documented in [docs/skemman_database_mapping.md](docs/skemman_database_mapping.md).
+The analysis is a Quarto book. The database mapping is documented in its appendix,
+[schema.qmd](schema.qmd), and published at
+<https://hi-idn.github.io/icelandic-thesis-comparison>.
+
+Build it locally with:
+
+```bash
+quarto render
+```
+
+Disconnect `thesis.db` from any IDE database panel first — DuckDB permits one process on
+the file at a time.
 
 Useful SQL checks are in `scripts/useful_queries.sql`.

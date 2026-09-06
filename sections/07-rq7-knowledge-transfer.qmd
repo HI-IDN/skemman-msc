@@ -1,0 +1,58 @@
+# RQ7 — Þekkingaryfirfærsla
+
+```{r rq7-setup}
+#| include: false
+source("../scripts/report_setup.R")
+```
+
+> Að hvaða marki má líta á meistararitgerðir sem vettvang þekkingaryfirfærslu milli
+> háskóla og atvinnulífs?
+
+Undirspurningar:
+
+- Hversu sýnilegt er samstarf í ritgerðunum?
+- Hvaða form tekur samstarfið?
+- Hvernig þróast það yfir tímann?
+
+::: {.callout-important title="Háð RQ4 og RQ5"}
+Þetta er túlkunarkafli sem byggir á samstarfsmælingunum. Þar sem
+[RQ4](04-rq4-collaboration.qmd) og [RQ5](05-rq5-partners.qmd) bíða beggja
+gagnavinnslu, er ekkert til að túlka enn.
+:::
+
+## Það sem gögnin gefa í dag
+
+```{r rq7-signals}
+tibble::tribble(
+  ~Merki,                       ~Uppspretta,              ~Staða,
+  "Skráður styrktaraðili",      "`thesis_metadata.sponsor`", "Lítil þekja, skekkt yfir tíma",
+  "Leiðbeinendur",              "`thesis_people`",           "Til staðar, starfsvettvang vantar",
+  "Nefndir aðilar í útdrætti",  "`abstract_is` / `abstract_en`", "Óunnið",
+  "Þakkarorð",                  "PDF-skjöl",                 "Ekki sótt",
+  "Tengd vefslóð",              "`thesis_metadata.related_url`", "Mjög lítil þekja"
+) |>
+  knitr::kable(caption = "Möguleg merki um þekkingaryfirfærslu og staða þeirra.")
+```
+
+```{r rq7-advisors}
+dbGetQuery(con, "
+  select count(distinct tp.person_id) as leidbeinendur,
+         count(*)                     as tengingar
+  from thesis t
+  join thesis_metadata m on m.thesis_id = t.id
+  join thesis_people tp on tp.thesis_id = t.id
+  where m.degree_level = 'master' and tp.role = 'advisor'
+") |>
+  knitr::kable(caption = "Umfang leiðbeinendagagna fyrir meistararitgerðir.")
+```
+
+Leiðbeinendagögnin eru heilleg og eru líklega vannýttasta uppsprettan: endurteknir
+leiðbeinendur utan háskólanna mynda tengslanet sem svarar bæði spurningunni um form
+samstarfsins og þróun þess.
+
+## Næstu skref
+
+1. Klára [RQ4](04-rq4-collaboration.qmd) og [RQ5](05-rq5-partners.qmd).
+2. Varpa leiðbeinendum á starfsvettvang (háskóli / fyrirtæki / stofnun).
+3. Byggja tengslanet ritgerða, leiðbeinenda og samstarfsaðila.
+4. Meta hvort tengslin séu stöðug yfir tíma eða bundin einstökum verkefnum.

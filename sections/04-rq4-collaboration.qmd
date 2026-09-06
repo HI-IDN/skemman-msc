@@ -1,0 +1,64 @@
+# RQ4 — Samstarf við atvinnulíf
+
+```{r rq4-setup}
+#| include: false
+source("../scripts/report_setup.R")
+```
+
+> Hversu stór hluti ritgerða er unninn í samstarfi við fyrirtæki eða stofnanir?
+
+Undirspurningar:
+
+- Hefur hlutfall samstarfsverkefna breyst með tíma?
+- Eru samstarfsverkefni algengari í ákveðnum greinum?
+- Er munur milli HÍ og HR?
+
+::: {.callout-important title="Gögnin bera þessa spurningu ekki"}
+`sponsor` er eina samstarfsbreytan í grunninum og hún er útfyllt í litlum minnihluta
+tilvika. Verra er að **þróunin í þekjunni er skráningaráhrif, ekki breyting á samstarfi** —
+sjá myndina hér að neðan. Tímaröð byggð á þessari breytu væri villandi.
+:::
+
+## Þekja `sponsor` yfir tíma
+
+```{r rq4-coverage}
+#| fig-cap: >
+#|   Hlutfall ritgerða með skráðan styrktaraðila. Fallið hjá HÍ frá 2010 endurspeglar
+#|   breytta skráningarvenju í Skemmunni fremur en minnkandi samstarf.
+masters |>
+  group_by(yr, uni) |>
+  summarise(hlutfall = mean(!is.na(sponsor)), .groups = "drop") |>
+  ggplot(aes(yr, hlutfall, colour = uni)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  scale_colour_manual(values = hi_colors) +
+  scale_y_continuous(labels = percent, limits = c(0, NA)) +
+  scale_x_continuous(breaks = seq(2010, 2026, 2)) +
+  labs(x = NULL, y = "Með skráðan styrktaraðila", colour = NULL)
+```
+
+```{r rq4-overall}
+masters |>
+  summarise(
+    alls = n(),
+    `með styrktaraðila` = sum(!is.na(sponsor)),
+    þekja = percent(mean(!is.na(sponsor)), accuracy = 0.1),
+    .by = uni
+  ) |>
+  rename(Skóli = uni) |>
+  knitr::kable(caption = "Þekja `sponsor` í heild.")
+```
+
+## Hvað þyrfti til
+
+`sponsor` dugar ekki ein og sér. Möguleikar, í vaxandi umfangi:
+
+1. **Þakkarorð og útdrættir.** Nefndir samstarfsaðilar koma oftast fram í texta þótt
+   `sponsor` sé tómt. Útdrættir eru til fyrir nánast allar ritgerðir (sjá
+   [RQ6](06-rq6-themes.qmd)), svo þetta er líklegasta leiðin.
+2. **Leiðbeinendur utan háskóla.** `thesis_people` geymir leiðbeinendur; utanaðkomandi
+   leiðbeinandi er sterk vísbending um samstarf. Þarf vörpun á starfsvettvang.
+3. **PDF-texti.** Þakkarorðskaflinn sjálfur, ef sótt er í skjölin.
+
+Þangað til er ekki hægt að fullyrða um hlutfall samstarfsverkefna, hvorki í heild né yfir
+tíma.

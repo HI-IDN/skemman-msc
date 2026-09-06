@@ -1,0 +1,53 @@
+# RQ6 — Þróun rannsóknarviðfangsefna
+
+```{r rq6-setup}
+#| include: false
+source("../scripts/report_setup.R")
+```
+
+> Hvaða efnisþemu birtast í ritgerðunum og hvernig hafa þau þróast?
+
+Möguleg þemu: orka, sjálfbærni, byggingar og innviðir, iðnaðarverkfræði, gervigreind,
+gagnavinnsla, hugbúnaðarþróun, heilbrigðistækni, fjarskipti.
+
+::: {.callout-tip title="Framkvæmanlegt með núverandi gögnum"}
+Þetta er sú spurning, fyrir utan [RQ1](01-rq1-volume.qmd), sem gögnin styðja best.
+Útdrættir eru til fyrir nánast allar meistararitgerðir og leitarorð fyrir sömuleiðis.
+:::
+
+## Þekja texta
+
+```{r rq6-coverage}
+masters |>
+  summarise(
+    alls = n(),
+    `útdráttur (is)` = percent(mean(!is.na(abstract_is)), accuracy = 0.1),
+    `útdráttur (en)` = percent(mean(!is.na(abstract_en)), accuracy = 0.1),
+    `útdráttur (annað hvort)` = percent(
+      mean(!is.na(abstract_is) | !is.na(abstract_en)), accuracy = 0.1
+    ),
+    .by = uni
+  ) |>
+  rename(Skóli = uni) |>
+  knitr::kable(caption = "Þekja útdrátta meðal meistararitgerða.")
+```
+
+Tungumálaskiptingin er ólík milli skóla, svo efnisgreining þarf annaðhvort að vinna á
+báðum málum eða velja eitt og gera grein fyrir brottfalli.
+
+## Vinnsluáætlun
+
+1. **Undirbúningur texta.** Sameina `abstract_is` og `abstract_en`, skrá tungumál,
+   fjarlægja stopporð fyrir bæði mál.
+2. **Grunntalning.** Tíðni lykilorða eftir ári — fljótleg leið að fyrstu tímaröð þema.
+3. **Þemalíkön.** Efnisgreining á útdráttum, með fjölda þema valinn út frá gögnunum.
+4. **Tímaröð.** Hlutdeild hvers þema eftir ári og skóla.
+
+Athugið að leitarorðin ein duga skammt: hjá HR eru tíðustu orðin safnheiti án
+efnismerkingar (sjá [RQ2](02-rq2-disciplines.qmd)). Útdrættirnir eru áreiðanlegri
+uppspretta.
+
+::: {.callout-note}
+Efnisgreiningin sjálf á eftir að vera unnin. Þessi kafli lýsir eingöngu því sem gögnin
+leyfa.
+:::

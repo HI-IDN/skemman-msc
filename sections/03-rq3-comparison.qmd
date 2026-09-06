@@ -1,0 +1,61 @@
+# RQ3 — Samanburður HÍ og HR
+
+```{r rq3-setup}
+#| include: false
+source("../scripts/report_setup.R")
+```
+
+> Hvaða munur er á framleiðslu meistararitgerða milli HÍ og HR?
+
+Undirspurningar:
+
+- Er munur á fjölda ritgerða?
+- Er munur á dreifingu fræðigreina?
+- Er munur á rannsóknarviðfangsefnum?
+
+::: {.callout-note title="Að hluta svarað"}
+Fyrsta undirspurningin er svöruð í [RQ1](01-rq1-volume.qmd). Hinar tvær bíða
+greinaflokkunar ([RQ2](02-rq2-disciplines.qmd)) og efnisgreiningar
+([RQ6](06-rq6-themes.qmd)).
+:::
+
+## Munur á fjölda
+
+```{r rq3-totals}
+masters |>
+  filter(yr >= 2012, yr <= 2025) |>
+  count(uni, name = "alls") |>
+  mutate(
+    `á ári` = round(alls / length(2012:2025), 1),
+    hlutfall = percent(alls / sum(alls), accuracy = 0.1)
+  ) |>
+  rename(Skóli = uni) |>
+  knitr::kable(caption = "Meistararitgerðir 2012–2025, að undanskildum jaðarárum.")
+```
+
+```{r rq3-share}
+#| fig-cap: Hlutdeild skólanna í heildarfjölda meistararitgerða á ári.
+masters_by_year |>
+  group_by(yr) |>
+  mutate(hlutfall = n / sum(n)) |>
+  ungroup() |>
+  ggplot(aes(yr, hlutfall, fill = uni)) +
+  geom_area(alpha = 0.85) +
+  scale_fill_manual(values = hi_colors) +
+  scale_y_continuous(labels = percent) +
+  scale_x_continuous(breaks = seq(2010, 2026, 2)) +
+  labs(x = NULL, y = NULL, fill = NULL)
+```
+
+## Það sem vantar
+
+Til að svara undirspurningum tvö og þrjú þarf:
+
+- **Greinaflokkun** svo dreifing fræðigreina sé samanburðarhæf milli skóla. Sjá
+  [RQ2](02-rq2-disciplines.qmd).
+- **Efnisgreiningu útdrátta** svo bera megi saman rannsóknarviðfangsefni. Sjá
+  [RQ6](06-rq6-themes.qmd).
+
+Athugið að skólarnir eru ekki fyllilega sambærilegir: HR telur tæknifræði og
+tölvunarfræði með, en hjá HÍ blandast náttúruvísindi inn í tölurnar. Samanburður án
+greinaflokkunar mælir því að hluta til mismunandi þýði.

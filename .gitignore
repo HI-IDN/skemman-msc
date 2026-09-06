@@ -45,3 +45,11 @@ Thumbs.db
 # IDE settings
 .vscode/
 .idea/
+
+# Quarto
+/docs/
+/.quarto/
+*_files/
+*.quarto_ipynb
+
+**/*.quarto_ipynb

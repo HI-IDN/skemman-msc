@@ -1,0 +1,206 @@
+# Gagnagrunnurinn {.unnumbered}
+
+```{r schema-setup}
+#| include: false
+source("scripts/report_setup.R")
+```
+
+Hvernig færslur úr Skemmunni verða að töflum í DuckDB. Þessi viðauki kom í stað
+`docs/skemman_database_mapping.md`.
+
+Heiti reita, taflna og skipana eru óþýdd — þau eru kóði og verða að standast samanburð við
+Skemmuna og gagnagrunninn.
+
+Grunnurinn er byggður í tveimur umferðum.
+
+## Söfnun úr leitarniðurstöðum
+
+`skemman simple-search` byggir slóð á Skemmuna úr:
+
+- `base_url` í `config/collections.yaml`
+- einu safnauðkenni, nú `1946/2064` fyrir HÍ eða `1946/6870` fyrir HR
+- einu ári af tímabilinu 2010–2026
+
+Slóðin notar `dateIssued` sem nákvæma ársíu. Þáttarinn vistar eina röð fyrir hverja
+leitarniðurstöðu í `thesis`.
+
+| Dálkur í DuckDB | Uppspretta í leitarniðurstöðum |
+| --- | --- |
+| `id` | auðkenni úr `/handle/1946/<id>` |
+| `date_accepted` | fyrsti dálkur, lesinn sem `DD.MM.YYYY` |
+| `title` | texti hlekksins |
+| `authors` | þriðji dálkur |
+
+`v_thesis` bætir við slóð á færsluna sjálfa:
+
+```sql
+'https://skemman.is/handle/1946/' || id as item_url
+```
+
+## Lestur lýsigagna
+
+`skemman metadata-load` les slóðir úr `v_thesis` þar sem engin röð er til í
+`thesis_metadata`, nema `--ids` eða `--urls` séu gefin. Útfærslan er í
+`src/skemman_scraper/metadata_load.py`.
+
+Fyrir hverja færslu:
+
+1. Auðkenni ritgerðar er leyst úr slóðinni.
+2. `data/raw/items/<id>.html` er lesið ef skráin er til.
+3. Síðan er sótt af Skemmunni ef skráin vantar.
+4. Nýsótt HTML er vistað í `data/raw/items/<id>.html`.
+5. Töflur, skilgreiningarlistar, `div.attr` blokkir og `<meta>` mörk eru þáttuð.
+6. Eldri raðir ritgerðarinnar í `thesis_metadata`, `thesis_people` og `thesis_keywords`
+   eru fjarlægðar.
+7. Lýsigögnum, tengslum við fólk og leitarorðum er raðað inn.
+
+## Töflur
+
+```{mermaid}
+erDiagram
+    thesis ||--|| thesis_metadata : metadata
+    thesis ||--o{ thesis_people : has_people
+    people ||--o{ thesis_people : linked_to
+    thesis ||--o{ thesis_keywords : has_keywords
+    keywords ||--o{ thesis_keywords : linked_to
+
+    thesis {
+        INTEGER id PK
+        DATE date_accepted
+        VARCHAR title
+        VARCHAR authors
+    }
+    thesis_metadata {
+        INTEGER thesis_id PK
+        VARCHAR title_is
+        VARCHAR title_en
+        VARCHAR abstract_is
+        VARCHAR abstract_en
+        VARCHAR degree_level
+        VARCHAR thesis_type
+        VARCHAR sponsor
+        VARCHAR note
+        VARCHAR related_url
+        VARCHAR raw_keywords
+        VARCHAR pdf_url
+        VARCHAR institution
+        VARCHAR school
+        VARCHAR university
+        VARCHAR faculty
+        VARCHAR study_category
+        VARCHAR thesis_type_label
+    }
+    people {
+        BIGINT id PK
+        VARCHAR name
+        INTEGER year_born
+        INTEGER year_died
+    }
+    thesis_people {
+        INTEGER thesis_id FK
+        BIGINT person_id FK
+        VARCHAR role
+        INTEGER sort_order
+    }
+    keywords {
+        BIGINT id PK
+        VARCHAR keyword
+        VARCHAR keyword_norm
+    }
+    thesis_keywords {
+        INTEGER thesis_id FK
+        BIGINT keyword_id FK
+        INTEGER sort_order
+    }
+```
+
+```{r schema-sizes}
+dbGetQuery(con, "
+  select 'thesis' as tafla, count(*) as raðir from thesis
+  union all select 'thesis_metadata', count(*) from thesis_metadata
+  union all select 'people', count(*) from people
+  union all select 'thesis_people', count(*) from thesis_people
+  union all select 'keywords', count(*) from keywords
+  union all select 'thesis_keywords', count(*) from thesis_keywords
+  order by raðir desc
+") |>
+  knitr::kable(caption = "Fjöldi raða í hverri töflu í núverandi byggingu.")
+```
+
+## Dálkar lýsigagna
+
+| Dálkur í DuckDB | Helstu uppsprettur í Skemmunni | Athugasemd |
+| --- | --- | --- |
+| `title_is`, `title_en` | `DCTERMS.title`, `DCTERMS.alternative`, `citation_title`, `Titill`, `Title`, `dc.title` | Íslenska og enska eru greindar að með þumalfingursreglu. |
+| `abstract_is`, `abstract_en` | `DCTERMS.abstract`, `Útdráttur`, `Abstract`, `dc.description.abstract`, `DCTERMS.description` | Íslenska útdrætti má stundum draga út úr forskeyttum lýsingum. |
+| `degree_level` | `Námsstig`, `Degree`, `dc.description.degree`, `DCTERMS.type` | Staðlað í `bachelor`, `master` eða `phd`. |
+| `thesis_type` | `DCTERMS.type`, `Type`, `dc.type` | Meistararaðir eru hreinsaðar af diplómasuði þar sem hægt er. |
+| `sponsor` | `Styrktaraðili`, `Sponsor` | Geymt sem texti. |
+| `note` | `Athugasemdir`, `Athugasemd`, `Notes`, `Note`, valin `DCTERMS.description` gildi | Endurtekinn texti er fjarlægður. |
+| `related_url` | `Tengd vefslóð`, `Related URL`, `DCTERMS.relation` | Geymt sem texti. |
+| `raw_keywords` | `DCTERMS.subject`, `citation_keywords`, `Efnisorð`, `dc.subject` | Upprunalegur samsettur texti eftir skiptingu og afritahreinsun. |
+| `pdf_url` | raðir úr skráartöflu, `citation_pdf_url`, `PDF`, `Bitstream` | Aðeins geymt sem lýsigögn; PDF-skjöl eru hvorki sótt né textagreind. |
+| `university`, `school`, `study_category`, `thesis_type_label` | brauðmolaslóð | Þrep eitt til fjögur. |
+| `institution` | brauðmolaslóð | Sama gildi og `university`, til hægðarauka. |
+| `faculty` | ekki fyllt út | Frátekið fyrir seinni leiðslu, líklega úr PDF-texta eða leitarorðum á borð við `*deild` eða `*department`. |
+
+Fyrir grunn sem var byggður fyrir þessa breytingu þarf að hreinsa gömlu afrituðu gildin einu sinni:
+
+```sql
+update thesis_metadata
+set faculty = null;
+```
+
+::: {.callout-note title="Hvers vegna þetta skiptir máli"}
+Að `faculty` sé tómt er ástæðan fyrir því að [RQ2](sections/02-rq2-disciplines.qmd) verður
+ekki svarað án greinaflokkunar, og ástæðan fyrir því að þýðið í þessari bók er víðara en
+rannsóknaráætlunin skilgreinir.
+:::
+
+## Fólk
+
+Höfundar og leiðbeinendur eru staðlaðir í `people` og `thesis_people`.
+
+Uppsprettur:
+
+- höfundar: `DCTERMS.creator`, `citation_author`, `Höfundur`, `Höfundar`, `Author`,
+  `dc.contributor.author`
+- leiðbeinendur: `Leiðbeinandi`, `Leiðbeinendur`, `Advisor`, `dc.contributor.advisor`
+
+Nöfn eru sameinuð eftir `name` og `year_born`. Tengslataflan geymir hlutverk og upprunaröð.
+
+Gildi eru hreinsuð áður en þeim er raðað inn:
+
+- ártöl á forminu `19xx` eða `20xx` inni í nafni eru lesin í `year_born`;
+- bil á borð við `1975-2020` fylla einnig `year_died`;
+- starfsheiti eða hlutverk innan sviga eru fjarlægð úr `name`.
+
+Fyrir grunn sem var lesinn fyrir þessa hreinsun:
+
+```bash
+skemman clean-people --db data/processed/thesis.db
+```
+
+## Leitarorð
+
+Leitarorð eru klofin á semíkommum og kommum, sameinuð án tillits til hástafa, sett í
+`keywords` og tengd gegnum `thesis_keywords`.
+
+`v_thesis_metadata` sameinar stöðluðu töflurnar aftur í eina sýn með fylkjadálkum fyrir
+höfunda, leiðbeinendur og leitarorð.
+
+## Að endurgera grunninn
+
+```bash
+duckdb data/processed/thesis.db < scripts/create_thesis_db.sql
+skemman simple-search --location 1946/2064 --year 2026 --output data/processed/thesis.db
+skemman metadata-load --db data/processed/thesis.db
+```
+
+Hrátt HTML er geymt í `data/raw/items/`. Sé `data/raw/items/<thesis_id>.html` til staðar er
+það endurnýtt í stað þess að sækja síðuna aftur.
+
+::: {.callout-warning title="Ein tenging í einu"}
+DuckDB leyfir aðeins einu ferli að opna skrána. Aftengdu `thesis.db` í gagnaglugga
+þróunarumhverfisins áður en bókin er byggð, annars mistekst tengingin.
+:::

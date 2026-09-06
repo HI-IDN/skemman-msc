@@ -1,0 +1,94 @@
+---
+body-class: welcome-page
+---
+
+# Inngangur {.unnumbered}
+
+Meistararitgerðir sem mælikvarði á þróun verkfræðimenntunar á Íslandi — HÍ og HR,
+2010 til dagsins í dag.
+
+Þessi bók greinir meistararitgerðir í verkfræði og tæknigreinum sem birtar hafa verið í
+[Skemmunni](https://skemman.is), við Háskóla Íslands og Háskólann í Reykjavík. Markmiðið
+er að kortleggja þróun meistaranáms, breytingar á rannsóknaráherslum, og umfang samstarfs
+við fyrirtæki og stofnanir.
+
+```{r}
+#| include: false
+source("scripts/report_setup.R")
+```
+
+## Gögnin
+
+Gögnin eru sótt úr Skemmunni í tveimur skrefum og geymd í DuckDB gagnagrunni. Vinnsluferlið
+er skjalfest í [viðauka](schema.qmd).
+
+```{r}
+#| label: overview
+dbGetQuery(con, "
+  select coalesce(m.degree_level, 'óþekkt') as namsstig,
+         count(*)                           as fjoldi,
+         min(year(t.date_accepted))         as fyrsta_ar,
+         max(year(t.date_accepted))         as sidasta_ar
+  from thesis t
+  left join thesis_metadata m on m.thesis_id = t.id
+  group by 1
+  order by 2 desc
+") |>
+  knitr::kable(caption = "Allar færslur í grunninum, eftir námsstigi.")
+```
+
+```{r}
+#| label: coverage
+dbGetQuery(con, "
+  select 'titill (is)'    as breyta, round(100.0 * count(title_is) / count(*), 1) as thekja_pct from thesis_metadata
+  union all select 'útdráttur (hvaða mál sem er)', round(100.0 * count(coalesce(abstract_is, abstract_en)) / count(*), 1) from thesis_metadata
+  union all select 'leitarorð', round(100.0 * count(raw_keywords) / count(*), 1) from thesis_metadata
+  union all select 'námsstig', round(100.0 * count(degree_level) / count(*), 1) from thesis_metadata
+  union all select 'styrktaraðili', round(100.0 * count(sponsor) / count(*), 1) from thesis_metadata
+  union all select 'deild (faculty)', round(100.0 * count(faculty) / count(*), 1) from thesis_metadata
+") |>
+  knitr::kable(caption = "Þekja lykilbreyta í `thesis_metadata`, hlutfall útfyllt.")
+```
+
+Þekjan ræður því hvaða spurningum er hægt að svara. Námsstig, titlar og leitarorð eru
+nánast alltaf til staðar; styrktaraðili sjaldan; deild aldrei.
+
+## Staða rannsóknarspurninga
+
+```{r}
+#| label: status
+tibble::tribble(
+  ~Spurning, ~Efni,                        ~Staða,
+  "RQ1",     "Þróun umfangs",              "Svarað",
+  "RQ2",     "Þróun fræðasviða",           "Bíður greinaflokkunar",
+  "RQ3",     "Samanburður HÍ og HR",       "Að hluta",
+  "RQ4",     "Samstarf við atvinnulíf",    "Gögn ófullnægjandi",
+  "RQ5",     "Tegund samstarfsaðila",      "Gögn ófullnægjandi",
+  "RQ6",     "Þróun rannsóknarviðfangsefna", "Framkvæmanlegt",
+  "RQ7",     "Þekkingaryfirfærsla",        "Háð RQ4 og RQ5"
+) |>
+  knitr::kable()
+```
+
+## Fyrirvarar
+
+Þrír fyrirvarar gilda um alla kafla og eru ekki endurteknir í hvert sinn.
+
+::: {.callout-warning title="Þýðið er ekki fullmótað"}
+Rannsóknaráætlunin afmarkar þýðið við verkfræði og tæknigreinar. Gagnagrunnurinn styður
+það ekki enn: `school` hjá HÍ er *Verkfræði- og náttúruvísindasvið*, sem blandar
+náttúruvísindum saman við verkfræðina, og `faculty` er tómt. Tölur hér eru því fyrir
+**allar meistararitgerðir sviðanna**, ekki verkfræðina eina.
+:::
+
+::: {.callout-note title="Þekja Skemmunnar í upphafi tímabilsins"}
+HR telur aðeins 3 ritgerðir árið 2010 en 40 árið 2011. Þetta endurspeglar hvenær skólinn
+byrjaði að skila í Skemmuna, ekki raunverulega framleiðslu. Ártalið 2010 er því ekki
+nothæfur grunnpunktur fyrir HR.
+:::
+
+::: {.callout-note title="2026 er ókláruð"}
+Síðasta árið í gögnunum er í gangi. Lækkun í lokapunkti tímaraða er ekki þróun.
+:::
+
+Byrjaðu á [RQ1](sections/01-rq1-volume.qmd) eða veldu kafla í hliðarstiku.

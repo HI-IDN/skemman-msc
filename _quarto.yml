@@ -1,0 +1,67 @@
+project:
+  type: book
+  output-dir: docs
+  resources:
+    - .nojekyll
+    - img/hi
+
+book:
+  title: "Meistararitgerðir í verkfræði og tæknigreinum"
+  repo-url: https://github.com/HI-IDN/icelandic-thesis-comparison
+  repo-actions: [edit, issue]
+  site-url: https://hi-idn.github.io/icelandic-thesis-comparison
+  favicon: img/hi/favicon.svg
+  search: true
+  page-footer:
+    left: "© 2026 Háskóli Íslands"
+    center: "Dr. Helga Ingimundardóttir"
+    right:
+      - icon: github
+        href: https://github.com/HI-IDN/icelandic-thesis-comparison
+        aria-label: GitHub
+  navbar:
+    logo: img/hi/hi_named_logo-is.svg
+    logo-alt: "Háskóli Íslands"
+    background: primary
+    tools:
+      - icon: github
+        href: https://github.com/HI-IDN/icelandic-thesis-comparison
+        aria-label: GitHub
+  sidebar:
+    style: docked
+    background: light
+  chapters:
+    - index.qmd
+    - sections/01-rq1-volume.qmd
+    - sections/02-rq2-disciplines.qmd
+    - sections/03-rq3-comparison.qmd
+    - sections/04-rq4-collaboration.qmd
+    - sections/05-rq5-partners.qmd
+    - sections/06-rq6-themes.qmd
+    - sections/07-rq7-knowledge-transfer.qmd
+  appendices:
+    - schema.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - styles/hi-book.scss
+    include-in-header: partials/header-includes.inc
+    include-after-body: partials/breadcrumb.inc
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-copy: true
+    code-overflow: wrap
+    smooth-scroll: true
+    fig-width: 9
+    fig-height: 5.5
+    embed-resources: false
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
