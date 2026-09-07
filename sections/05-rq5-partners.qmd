@@ -1,4 +1,4 @@
-# RQ5 — Tegund samstarfsaðila
+# Tegund samstarfsaðila
 
 ```{r rq5-setup}
 #| include: false

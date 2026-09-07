@@ -5,8 +5,7 @@
 source("scripts/report_setup.R")
 ```
 
-Hvernig færslur úr Skemmunni verða að töflum í DuckDB. Þessi viðauki kom í stað
-`docs/skemman_database_mapping.md`.
+Hvernig færslur úr Skemmunni verða að töflum í DuckDB.
 
 Heiti reita, taflna og skipana eru óþýdd — þau eru kóði og verða að standast samanburð við
 Skemmuna og gagnagrunninn.
@@ -188,6 +187,87 @@ Leitarorð eru klofin á semíkommum og kommum, sameinuð án tillits til hásta
 
 `v_thesis_metadata` sameinar stöðluðu töflurnar aftur í eina sýn með fylkjadálkum fyrir
 höfunda, leiðbeinendur og leitarorð.
+
+## Sýnidæmi
+
+Ein færsla á Skemmunni dreifist á fimm töflur. Hér eru tvær raktar alla leið, valdar af því
+að sama manneskjan tengist þeim í sitt hvoru hlutverkinu — `person_id` 55 er höfundur
+annarrar og leiðbeinandi hinnar, með fimmtán ára millibili:
+
+- [4445](https://skemman.is/handle/1946/4445) — meistararitgerð frá 2010.
+- [50249](https://skemman.is/handle/1946/50249) — meistararitgerð frá 2025.
+
+```{r daemi-thesis}
+dbGetQuery(con, "
+  select id, date_accepted, title, authors
+  from thesis
+  where id in (4445, 50249)
+  order by id
+") |>
+  knitr::kable(caption = "`thesis` — ein röð á hverja leitarniðurstöðu, þátta úr leitartöflunni.")
+```
+
+Lýsigögnin eru hér sett á hliðina, einn dálkur á línu, svo raðirnar tvær megi bera saman.
+Löng gildi eru stytt.
+
+```{r daemi-metadata}
+dbGetQuery(con, "select * from thesis_metadata where thesis_id in (4445, 50249)") |>
+  mutate(across(everything(), as.character)) |>
+  pivot_longer(-thesis_id, names_to = "dálkur", values_to = "gildi") |>
+  mutate(gildi = if_else(
+    !is.na(gildi) & nchar(gildi) > 80,
+    paste0(substr(gildi, 1, 80), " …"),
+    gildi
+  )) |>
+  pivot_wider(names_from = thesis_id, values_from = gildi) |>
+  knitr::kable(caption = "`thesis_metadata` — ein röð á hverja ritgerð, sýnd á hliðinni.")
+```
+
+```{r daemi-folk}
+dbGetQuery(con, "
+  select tp.thesis_id, tp.role, tp.sort_order, p.id as person_id, p.name, p.year_born
+  from thesis_people tp
+  join people p on p.id = tp.person_id
+  where tp.thesis_id in (4445, 50249)
+  order by tp.thesis_id, tp.role, tp.sort_order
+") |>
+  knitr::kable(caption = "`thesis_people` og `people` — hlutverk og upprunaröð varðveitast.")
+```
+
+```{r daemi-leitarord}
+dbGetQuery(con, "
+  select tk.thesis_id, tk.sort_order, k.id as keyword_id, k.keyword, k.keyword_norm
+  from thesis_keywords tk
+  join keywords k on k.id = tk.keyword_id
+  where tk.thesis_id in (4445, 50249)
+  order by tk.thesis_id, tk.sort_order
+") |>
+  knitr::kable(caption = "`thesis_keywords` og `keywords` — `raw_keywords` eftir klofningu.")
+```
+
+::: {.callout-important title="Hvað dæmin afhjúpa"}
+Raðirnar tvær sýna fjóra annmarka sem hafa bein áhrif á rannsóknarspurningarnar:
+
+1. **`title_is` og `abstract_is` geyma enskan texta í 50249.** Aðgreining tungumála er
+   þumalfingursregla þáttarans, ekki tungumálamerking frá Skemmunni. `abstract_en` er tómt
+   þótt útdrátturinn sé á ensku.
+2. **Össur kemur hvergi fram í `sponsor` í 50249** — fyrirtækið sést aðeins í titli og
+   útdrætti. Samstarf sem er sýnilegt í textanum skilar sér ekki í lýsigögnin, sem er
+   ástæðan fyrir því að `sponsor` einn og sér vanmetur [RQ4](sections/04-rq4-collaboration.qmd).
+3. **`sponsor` í 4445 er rannsóknasjóður**, ekki fyrirtæki. Dálkurinn blandar saman
+   fjármögnun og samstarfsaðilum og þarf flokkun áður en hlutfall samstarfsverkefna er reiknað.
+4. **Leitarorðin þynnast.** 4445 hefur fjögur, 50249 aðeins eitt. Námsgreinin helst en
+   efnisorðin hverfa, sem takmarkar [RQ6](sections/06-rq6-themes.qmd) fyrir HÍ eftir 2020.
+5. **Nafnasnið er ósamræmt.** `Lalot, Sylvain` stendur með eftirnafn fremst og án
+   fæðingarárs, ólíkt íslensku nöfnunum. Sameining í `people` byggir á `name` og
+   `year_born`, svo sami erlendi leiðbeinandinn getur endað sem fleiri en ein röð — sem
+   bitnar á talningu endurtekinna samstarfstengsla í
+   [RQ7](sections/07-rq7-knowledge-transfer.qmd).
+
+`faculty` og `thesis_type_label` eru tóm í báðum, eins og í grunninum öllum. Á móti sést
+sameiningin virka: `person_id` 56 er sami leiðbeinandinn í báðum ritgerðum, fimmtán árum
+á milli, með eina röð í `people`.
+:::
 
 ## Að endurgera grunninn
 

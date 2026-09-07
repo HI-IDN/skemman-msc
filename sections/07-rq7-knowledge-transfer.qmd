@@ -1,4 +1,4 @@
-# RQ7 — Þekkingaryfirfærsla
+# Þekkingaryfirfærsla
 
 ```{r rq7-setup}
 #| include: false

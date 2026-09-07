@@ -1,4 +1,4 @@
-# RQ6 — Þróun rannsóknarviðfangsefna
+# Þróun rannsóknarviðfangsefna
 
 ```{r rq6-setup}
 #| include: false

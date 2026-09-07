@@ -1,4 +1,4 @@
-# RQ4 — Samstarf við atvinnulíf
+# Samstarf við atvinnulíf
 
 ```{r rq4-setup}
 #| include: false

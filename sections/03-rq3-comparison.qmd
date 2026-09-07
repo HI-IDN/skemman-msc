@@ -1,4 +1,4 @@
-# RQ3 — Samanburður HÍ og HR
+# Samanburður HÍ og HR
 
 ```{r rq3-setup}
 #| include: false

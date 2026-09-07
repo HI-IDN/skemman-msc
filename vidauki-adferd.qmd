@@ -1,0 +1,204 @@
+# Aðferð og afmörkun {.unnumbered}
+
+```{r vidauki-setup}
+#| include: false
+source("scripts/report_setup.R")
+```
+
+Áður en skólarnir eru bornir saman þarf að svara því hvað telst verkfræði og hvað er
+sambærilegt milli þeirra. Þessi viðauki gerir það og skýrir um leið hvers vegna nálgunin er
+ósamhverf.
+
+## Ósamhverf söfnun
+
+Skemman geymir hvorki deild né námsleið sem sjálfstætt gagn — `faculty` er tómt í öllum
+færslum — svo afmörkunin verður að byggja á því sem hvor skóli lætur í té.
+
+- **HR** má sækja í heild. Tæknisvið skólans er nánast allt innan þýðisins, og
+  `study_category` *er* deildin: `MSc Tölvunarfræðideild`, `Dip Tæknifræðideild` og svo
+  framvegis.
+- **HÍ** er margfalt stærri, svo aðeins eitt svið er sótt: Verkfræði- og
+  náttúruvísindasvið. Þar lendir hins vegar allt í einum flokki,
+  `Meistaraprófsritgerðir - Verkfræði- og náttúruvísindasvið`, svo deildin verður að
+  leiðast af leitarorðum.
+
+Vörpunin er í `scripts/discipline_map.sql`: `discipline_keyword` varpar leitarorðum á
+greinar, `discipline_unit` varpar greinum HÍ á deildir, og `v_thesis_unit` sameinar hvort
+tveggja við reglur HR.
+
+## Hvað hvor skóli sendir inn
+
+```{r vidauki-stig}
+library(kableExtra)
+
+innsent <- dbGetQuery(con, "
+  select year(t.date_accepted) as ár,
+         m.university          as skóli,
+         m.degree_level        as stig,
+         count(*)              as fjöldi
+  from thesis t
+  join thesis_metadata m on m.thesis_id = t.id
+  where year(t.date_accepted) between 2010 and 2026
+    and m.degree_level is not null
+  group by 1, 2, 3
+") |>
+  mutate(
+    skóli = factor(skóli, levels = c("Háskóli Íslands", "Háskólinn í Reykjavík")),
+    stig  = factor(stig,
+                   levels = c("bachelor", "master", "phd"),
+                   labels = c("BS", "MS", "PhD"))
+  ) |>
+  tidyr::pivot_wider(
+    names_from  = c(skóli, stig),
+    values_from = fjöldi,
+    values_fill = 0,
+    names_sort  = TRUE,
+    names_sep   = "|"
+  ) |>
+  arrange(ár)
+
+# Dálkaheitin bera "skóli|stig". Neðri hausinn er stigið eitt og sér, sá efri er
+# skólinn, spannandi sína dálka. Spönnin er talin úr heitunum svo taflan haldist
+# rétt þótt námsstig vanti hjá öðrum skólanum.
+hlutar <- strsplit(names(innsent), "|", fixed = TRUE)
+
+neðri <- vapply(hlutar, function(x) x[length(x)], character(1))
+neðri[1] <- "Ár"
+
+spönn <- rle(vapply(hlutar[-1], `[`, character(1), 1))
+efri  <- c(1, spönn$lengths)
+names(efri) <- c(" ", spönn$values)
+
+kbl(
+  innsent,
+  col.names = neðri,
+  align     = c("l", rep("r", ncol(innsent) - 1)),
+  caption   = "Innsendingar á ári eftir skóla og námsstigi."
+) |>
+  add_header_above(efri) |>
+  kable_styling(full_width = FALSE)
+```
+
+::: {.callout-warning title="Tvennt skekkir töfluna"}
+**Námsstig vantar á hluta safnsins.** `degree_level` er tómt á 712 færslum, þar af 522 sem
+Skemman merkir `Diplóma bakkalár`. Þáttarinn les `Námsstig` ekki til fulls, svo taflan
+vantelur BS-stigið hjá HR þar til það er lagfært. Meistarastigið er óskert.
+
+**Doktorsritgerðir hverfa eftir 2016.** Þær voru í Skemmunni ásamt meistararitgerðum fram
+að því, en hafa síðan verið færðar í [Opin vísindi](https://opinvisindi.is/home),
+varðveislusafn vísindaefnis og doktorsritgerða í opnum aðgangi á vegum íslensku háskólanna
+og Landsbókasafns Íslands – Háskólabókasafns. PhD-dálkarnir tæmast því af skráningarástæðum
+en ekki vegna þess að doktorsnámi hafi lokið. Doktorsritgerðir standa utan þýðis þessarar
+greinargerðar hvort eð er.
+:::
+
+## HÍ: Verkfræði- og náttúruvísindasvið eftir deild
+
+```{r vidauki-hi}
+dbGetQuery(con, "
+  select unit_label   as deild,
+         count(*)     as fjöldi,
+         sum(in_core::int) as \"í kjarna\"
+  from v_thesis_unit
+  where university = 'Háskóli Íslands'
+    and degree_level = 'master'
+    and yr between 2010 and 2026
+  group by 1
+  order by 2 desc
+") |>
+  knitr::kable(caption = "Meistararitgerðir HÍ 2010–2026 eftir deild.")
+```
+
+Verkfræðideildirnar þrjár — IVT, UMBYGG og RT — eru innan við helmingur sviðsins.
+Náttúruvísindin verða því að skerast frá áður en talað er um verkfræði hjá HÍ.
+
+## HR: tæknisvið eftir námsleið
+
+```{r vidauki-hr}
+dbGetQuery(con, "
+  select unit_label   as námsleið,
+         count(*)     as fjöldi,
+         sum(in_core::int) as \"í kjarna\"
+  from v_thesis_unit
+  where university = 'Háskólinn í Reykjavík'
+    and degree_level = 'master'
+    and yr between 2010 and 2026
+  group by 1
+  order by 2 desc
+") |>
+  knitr::kable(caption = "Meistararitgerðir HR 2010–2026 eftir námsleið.")
+```
+
+MPM er atvinnutengt meistaranám í verkefnastjórnun, vistað hjá verkfræðideild og vottað af
+APM/IPMA, en það er ekki verkfræðigráða. Iðnfræðin — `Dip Tæknifræðideild` — er atvinnutengt
+diplómanám og að langmestu leyti á BS-stigi. Hvort tveggja er talið og skýrt hér, en stendur
+utan kjarnans.
+
+## Samanburðarhæfi kjarninn
+
+```{r vidauki-kjarni}
+dbGetQuery(con, "
+  select university as skóli,
+         count(*) filter (where in_core)     as \"í kjarna\",
+         count(*) filter (where not in_core) as \"utan kjarna\",
+         round(100.0 * count(*) filter (where in_core) / count(*), 1) as \"% eftir\"
+  from v_thesis_unit
+  where degree_level = 'master' and yr between 2010 and 2026
+  group by 1
+") |>
+  knitr::kable(caption = "Hvað stendur eftir þegar aðeins verkfræði og tölvunarfræði eru talin.")
+```
+
+Báðir skólar missa um helming, af gjörólíkum ástæðum: HÍ vegna náttúruvísinda, HR vegna
+MPM, íþróttafræði og iðnfræði. Það er forsenda alls samanburðar í köflunum á eftir.
+
+## Greinar undir ólíkum nöfnum
+
+Greinaheiti eru ekki samanburðarhæf milli skólanna. Taflan mælir kósínuslíkindi á
+efnisorðavigrum greinanna, að frádregnum greinaheitunum sjálfum, svo samsvörunin byggir á
+viðfangsefnum en ekki nöfnum.
+
+```{r vidauki-samsvorun}
+dbGetQuery(con, "
+  with dkw as (
+    select d.university as uni, d.discipline as disc, k.keyword_norm as kw, count(*) as n
+    from v_thesis_discipline d
+    join thesis_keywords tk on tk.thesis_id = d.thesis_id
+    join keywords k on k.id = tk.keyword_id
+    where d.degree_level = 'master'
+      and d.category = 'engineering'
+      and d.discipline is not null
+      and k.keyword_norm not in (select keyword_norm from discipline_keyword)
+      and k.keyword_norm not in ('meistaraprófsritgerðir', 'tækni- og verkfræðideild',
+                                 'school of science and engineering', 'rannsóknir', 'ísland')
+    group by 1, 2, 3
+  ),
+  a  as (select disc, kw, n from dkw where uni = 'Háskóli Íslands'),
+  b  as (select disc, kw, n from dkw where uni = 'Háskólinn í Reykjavík'),
+  na as (select disc, sqrt(sum(n * n)) as m from a group by 1),
+  nb as (select disc, sqrt(sum(n * n)) as m from b group by 1)
+  select a.disc as \"HÍ\",
+         b.disc as \"HR\",
+         round(sum(a.n * b.n) / (max(na.m) * max(nb.m)), 3) as líkindi,
+         count(*) as \"sameiginleg orð\"
+  from a
+  join b  on a.kw = b.kw
+  join na on na.disc = a.disc
+  join nb on nb.disc = b.disc
+  group by 1, 2
+  having count(*) >= 20
+  order by líkindi desc
+  limit 8
+") |>
+  knitr::kable(caption = "Greinar sem fjalla um það sama undir ólíkum nöfnum.")
+```
+
+Tvö pör skera sig úr, og dreifingin staðfestir þau: **Iðnaðarverkfræði** er 118 ritgerðir hjá
+HÍ en 9 hjá HR, sem kallar sömu grein **Rekstrarverkfræði** (135). **Orkuverkfræði** er 100
+hjá HR en 1 hjá HÍ, sem vistar orkuvinnuna inni í **Vélaverkfræði** (123). Greinarnar eru
+gagnkvæmt útilokandi — sama efni, sitt hvort nafnið.
+
+```{r vidauki-teardown}
+#| include: false
+dbDisconnect(con, shutdown = TRUE)
+```

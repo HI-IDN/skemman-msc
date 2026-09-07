@@ -40,7 +40,28 @@ book:
     - sections/06-rq6-themes.qmd
     - sections/07-rq7-knowledge-transfer.qmd
   appendices:
+    - vidauki-adferd.qmd
     - schema.qmd
+
+# Quarto's built-in strings are English; the book is Icelandic. Only the ones
+# that actually surface in the rendered page are overridden here.
+language:
+  section-title-appendices: "Viðauki"
+  toc-title-document: "Efnisyfirlit"
+  toc-title-website: "Á þessari síðu"
+  back-to-top: "Efst á síðu"
+  search-text-placeholder: "Leita"
+  repo-action-links-edit: "Breyta þessari síðu"
+  repo-action-links-issue: "Tilkynna villu"
+  repo-action-links-source: "Skoða frumkóða"
+  copy-button-tooltip: "Afrita"
+  copy-button-tooltip-success: "Afritað!"
+  search-no-results-text: "Engar niðurstöður"
+  crossref-apx-prefix: "Viðauki"
+  crossref-ch-prefix: "Kafli"
+  crossref-sec-prefix: "Hluti"
+  crossref-fig-title: "Mynd"
+  crossref-tbl-title: "Tafla"
 
 format:
   html:

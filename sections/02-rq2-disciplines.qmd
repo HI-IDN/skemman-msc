@@ -1,4 +1,4 @@
-# RQ2 — Þróun fræðasviða
+# Þróun fræðasviða
 
 ```{r rq2-setup}
 #| include: false

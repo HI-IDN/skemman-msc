@@ -2,12 +2,10 @@
 body-class: welcome-page
 ---
 
-# Inngangur {.unnumbered}
-
 Meistararitgerðir sem mælikvarði á þróun verkfræðimenntunar á Íslandi — HÍ og HR,
 2010 til dagsins í dag.
 
-Þessi bók greinir meistararitgerðir í verkfræði og tæknigreinum sem birtar hafa verið í
+Þessi greinagerð greinir meistararitgerðir í verkfræði og tæknigreinum sem birtar hafa verið í
 [Skemmunni](https://skemman.is), við Háskóla Íslands og Háskólann í Reykjavík. Markmiðið
 er að kortleggja þróun meistaranáms, breytingar á rannsóknaráherslum, og umfang samstarfs
 við fyrirtæki og stofnanir.
@@ -59,13 +57,13 @@ nánast alltaf til staðar; styrktaraðili sjaldan; deild aldrei.
 #| label: status
 tibble::tribble(
   ~Spurning, ~Efni,                        ~Staða,
-  "RQ1",     "Þróun umfangs",              "Svarað",
-  "RQ2",     "Þróun fræðasviða",           "Bíður greinaflokkunar",
-  "RQ3",     "Samanburður HÍ og HR",       "Að hluta",
-  "RQ4",     "Samstarf við atvinnulíf",    "Gögn ófullnægjandi",
-  "RQ5",     "Tegund samstarfsaðila",      "Gögn ófullnægjandi",
-  "RQ6",     "Þróun rannsóknarviðfangsefna", "Framkvæmanlegt",
-  "RQ7",     "Þekkingaryfirfærsla",        "Háð RQ4 og RQ5"
+  "RS1",     "Þróun umfangs",              "Svarað",
+  "RS2",     "Þróun fræðasviða",           "Bíður greinaflokkunar",
+  "RS3",     "Samanburður HÍ og HR",       "Að hluta",
+  "RS4",     "Samstarf við atvinnulíf",    "Gögn ófullnægjandi",
+  "RS5",     "Tegund samstarfsaðila",      "Gögn ófullnægjandi",
+  "RS6",     "Þróun rannsóknarviðfangsefna", "Framkvæmanlegt",
+  "RS7",     "Þekkingaryfirfærsla",        "Háð RS4 og RS5"
 ) |>
   knitr::kable()
 ```

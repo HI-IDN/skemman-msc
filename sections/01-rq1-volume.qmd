@@ -1,4 +1,4 @@
-# RQ1 — Þróun umfangs
+# Þróun umfangs
 
 ```{r rq1-setup}
 #| include: false
