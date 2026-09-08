@@ -1,8 +1,10 @@
 name: Publish book
 
+# Manual only. The book is rendered locally, where R and thesis.db are
+# available; there is no _freeze cache for CI to build from, so an automatic
+# push trigger would fail on every commit. Re-enable the push trigger once
+# either the freeze cache or a committed database snapshot exists (see issue #3).
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -20,12 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check freeze cache is present
+      - name: Check the book can be built here
         run: |
           if [ ! -d _freeze ]; then
-            echo "::error::_freeze/ is missing. thesis.db is not in the repository, so the"
-            echo "::error::book can only build in CI from frozen results. Render locally"
-            echo "::error::(quarto render) and commit _freeze/ before pushing."
+            echo "::error::_freeze/ is missing and this runner has neither R nor thesis.db,"
+            echo "::error::so no chunk can be executed. This workflow is manual-only for that"
+            echo "::error::reason -- see issue #3. To publish, either commit a _freeze cache or"
+            echo "::error::add R and a database snapshot to this job."
             exit 1
           fi
 

@@ -82,8 +82,9 @@ format:
     fig-height: 5.5
     embed-resources: false
 
+# No freeze: the book is rendered locally, where R and thesis.db are available,
+# so every chunk executes against the live database on each render.
 execute:
   echo: true
   warning: false
   message: false
-  freeze: auto
