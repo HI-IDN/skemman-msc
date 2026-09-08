@@ -115,7 +115,7 @@ erDiagram
 
 ```{r schema-sizes}
 dbGetQuery(con, "
-  select 'thesis' as tafla, count(*) as raðir from thesis
+  select 'thesis' as \"Tafla\", count(*) as \"Raðir\" from thesis
   union all select 'thesis_metadata', count(*) from thesis_metadata
   union all select 'people', count(*) from people
   union all select 'thesis_people', count(*) from thesis_people
@@ -213,7 +213,7 @@ Löng gildi eru stytt.
 ```{r daemi-metadata}
 dbGetQuery(con, "select * from thesis_metadata where thesis_id in (4445, 50249)") |>
   mutate(across(everything(), as.character)) |>
-  pivot_longer(-thesis_id, names_to = "dálkur", values_to = "gildi") |>
+  pivot_longer(-thesis_id, names_to = "Dálkur", values_to = "gildi") |>
   mutate(gildi = if_else(
     !is.na(gildi) & nchar(gildi) > 80,
     paste0(substr(gildi, 1, 80), " …"),
@@ -225,7 +225,8 @@ dbGetQuery(con, "select * from thesis_metadata where thesis_id in (4445, 50249)"
 
 ```{r daemi-folk}
 dbGetQuery(con, "
-  select tp.thesis_id, tp.role, tp.sort_order, p.id as person_id, p.name, p.year_born
+  select tp.thesis_id as \"Ritgerð\", tp.role as \"Hlutverk\", tp.sort_order as \"Röð\",
+         p.id as \"Auðkenni\", p.name as \"Nafn\", p.year_born as \"Fæðingarár\"
   from thesis_people tp
   join people p on p.id = tp.person_id
   where tp.thesis_id in (4445, 50249)
@@ -236,7 +237,8 @@ dbGetQuery(con, "
 
 ```{r daemi-leitarord}
 dbGetQuery(con, "
-  select tk.thesis_id, tk.sort_order, k.id as keyword_id, k.keyword, k.keyword_norm
+  select tk.thesis_id as \"Ritgerð\", tk.sort_order as \"Röð\", k.id as \"Auðkenni\",
+         k.keyword as \"Leitarorð\", k.keyword_norm as \"Staðlað\"
   from thesis_keywords tk
   join keywords k on k.id = tk.keyword_id
   where tk.thesis_id in (4445, 50249)

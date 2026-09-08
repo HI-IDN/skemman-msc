@@ -22,7 +22,7 @@ tvennt: **samræmingu heita** og **aðgreiningu styrkveitenda frá samstarfsaði
 
 ```{r rq5-top}
 dbGetQuery(con, "
-  select m.sponsor as styrktaradili, count(*) as fjoldi
+  select m.sponsor as \"Styrktaraðili\", count(*) as \"Fjöldi\"
   from thesis t
   join thesis_metadata m on m.thesis_id = t.id
   where m.degree_level = 'master' and m.sponsor is not null

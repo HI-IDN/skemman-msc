@@ -45,7 +45,8 @@ masters |>
     þekja = percent(mean(!is.na(sponsor)), accuracy = 0.1),
     .by = uni
   ) |>
-  rename(Skóli = uni) |>
+  rename(Skóli = uni, Alls = alls, `Með styrktaraðila` = `með styrktaraðila`,
+         Þekja = þekja) |>
   knitr::kable(caption = "Þekja `sponsor` í heild.")
 ```
 

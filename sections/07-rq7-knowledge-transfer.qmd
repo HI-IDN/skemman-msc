@@ -36,8 +36,8 @@ tibble::tribble(
 
 ```{r rq7-advisors}
 dbGetQuery(con, "
-  select count(distinct tp.person_id) as leidbeinendur,
-         count(*)                     as tengingar
+  select count(distinct tp.person_id) as \"Leiðbeinendur\",
+         count(*)                     as \"Tengingar\"
   from thesis t
   join thesis_metadata m on m.thesis_id = t.id
   join thesis_people tp on tp.thesis_id = t.id

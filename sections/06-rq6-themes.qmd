@@ -28,7 +28,10 @@ masters |>
     ),
     .by = uni
   ) |>
-  rename(Skóli = uni) |>
+  rename(Skóli = uni, Alls = alls,
+         `Útdráttur (is)` = `útdráttur (is)`,
+         `Útdráttur (en)` = `útdráttur (en)`,
+         `Útdráttur (annað hvort)` = `útdráttur (annað hvort)`) |>
   knitr::kable(caption = "Þekja útdrátta meðal meistararitgerða.")
 ```
 

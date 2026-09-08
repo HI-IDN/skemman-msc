@@ -23,9 +23,9 @@ leitarorðum og `study_category` á samræmdan greinalista**.
 
 ```{r rq2-study-category}
 dbGetQuery(con, "
-  select m.university     as skoli,
-         m.study_category as flokkur,
-         count(*)         as fjoldi
+  select m.university     as \"Skóli\",
+         m.study_category as \"Flokkur\",
+         count(*)         as \"Fjöldi\"
   from thesis t
   join thesis_metadata m on m.thesis_id = t.id
   where m.degree_level = 'master'
@@ -40,7 +40,7 @@ er flokkurinn nothæfur en grófur — meirihlutinn lendir í einni deild.
 
 ```{r rq2-keywords}
 dbGetQuery(con, "
-  select m.university as skoli, k.keyword as leitarord, count(*) as fjoldi
+  select m.university as \"Skóli\", k.keyword as \"Leitarorð\", count(*) as \"Fjöldi\"
   from thesis t
   join thesis_metadata m on m.thesis_id = t.id
   join thesis_keywords tk on tk.thesis_id = t.id

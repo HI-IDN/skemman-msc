@@ -29,7 +29,7 @@ masters |>
     `á ári` = round(alls / length(2012:2025), 1),
     hlutfall = percent(alls / sum(alls), accuracy = 0.1)
   ) |>
-  rename(Skóli = uni) |>
+  rename(Skóli = uni, Alls = alls, `Á ári` = `á ári`, Hlutfall = hlutfall) |>
   knitr::kable(caption = "Meistararitgerðir 2012–2025, að undanskildum jaðarárum.")
 ```
 

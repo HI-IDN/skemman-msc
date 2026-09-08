@@ -79,7 +79,7 @@ og á sérstakan ágústtopp sem HÍ hefur nánast ekki.
 
 ```{r rq1-truncation}
 dbGetQuery(con, "
-  select m.university as skoli,
+  select m.university as \"Skóli\",
          count(*)     as \"Ritgerðir á ári\",
          round(
            100.0 * sum(case when dayofyear(t.date_accepted) > dayofyear(date '2020-06-18')

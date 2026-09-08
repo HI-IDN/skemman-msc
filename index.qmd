@@ -23,10 +23,10 @@ er skjalfest í [viðauka](schema.qmd).
 ```{r}
 #| label: overview
 dbGetQuery(con, "
-  select coalesce(m.degree_level, 'óþekkt') as namsstig,
-         count(*)                           as fjoldi,
-         min(year(t.date_accepted))         as fyrsta_ar,
-         max(year(t.date_accepted))         as sidasta_ar
+  select coalesce(m.degree_level, 'óþekkt') as \"Námsstig\",
+         count(*)                           as \"Fjöldi\",
+         min(year(t.date_accepted))         as \"Fyrsta ár\",
+         max(year(t.date_accepted))         as \"Síðasta ár\"
   from thesis t
   left join thesis_metadata m on m.thesis_id = t.id
   group by 1
@@ -38,12 +38,19 @@ dbGetQuery(con, "
 ```{r}
 #| label: coverage
 dbGetQuery(con, "
-  select 'titill (is)'    as breyta, round(100.0 * count(title_is) / count(*), 1) as thekja_pct from thesis_metadata
-  union all select 'útdráttur (hvaða mál sem er)', round(100.0 * count(coalesce(abstract_is, abstract_en)) / count(*), 1) from thesis_metadata
-  union all select 'leitarorð', round(100.0 * count(raw_keywords) / count(*), 1) from thesis_metadata
-  union all select 'námsstig', round(100.0 * count(degree_level) / count(*), 1) from thesis_metadata
-  union all select 'styrktaraðili', round(100.0 * count(sponsor) / count(*), 1) from thesis_metadata
-  union all select 'deild (faculty)', round(100.0 * count(faculty) / count(*), 1) from thesis_metadata
+  select 'Titill (is)' as \"Breyta\",
+         round(100.0 * count(title_is) / count(*), 1) as \"Þekja (%)\"
+  from thesis_metadata
+  union all select 'Útdráttur (hvaða mál sem er)',
+         round(100.0 * count(coalesce(abstract_is, abstract_en)) / count(*), 1) from thesis_metadata
+  union all select 'Leitarorð',
+         round(100.0 * count(raw_keywords) / count(*), 1) from thesis_metadata
+  union all select 'Námsstig',
+         round(100.0 * count(degree_level) / count(*), 1) from thesis_metadata
+  union all select 'Styrktaraðili',
+         round(100.0 * count(sponsor) / count(*), 1) from thesis_metadata
+  union all select 'Deild (faculty)',
+         round(100.0 * count(faculty) / count(*), 1) from thesis_metadata
 ") |>
   knitr::kable(caption = "Þekja lykilbreyta í `thesis_metadata`, hlutfall útfyllt.")
 ```
