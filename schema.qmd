@@ -22,7 +22,8 @@ Skemmunnar, `/oai/request`, út frá:
   OAI-PMH `setSpec`: `com_1946_2064` eða `com_1946_6870`
 - árasíu á `dc:date`, nú 2010–2026
 
-Þáttarinn vistar eina röð fyrir hverja OAI-PMH færslu í `thesis`.
+Þáttarinn vistar eina röð fyrir hverja OAI-PMH færslu í `thesis` og hleður jafnframt
+OAI-reitum í `thesis_metadata`, `keywords` og `thesis_keywords`.
 
 | Dálkur í DuckDB | Uppspretta í OAI-PMH |
 | --- | --- |
@@ -39,20 +40,26 @@ Skemmunnar, `/oai/request`, út frá:
 
 ## Lestur lýsigagna
 
-`skemman metadata-load` les slóðir úr `v_thesis` þar sem engin röð er til í
-`thesis_metadata`, nema `--ids` eða `--urls` séu gefin. Útfærslan er í
+`skemman metadata-load` les vistaðar OAI-PMH XML-skrár úr `data/raw/oai/` og raðar þeim
+aftur inn í stöðluðu lýsigagnatöflurnar. Skipunin er því endurkeyrsla á OAI-lýsigögnum,
+ekki HTML-söfnun. Hún er gagnleg þegar þáttarinn batnar og sömu XML-skrár má nýta aftur
+án netumferðar. Útfærslan er í
 `skemman-harvester/src/skemman_scraper/metadata_load.py`.
 
-Fyrir hverja færslu:
+Úr OAI færslunum eru helst notuð:
 
-1. Auðkenni ritgerðar er leyst úr slóðinni.
-2. `data/raw/items/<id>.html` er lesið ef skráin er til.
-3. Síðan er sótt af Skemmunni ef skráin vantar.
-4. Nýsótt HTML er vistað í `data/raw/items/<id>.html`.
-5. Töflur, skilgreiningarlistar, `div.attr` blokkir og `<meta>` mörk eru þáttuð.
-6. Eldri raðir ritgerðarinnar í `thesis_metadata`, `thesis_people` og `thesis_keywords`
-   eru fjarlægðar.
-7. Lýsigögnum, tengslum við fólk og leitarorðum er raðað inn.
+- `dc:title` fyrir `title_is` eða `title_en`
+- `dc:description` fyrir `abstract_is`, `abstract_en` eða `note`
+- `dc:subject` fyrir `raw_keywords`, `keywords` og `thesis_keywords`
+- `dc:type` fyrir `degree_level` og `thesis_type`
+- `dc:contributor` fyrir `institution` og `university`
+- `dc:relation` fyrir `related_url`
+
+Skrár eru sóttar úr OAI-PMH með `metadataPrefix=xoai`. `skemman files-load` les vistaðar
+`xoai` XML-skrár og vistar skráarlínur í `thesis_file`, þar á meðal hvort viðhengið virðist
+vera meginritgerð (`primary`) eða aukaefni (`secondary`). `skemman files-index` er áfram
+til þegar þarf opið/lokað stöðu af item-síðum, en hrátt HTML er ekki hluti af venjulegu
+skyndiminni.
 
 ## Töflur
 
@@ -63,6 +70,8 @@ erDiagram
     people ||--o{ thesis_people : linked_to
     thesis ||--o{ thesis_keywords : has_keywords
     keywords ||--o{ thesis_keywords : linked_to
+    thesis ||--o{ thesis_file : has_files
+    thesis ||--o| thesis_file_index_status : file_indexed
 
     thesis {
         INTEGER id PK
@@ -112,6 +121,22 @@ erDiagram
         BIGINT keyword_id FK
         INTEGER sort_order
     }
+    thesis_file {
+        INTEGER thesis_id FK
+        VARCHAR filename
+        VARCHAR size_label
+        BIGINT size_bytes
+        VARCHAR access
+        VARCHAR description
+        VARCHAR filetype
+        VARCHAR url
+        VARCHAR role
+    }
+    thesis_file_index_status {
+        INTEGER thesis_id FK
+        TIMESTAMP indexed_at
+        INTEGER file_count
+    }
 ```
 
 ```{r schema-sizes}
@@ -122,6 +147,8 @@ dbGetQuery(con, "
   union all select 'thesis_people', count(*) from thesis_people
   union all select 'keywords', count(*) from keywords
   union all select 'thesis_keywords', count(*) from thesis_keywords
+  union all select 'thesis_file', count(*) from thesis_file
+  union all select 'thesis_file_index_status', count(*) from thesis_file_index_status
   order by raðir desc
 ") |>
   knitr::kable(caption = "Fjöldi raða í hverri töflu í núverandi byggingu.")
@@ -131,17 +158,17 @@ dbGetQuery(con, "
 
 | Dálkur í DuckDB | Helstu uppsprettur í Skemmunni | Athugasemd |
 | --- | --- | --- |
-| `title_is`, `title_en` | `DCTERMS.title`, `DCTERMS.alternative`, `citation_title`, `Titill`, `Title`, `dc.title` | Íslenska og enska eru greindar að með þumalfingursreglu. |
-| `abstract_is`, `abstract_en` | `DCTERMS.abstract`, `Útdráttur`, `Abstract`, `dc.description.abstract`, `DCTERMS.description` | Íslenska útdrætti má stundum draga út úr forskeyttum lýsingum. |
-| `degree_level` | `Námsstig`, `Degree`, `dc.description.degree`, `DCTERMS.type` | Staðlað í `bachelor`, `master` eða `phd`. |
-| `thesis_type` | `DCTERMS.type`, `Type`, `dc.type` | Meistararaðir eru hreinsaðar af diplómasuði þar sem hægt er. |
-| `sponsor` | `Styrktaraðili`, `Sponsor` | Geymt sem texti. |
-| `note` | `Athugasemdir`, `Athugasemd`, `Notes`, `Note`, valin `DCTERMS.description` gildi | Endurtekinn texti er fjarlægður. |
-| `related_url` | `Tengd vefslóð`, `Related URL`, `DCTERMS.relation` | Geymt sem texti. |
-| `raw_keywords` | `DCTERMS.subject`, `citation_keywords`, `Efnisorð`, `dc.subject` | Upprunalegur samsettur texti eftir skiptingu og afritahreinsun. |
-| `pdf_url` | raðir úr skráartöflu, `citation_pdf_url`, `PDF`, `Bitstream` | Aðeins geymt sem lýsigögn; PDF-skjöl eru hvorki sótt né textagreind. |
-| `university`, `school`, `study_category`, `thesis_type_label` | brauðmolaslóð | Þrep eitt til fjögur. |
-| `institution` | brauðmolaslóð | Sama gildi og `university`, til hægðarauka. |
+| `title_is`, `title_en` | `dc:title` | Íslenska og enska eru greindar að með þumalfingursreglu. |
+| `abstract_is`, `abstract_en` | `dc:description` | Íslenska útdrætti má stundum draga út úr forskeyttum lýsingum. |
+| `degree_level` | `dc:type` | Staðlað í `bachelor`, `master` eða `phd`. |
+| `thesis_type` | `dc:type` | Meistararaðir eru hreinsaðar af diplómasuði þar sem hægt er. |
+| `sponsor` | ekki fyllt úr OAI-PMH | Frátekið ef sú uppspretta verður sótt síðar. |
+| `note` | valin `dc:description` gildi | Endurtekinn texti er fjarlægður. |
+| `related_url` | `dc:relation` | Geymt sem texti. |
+| `raw_keywords` | `dc:subject` | Upprunalegur samsettur texti eftir skiptingu og afritahreinsun. |
+| `pdf_url` | ekki fyllt úr OAI-PMH | Slóðir á PDF-skjöl koma úr `thesis_file`. |
+| `university`, `institution` | `dc:contributor` | Oft heiti háskóla eða stofnunar. |
+| `school`, `study_category`, `thesis_type_label` | ekki fyllt úr OAI-PMH | Skemman birtir þetta á item-síðum, en það er ekki lengur sótt sem hrátt HTML. |
 | `faculty` | ekki fyllt út | Frátekið fyrir seinni leiðslu, líklega úr PDF-texta eða leitarorðum á borð við `*deild` eða `*department`. |
 
 Fyrir grunn sem var byggður fyrir þessa breytingu þarf að hreinsa gömlu afrituðu gildin einu sinni:
@@ -276,12 +303,11 @@ sameiningin virka: `person_id` 56 er sami leiðbeinandinn í báðum ritgerðum,
 
 ```bash
 duckdb data/processed/thesis.db < scripts/create_thesis_db.sql
-skemman oai-pmh --location 1946/2064 --year-start 2026 --year-end 2026 --output data/processed/thesis.db
+skemman oai-pmh --output data/processed/thesis.db
 skemman metadata-load --db data/processed/thesis.db
+skemman oai-pmh --output data/processed/thesis.db --metadata-prefix xoai
+skemman files-load --db data/processed/thesis.db
 ```
-
-Hrátt HTML er geymt í `data/raw/items/`. Sé `data/raw/items/<thesis_id>.html` til staðar er
-það endurnýtt í stað þess að sækja síðuna aftur.
 
 ::: {.callout-warning title="Ein tenging í einu"}
 DuckDB leyfir aðeins einu ferli að opna skrána. Aftengdu `thesis.db` í gagnaglugga
