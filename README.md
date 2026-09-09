@@ -21,9 +21,10 @@ What is specific to this study stays here: `config/collections.yaml`,
 
 ## Workflow
 
-1. **Capture listings** — `skemman oai-pmh` for each collection handle.
-2. **Load metadata** — `skemman metadata-load` fetches each Skemman item page and parses
-   it into normalized tables. Cached HTML is reused.
+1. **Capture OAI records** — `skemman oai-pmh` for each collection handle, including
+   OAI-provided keywords and abstracts.
+2. **Load item-page metadata** — `skemman metadata-load` fetches each Skemman item page
+   for details not exposed by OAI-PMH. Cached HTML is reused.
 3. **Index files** — `skemman files-index` reads each cached item page's file table into
    `thesis_file`, including access status and size. This step does not use the network.
 4. **Read title pages** — `skemman titlepage-load` fetches open thesis PDFs, keeps the
@@ -73,11 +74,12 @@ skemman oai-pmh --output data/processed/thesis.db
 Handles are mapped to Skemman's OAI-PMH community sets, so `1946/2064` becomes
 `com_1946_2064` and `1946/6870` becomes `com_1946_6870`. Use `--set` directly if you
 want to harvest a specific OAI-PMH set. The default handles, year range and optional test
-limit are read from `config/collections.yaml`.
+limit are read from `config/collections.yaml`. OAI `dc:subject` values are loaded as
+keywords, and `dc:description` values are loaded as abstracts where possible.
 
 ## Step 2: Load Metadata
 
-Load metadata for all thesis IDs that are missing metadata:
+Load item-page metadata for all thesis IDs that are missing page-only details:
 
 ```bash
 skemman metadata-load --db data/processed/thesis.db
@@ -89,7 +91,10 @@ For a selected set of IDs:
 skemman metadata-load --db data/processed/thesis.db --ids 4445,25337
 ```
 
-Raw item HTML is cached under `data/raw/items/`. If `data/raw/items/<thesis_id>.html` exists, the loader reuses it instead of fetching the page again.
+Raw item HTML is cached under `data/raw/items/`. If `data/raw/items/<thesis_id>.html`
+exists, the loader reuses it instead of fetching the page again. This cache is still
+needed for fields OAI-PMH does not include, especially PDF URLs, file-table access status,
+breadcrumbs and advisor metadata.
 
 Clean already-loaded people rows if old metadata loads left years or parenthesized roles in names:
 

@@ -20,8 +20,9 @@ The pipeline is driven by the `skemman` CLI from the `skemman-harvester/` submod
 
 1. Initialize DuckDB with `scripts/create_thesis_db.sql`.
 2. `skemman oai-pmh` from `skemman-harvester/`, using the handles and years in
-   `config/collections.yaml`.
-3. `skemman metadata-load` to fetch and parse item pages.
+   `config/collections.yaml`; this also loads OAI-provided keywords and abstracts.
+3. `skemman metadata-load` to fetch and parse item pages for fields OAI-PMH does not
+   expose.
 4. `skemman files-index` to read each item's file table from the cached HTML.
 5. `skemman titlepage-load` to read the faculty, credits and degree off the PDFs.
 6. Analyze the resulting database in the Quarto book.
@@ -34,11 +35,12 @@ duplicate one-off Python scripts when a CLI command is the intended interface.
 `skemman-harvester/`. Changes to it are commits in that repository, and the submodule
 pointer here is bumped separately. Nothing study-specific may go into it: no engineering,
 no HÍ or HR, no master's-only assumptions. Those belong in `config/collections.yaml` or in
-`scripts/discipline_map.sql`. Raw item HTML is cached under
-`data/raw/items/`; the loader reuses it rather than refetching.
+`scripts/discipline_map.sql`. OAI XML is cached under `data/raw/oai/`. Raw item HTML is
+cached under `data/raw/items/` for page-only fields and the file table; the loader reuses
+it rather than refetching.
 
 Re-running `oai-pmh` for the configured year range picks up newly published theses. Follow
-it with `metadata-load`, which processes everything still missing metadata.
+it with `metadata-load`, which processes everything still missing item-page metadata.
 
 ## The database lock
 
