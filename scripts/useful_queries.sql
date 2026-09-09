@@ -31,3 +31,23 @@ select thesis_id,
        pdf_url is not null     as has_pdf_url
 from thesis_metadata
 order by thesis_id;
+
+-- Which theses are closed, and until when.
+--
+-- `access` is filled by files-index, which is run only for the theses whose PDF
+-- could not be opened -- xoai, where the file table comes from, does not carry
+-- the access status at all. A thesis with no row here is not necessarily open;
+-- it may simply never have been asked about.
+select
+    f.thesis_id,
+    m.title_is,
+    m.degree_level,
+    f.access,
+    try_strptime(regexp_extract(f.access, '(\d{2}\.\d{2}\.\d{4})', 1), '%d.%m.%Y')::date as opens,
+    'https://skemman.is/handle/1946/' || f.thesis_id as item_url
+from thesis_file f
+join thesis_metadata m on m.thesis_id = f.thesis_id
+where f.role = 'primary'
+  and f.access is not null
+  and f.access <> 'Opinn'
+order by opens nulls last, f.thesis_id;

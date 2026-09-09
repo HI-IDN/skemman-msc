@@ -3,13 +3,25 @@ base_url: "https://skemman.is"
 user_agent: "skemman-harvester/1.1 research crawler; contact: helgaingim@hi.is"
 # skemman.is/robots.txt asks for Crawl-delay: 30. The earlier value of 2 was
 # set before anyone read it.
-request_delay_seconds: 30.0
-timeout_seconds: 30
+request_delay_seconds: 0.5
+# Theses run to hundreds of megabytes and Skemman serves the large ones
+# slowly. This is a per-read timeout, not a total.
+timeout_seconds: 120
 
-year_start: 2010
-year_end: 2026
-record_limit:
-titlepage_pages: 8
+year_start: 2000
+year_end: 2027
+record_limit: 10000
+titlepage_pages: 20
+
+# Theses where I am author or advisor, so I know what the title page says and
+# can see straight away when the parser reads it wrong. Used by `--test`.
+#
+#   25337  author, PhD, 265 pp. -- one PDF, open
+#    4445  author, MSc, 94 pp. -- one PDF, open
+#   50278  advisor -- two PDFs, the declaration is the smaller one
+#   50249  advisor -- full text embargoed until 2050, never fetchable
+#   53215  advisor -- two PDFs, the declaration is the larger one
+test_ids: [25337, 4445, 50278, 50249, 53215]
 
 handles:
   HI: "1946/2064"

@@ -28,7 +28,11 @@ create table if not exists thesis_metadata
     university        varchar,
     faculty           varchar,
     study_category    varchar,
-    thesis_type_label varchar
+    thesis_type_label varchar,
+    -- dc.type.degree as xoai states it: "Master's",
+    -- "Undergraduate diploma", "Doctoral". degree_level is the
+    -- normalized form; this keeps the two diplomas apart.
+    degree_raw        varchar
 );
 
 create table if not exists people
@@ -61,12 +65,35 @@ create table if not exists thesis_keywords
     sort_order integer
 );
 
+create table if not exists thesis_file
+(
+    thesis_id   integer,
+    filename    varchar,
+    size_label  varchar,
+    size_bytes  bigint,
+    access      varchar,
+    description varchar,
+    filetype    varchar,
+    url         varchar,
+    -- 'primary' for the file that is the thesis, 'secondary' for everything
+    -- else: declaration forms, appendices, licences. Written by files-index.
+    role        varchar
+);
+
+create table if not exists thesis_file_index_status
+(
+    thesis_id  integer,
+    indexed_at timestamp default current_timestamp,
+    file_count integer
+);
+
 create unique index if not exists thesis_id_pk on thesis (id);
 create unique index if not exists people_id_pk on people (id);
 create unique index if not exists people_name_year_uq on people (name, year_born);
 create unique index if not exists keywords_norm_uq on keywords (keyword_norm);
 create unique index if not exists thesis_people_uq on thesis_people (thesis_id, person_id, role);
 create unique index if not exists thesis_keywords_uq on thesis_keywords (thesis_id, keyword_id);
+create unique index if not exists thesis_file_index_status_uq on thesis_file_index_status (thesis_id);
 
 create or replace view v_thesis as
 select
