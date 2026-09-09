@@ -1,12 +1,44 @@
-# Icelandic Thesis Metadata Loader
+# Icelandic Thesis Comparison
 
-This repository collects Icelandic BSc and master's thesis records from Skemman into DuckDB.
+A study of **master's theses in engineering and technology** published in
+[Skemman](https://skemman.is) since 2010, at Háskóli Íslands and Háskólinn í Reykjavík.
+The research questions are tracked in
+[issue #1](https://github.com/HI-IDN/icelandic-thesis-comparison/issues/1) and answered in
+the Quarto book, published at
+<https://hi-idn.github.io/icelandic-thesis-comparison>.
 
-The current workflow has three steps:
+The population is master's theses. Bachelor's and doctoral records are collected because
+they share the same Skemman collections, but they are outside the analysis.
 
-1. Run Skemman `simple-search` for the HI and HR handles, year by year for 2010 through 2026.
-2. Run the metadata loader. It fetches each Skemman item page unless the cached HTML file already exists, then parses the relevant metadata into normalized database tables.
-3. Run the title page loader. It fetches each thesis PDF, keeps the first pages as plain text, and reads the faculty, credits and degree stated in the document itself.
+The repository holds two things: a **scraper** that turns Skemman into a DuckDB database,
+and the **analysis** built on top of it.
+
+## The scraper is not specific to this study
+
+`skemman` reads whatever collection you point it at. Nothing about engineering, about these
+two universities or about master's theses is baked into it — the handles and year range
+live in `config/collections.yaml`, and every command takes the collection, year and degree
+level as arguments:
+
+```bash
+skemman simple-search --location 1946/1234 --year 2018   # any collection, any year
+skemman titlepage-load --degree-level bachelor           # any degree level
+```
+
+So it can be reused for a different faculty, a different school or a different question.
+What is specific to this study is the analysis: `scripts/discipline_map.sql`, the Quarto
+book and the research judgments they encode.
+
+## Workflow
+
+1. **Capture listings** — `simple-search` for each collection handle, year by year.
+2. **Load metadata** — fetch each Skemman item page and parse it into normalized tables.
+   Cached HTML is reused.
+3. **Read title pages** — fetch each thesis PDF, keep the first pages as plain text, and
+   read the faculty, credits and degree stated in the document itself.
+
+Every step is resumable and caches what it fetches, so re-running only does what is
+missing.
 
 ## Install
 
@@ -132,11 +164,10 @@ skemman titlepage-load
 Fetching all master's theses takes roughly 90 minutes at the two-second request delay set
 in `config/collections.yaml`.
 
-## Documentation
+## The analysis
 
-The analysis is a Quarto book. The database mapping is documented in its appendix,
-[schema.qmd](schema.qmd), and published at
-<https://hi-idn.github.io/icelandic-thesis-comparison>.
+The analysis is a Quarto book, one chapter per research question, written in Icelandic.
+The database mapping is documented in its appendix, [schema.qmd](schema.qmd).
 
 Build it locally with:
 
@@ -147,4 +178,24 @@ quarto render
 Disconnect `thesis.db` from any IDE database panel first — DuckDB permits one process on
 the file at a time.
 
+For ad hoc queries, `scripts/query.R` wraps a connection that opens, reads and closes, so
+it works even while a loader is running:
+
+```r
+source("scripts/query.R")
+q("select university, count(*) as n from thesis_metadata group by 1")
+```
+
 Useful SQL checks are in `scripts/useful_queries.sql`.
+
+## Layout
+
+| Path | What it is |
+| --- | --- |
+| `src/skemman_scraper/` | The scraper. Not specific to this study. |
+| `config/collections.yaml` | Which collections and years to fetch. |
+| `scripts/discipline_map.sql` | Keyword to discipline mapping. Specific to this study. |
+| `index.qmd`, `sections/`, `schema.qmd` | The Quarto book. |
+| `data/raw/` | Cached Skemman HTML and extracted PDF text. Not in git. |
+| `data/processed/thesis.db` | The DuckDB database. Not in git. |
+| `data/db/` | Per-table Parquet snapshot, for version control. |
