@@ -27,9 +27,9 @@ suppressMessages({
 
 .find_root <- function(start = getwd()) {
   d <- normalizePath(start, winslash = "/", mustWork = TRUE)
-  while (!file.exists(file.path(d, "pyproject.toml"))) {
+  while (!file.exists(file.path(d, "_quarto.yml"))) {
     parent <- dirname(d)
-    if (parent == d) stop("could not locate project root (no pyproject.toml above ", start, ")")
+    if (parent == d) stop("could not locate project root (no _quarto.yml above ", start, ")")
     d <- parent
   }
   d

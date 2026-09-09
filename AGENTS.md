@@ -7,7 +7,7 @@ Guidance for AI/code agents working on this project.
 A data analysis of master's theses in engineering and technology published in
 [Skemman](https://skemman.is) since 2010, covering Háskóli Íslands (HÍ) and Háskólinn í
 Reykjavík (HR). The research questions are tracked in
-[issue #1](https://github.com/HI-IDN/icelandic-thesis-comparison/issues/1); each has its
+[issue #1](https://github.com/HI-IDN/skemman-msc/issues/1); each has its
 own chapter.
 
 The deliverable is a Quarto book. `index.qmd` is the landing page, chapters live under
@@ -16,15 +16,24 @@ written to `docs/` (gitignored — see *Publishing*).
 
 ## Workflow
 
-The pipeline has two passes, both driven by the `skemman` CLI:
+The pipeline is driven by the `skemman` CLI:
 
 1. Initialize DuckDB with `scripts/create_thesis_db.sql`.
 2. `skemman simple-search` for the HÍ and HR handles, year by year over 2010–2026.
 3. `skemman metadata-load` to fetch and parse item pages.
-4. Analyze the resulting database in the Quarto book.
+4. `skemman files-index` to read each item's file table from the cached HTML.
+5. `skemman titlepage-load` to read the faculty, credits and degree off the PDFs.
+6. Analyze the resulting database in the Quarto book.
 
 Prefer the `skemman` CLI for scraper actions. Do not add duplicate one-off Python scripts
-when a CLI command is the intended interface. Raw item HTML is cached under
+when a CLI command is the intended interface.
+
+**The scraper is a submodule.** It lives in
+[skemman-harvester](https://github.com/HI-IDN/skemman-harvester), checked out under
+`skemman-harvester/`. Changes to it are commits in that repository, and the submodule
+pointer here is bumped separately. Nothing study-specific may go into it: no engineering,
+no HÍ or HR, no master's-only assumptions. Those belong in `config/collections.yaml` or in
+`scripts/discipline_map.sql`. Raw item HTML is cached under
 `data/raw/items/`; the loader reuses it rather than refetching.
 
 Re-running `simple-search` for the current year picks up newly published theses. Follow it
@@ -47,7 +56,7 @@ assumed present.
 ## Environment
 
 - **Python**: `.venv\Scripts\python.exe`, Python 3.12.10, with `duckdb` 1.5.5 and
-  `skemman-scraper` installed editable.
+  the harvester submodule installed editable (`pip install -e ./skemman-harvester`).
 - **R**: 4.5.3, with `duckdb` 1.5.2, `ggplot2` 4.0.2, `knitr`, `rmarkdown`, `tidyr`.
 - **Quarto**: 1.9.38.
 

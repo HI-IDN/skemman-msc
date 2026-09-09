@@ -1,33 +1,22 @@
-# Icelandic Thesis Comparison
+# skemman-msc
 
 A study of **master's theses in engineering and technology** published in
 [Skemman](https://skemman.is) since 2010, at Háskóli Íslands and Háskólinn í Reykjavík.
 The research questions are tracked in
-[issue #1](https://github.com/HI-IDN/icelandic-thesis-comparison/issues/1) and answered in
+[issue #1](https://github.com/HI-IDN/skemman-msc/issues/1) and answered in
 the Quarto book, published at
-<https://hi-idn.github.io/icelandic-thesis-comparison>.
+<https://hi-idn.github.io/skemman-msc>.
 
 The population is master's theses. Bachelor's and doctoral records are collected because
 they share the same Skemman collections, but they are outside the analysis.
 
-The repository holds two things: a **scraper** that turns Skemman into a DuckDB database,
-and the **analysis** built on top of it.
+This repository is the **analysis**. The tool that fetches the data lives separately, in
+[skemman-harvester](https://github.com/HI-IDN/skemman-harvester), and is vendored here as
+a submodule: it knows nothing about engineering, about these two universities or about
+master's theses, so it can be pointed at any Skemman collection.
 
-## The scraper is not specific to this study
-
-`skemman` reads whatever collection you point it at. Nothing about engineering, about these
-two universities or about master's theses is baked into it — the handles and year range
-live in `config/collections.yaml`, and every command takes the collection, year and degree
-level as arguments:
-
-```bash
-skemman simple-search --location 1946/1234 --year 2018   # any collection, any year
-skemman titlepage-load --degree-level bachelor           # any degree level
-```
-
-So it can be reused for a different faculty, a different school or a different question.
-What is specific to this study is the analysis: `scripts/discipline_map.sql`, the Quarto
-book and the research judgments they encode.
+What is specific to this study stays here: `config/collections.yaml`,
+`scripts/discipline_map.sql`, the Quarto book, and the research judgments they encode.
 
 ## Workflow
 
@@ -43,9 +32,18 @@ missing.
 ## Install
 
 ```bash
+git clone --recurse-submodules git@github.com:HI-IDN/skemman-msc.git
+cd skemman-msc
+
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.txt   # installs the harvester submodule, editable
+```
+
+If you cloned without `--recurse-submodules`:
+
+```bash
+git submodule update --init
 ```
 
 PowerShell activation:
@@ -192,7 +190,7 @@ Useful SQL checks are in `scripts/useful_queries.sql`.
 
 | Path | What it is |
 | --- | --- |
-| `src/skemman_scraper/` | The scraper. Not specific to this study. |
+| `skemman-harvester/` | The harvester, as a submodule. Not specific to this study. |
 | `config/collections.yaml` | Which collections and years to fetch. |
 | `scripts/discipline_map.sql` | Keyword to discipline mapping. Specific to this study. |
 | `index.qmd`, `sections/`, `schema.qmd` | The Quarto book. |

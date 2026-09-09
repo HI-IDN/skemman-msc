@@ -1,0 +1,3 @@
+[submodule "skemman-harvester"]
+	path = skemman-harvester
+	url = git@github.com:HI-IDN/skemman-harvester.git
