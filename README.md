@@ -10,21 +10,26 @@ the Quarto book, published at
 The population is master's theses. Bachelor's and doctoral records are collected because
 they share the same Skemman collections, but they are outside the analysis.
 
-This repository is the **analysis**. The tool that fetches the data lives separately, in
-[skemman-harvester](https://github.com/HI-IDN/skemman-harvester), and is vendored here as
-a submodule: it knows nothing about engineering, about these two universities or about
-master's theses, so it can be pointed at any Skemman collection.
+This repository is the **analysis**. Data harvesting is handled by
+[skemman-harvester](https://github.com/HI-IDN/skemman-harvester), vendored here as the
+`skemman-harvester/` submodule and installed by `requirements.txt` in editable mode. The
+harvester knows nothing about engineering, these two universities or master's theses, so
+it can be pointed at any Skemman collection.
 
 What is specific to this study stays here: `config/collections.yaml`,
 `scripts/discipline_map.sql`, the Quarto book, and the research judgments they encode.
 
 ## Workflow
 
-1. **Capture listings** — `simple-search` for each collection handle, year by year.
-2. **Load metadata** — fetch each Skemman item page and parse it into normalized tables.
-   Cached HTML is reused.
-3. **Read title pages** — fetch each thesis PDF, keep the first pages as plain text, and
-   read the faculty, credits and degree stated in the document itself.
+1. **Capture listings** — `skemman simple-search` for each collection handle, year by
+   year.
+2. **Load metadata** — `skemman metadata-load` fetches each Skemman item page and parses
+   it into normalized tables. Cached HTML is reused.
+3. **Index files** — `skemman files-index` reads each cached item page's file table into
+   `thesis_file`, including access status and size. This step does not use the network.
+4. **Read title pages** — `skemman titlepage-load` fetches open thesis PDFs, keeps the
+   first pages as plain text, and reads the faculty, credits and degree stated in the
+   document itself.
 
 Every step is resumable and caches what it fetches, so re-running only does what is
 missing.
@@ -103,7 +108,20 @@ Clean already-loaded people rows if old metadata loads left years or parenthesiz
 skemman clean-people --db data/processed/thesis.db
 ```
 
-## Step 3: Fetch Theses and Read Their Title Pages
+## Step 3: Index Attached Files
+
+Read the file table from the cached item HTML:
+
+```bash
+skemman files-index --db data/processed/thesis.db
+```
+
+This fills `thesis_file` with filename, size, access status and type. Run it before
+loading title pages: it lets the harvester skip closed files and take smaller PDFs first.
+
+Because this step reads `data/raw/items/`, it does not make network requests.
+
+## Step 4: Fetch Theses and Read Their Title Pages
 
 Skemman's subject keywords are a suggestion. The title page states the faculty, the credits
 and the degree outright, and carries fields Skemman does not expose at all — notably ECTS
@@ -112,20 +130,20 @@ and the length of the thesis.
 Load title pages for every master's thesis that does not have one yet:
 
 ```bash
-skemman titlepage-load --db data/processed/thesis.db
+skemman titlepage-load --db data/processed/thesis.db --degree-level master
 ```
 
 For a selected set of IDs, or a trial run:
 
 ```bash
-skemman titlepage-load --ids 30610,21584
-skemman titlepage-load --limit 50
+skemman titlepage-load --db data/processed/thesis.db --ids 30610,21584
+skemman titlepage-load --db data/processed/thesis.db --limit 50
 ```
 
 Bachelor's and doctoral theses are skipped by default. To include them:
 
 ```bash
-skemman titlepage-load --degree-level bachelor
+skemman titlepage-load --db data/processed/thesis.db --degree-level bachelor
 ```
 
 Results land in `thesis_titlepage`, one row per thesis, separate from `thesis_metadata` so
@@ -156,11 +174,11 @@ a truncated download is retried on the next run rather than being skipped foreve
 
 ```bash
 duckdb data/processed/thesis.db -c "drop table thesis_titlepage"
-skemman titlepage-load
+skemman titlepage-load --db data/processed/thesis.db --degree-level master
 ```
 
-Fetching all master's theses takes roughly 90 minutes at the two-second request delay set
-in `config/collections.yaml`.
+Fetching all master's theses takes a long overnight run at the 30-second request delay set
+in `config/collections.yaml`, which follows Skemman's robots.txt crawl-delay.
 
 ## The analysis
 
