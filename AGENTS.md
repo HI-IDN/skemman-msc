@@ -16,17 +16,17 @@ written to `docs/` (gitignored — see *Publishing*).
 
 ## Workflow
 
-The pipeline is driven by the `skemman` CLI:
+The pipeline is driven by the `skemman` CLI from the `skemman-harvester/` submodule:
 
 1. Initialize DuckDB with `scripts/create_thesis_db.sql`.
-2. `skemman oai-pmh` for the HÍ and HR handles over 2010–2026.
+2. `skemman oai-pmh` from `skemman-harvester/` for the HÍ and HR handles over 2010–2026.
 3. `skemman metadata-load` to fetch and parse item pages.
 4. `skemman files-index` to read each item's file table from the cached HTML.
 5. `skemman titlepage-load` to read the faculty, credits and degree off the PDFs.
 6. Analyze the resulting database in the Quarto book.
 
-Prefer the `skemman` CLI for scraper actions. Do not add duplicate one-off Python scripts
-when a CLI command is the intended interface.
+Prefer the `skemman` CLI from `skemman-harvester/` for scraper actions. Do not add
+duplicate one-off Python scripts when a CLI command is the intended interface.
 
 **The scraper is a submodule.** It lives in
 [skemman-harvester](https://github.com/HI-IDN/skemman-harvester), checked out under
