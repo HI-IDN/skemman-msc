@@ -12,23 +12,24 @@ Skemmuna og gagnagrunninn.
 
 Grunnurinn er byggður í tveimur umferðum.
 
-## Söfnun úr leitarniðurstöðum
+## Söfnun með OAI-PMH
 
-`skemman simple-search` byggir slóð á Skemmuna úr:
+`skemman oai-pmh` úr `skemman-harvester/` sækir færslur í gegnum OAI-PMH viðmót
+Skemmunnar, `/oai/request`, út frá:
 
 - `base_url` í `config/collections.yaml`
-- einu safnauðkenni, nú `1946/2064` fyrir HÍ eða `1946/6870` fyrir HR
-- einu ári af tímabilinu 2010–2026
+- einu handfangi, nú `1946/2064` fyrir HÍ eða `1946/6870` fyrir HR, sem verður að
+  OAI-PMH `setSpec`: `com_1946_2064` eða `com_1946_6870`
+- árasíu á `dc:date`, nú 2010–2026
 
-Slóðin notar `dateIssued` sem nákvæma ársíu. Þáttarinn vistar eina röð fyrir hverja
-leitarniðurstöðu í `thesis`.
+Þáttarinn vistar eina röð fyrir hverja OAI-PMH færslu í `thesis`.
 
-| Dálkur í DuckDB | Uppspretta í leitarniðurstöðum |
+| Dálkur í DuckDB | Uppspretta í OAI-PMH |
 | --- | --- |
-| `id` | auðkenni úr `/handle/1946/<id>` |
-| `date_accepted` | fyrsti dálkur, lesinn sem `DD.MM.YYYY` |
-| `title` | texti hlekksins |
-| `authors` | þriðji dálkur |
+| `id` | auðkenni úr `dc:identifier` eða OAI-PMH `identifier`, t.d. `1946/<id>` |
+| `date_accepted` | `dc:date`, lesið sem ár, ár-mánuður eða full dagsetning |
+| `title` | fyrsta `dc:title` |
+| `authors` | `dc:creator`, sameinað í texta þegar höfundar eru fleiri en einn |
 
 `v_thesis` bætir við slóð á færsluna sjálfa:
 
@@ -40,7 +41,7 @@ leitarniðurstöðu í `thesis`.
 
 `skemman metadata-load` les slóðir úr `v_thesis` þar sem engin röð er til í
 `thesis_metadata`, nema `--ids` eða `--urls` séu gefin. Útfærslan er í
-`src/skemman_scraper/metadata_load.py`.
+`skemman-harvester/src/skemman_scraper/metadata_load.py`.
 
 Fyrir hverja færslu:
 
@@ -275,7 +276,7 @@ sameiningin virka: `person_id` 56 er sami leiðbeinandinn í báðum ritgerðum,
 
 ```bash
 duckdb data/processed/thesis.db < scripts/create_thesis_db.sql
-skemman simple-search --location 1946/2064 --year 2026 --output data/processed/thesis.db
+skemman oai-pmh --location 1946/2064 --year-start 2026 --year-end 2026 --output data/processed/thesis.db
 skemman metadata-load --db data/processed/thesis.db
 ```
 
