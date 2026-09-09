@@ -19,7 +19,7 @@ written to `docs/` (gitignored — see *Publishing*).
 The pipeline is driven by the `skemman` CLI:
 
 1. Initialize DuckDB with `scripts/create_thesis_db.sql`.
-2. `skemman simple-search` for the HÍ and HR handles, year by year over 2010–2026.
+2. `skemman oai-pmh` for the HÍ and HR handles over 2010–2026.
 3. `skemman metadata-load` to fetch and parse item pages.
 4. `skemman files-index` to read each item's file table from the cached HTML.
 5. `skemman titlepage-load` to read the faculty, credits and degree off the PDFs.
@@ -36,8 +36,8 @@ no HÍ or HR, no master's-only assumptions. Those belong in `config/collections.
 `scripts/discipline_map.sql`. Raw item HTML is cached under
 `data/raw/items/`; the loader reuses it rather than refetching.
 
-Re-running `simple-search` for the current year picks up newly published theses. Follow it
-with `metadata-load`, which processes everything still missing metadata.
+Re-running `oai-pmh` for the configured year range picks up newly published theses. Follow
+it with `metadata-load`, which processes everything still missing metadata.
 
 ## The database lock
 

@@ -21,8 +21,7 @@ What is specific to this study stays here: `config/collections.yaml`,
 
 ## Workflow
 
-1. **Capture listings** — `skemman simple-search` for each collection handle, year by
-   year.
+1. **Capture listings** — `skemman oai-pmh` for each collection handle.
 2. **Load metadata** — `skemman metadata-load` fetches each Skemman item page and parses
    it into normalized tables. Cached HTML is reused.
 3. **Index files** — `skemman files-index` reads each cached item page's file table into
@@ -65,13 +64,15 @@ duckdb data/processed/thesis.db < scripts/create_thesis_db.sql
 
 ## Step 1: Capture Listings
 
-Run simple search for each handle and year:
+Harvest records through Skemman's OAI-PMH endpoint for each handle:
 
 ```bash
 for handle in 1946/2064 1946/6870; do
-  for year in $(seq 2010 2026); do
-    skemman simple-search --location "$handle" --year "$year" --output data/processed/thesis.db
-  done
+  skemman oai-pmh \
+    --location "$handle" \
+    --year-start 2010 \
+    --year-end 2026 \
+    --output data/processed/thesis.db
 done
 ```
 
@@ -80,11 +81,17 @@ PowerShell:
 ```powershell
 $handles = @("1946/2064", "1946/6870")
 foreach ($handle in $handles) {
-  foreach ($year in 2010..2026) {
-    skemman simple-search --location $handle --year $year --output data/processed/thesis.db
-  }
+  skemman oai-pmh `
+    --location $handle `
+    --year-start 2010 `
+    --year-end 2026 `
+    --output data/processed/thesis.db
 }
 ```
+
+Handles are mapped to Skemman's OAI-PMH community sets, so `1946/2064` becomes
+`com_1946_2064` and `1946/6870` becomes `com_1946_6870`. Use `--set` directly if you
+want to harvest a specific OAI-PMH set.
 
 ## Step 2: Load Metadata
 
