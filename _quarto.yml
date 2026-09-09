@@ -69,7 +69,9 @@ format:
       - cosmo
       - styles/hi-book.scss
     include-in-header: partials/header-includes.inc
-    include-after-body: partials/breadcrumb.inc
+    include-after-body:
+      - partials/breadcrumb.inc
+      - partials/sortable.inc
     toc: true
     toc-depth: 3
     number-sections: true
