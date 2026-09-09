@@ -19,7 +19,8 @@ written to `docs/` (gitignored — see *Publishing*).
 The pipeline is driven by the `skemman` CLI from the `skemman-harvester/` submodule:
 
 1. Initialize DuckDB with `scripts/create_thesis_db.sql`.
-2. `skemman oai-pmh` from `skemman-harvester/` for the HÍ and HR handles over 2010–2026.
+2. `skemman oai-pmh` from `skemman-harvester/`, using the handles and years in
+   `config/collections.yaml`.
 3. `skemman metadata-load` to fetch and parse item pages.
 4. `skemman files-index` to read each item's file table from the cached HTML.
 5. `skemman titlepage-load` to read the faculty, credits and degree off the PDFs.

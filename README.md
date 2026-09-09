@@ -64,34 +64,16 @@ duckdb data/processed/thesis.db < scripts/create_thesis_db.sql
 
 ## Step 1: Capture Listings
 
-Harvest records through Skemman's OAI-PMH endpoint for each handle:
+Harvest the configured handles and years through Skemman's OAI-PMH endpoint:
 
 ```bash
-for handle in 1946/2064 1946/6870; do
-  skemman oai-pmh \
-    --location "$handle" \
-    --year-start 2010 \
-    --year-end 2026 \
-    --output data/processed/thesis.db
-done
-```
-
-PowerShell:
-
-```powershell
-$handles = @("1946/2064", "1946/6870")
-foreach ($handle in $handles) {
-  skemman oai-pmh `
-    --location $handle `
-    --year-start 2010 `
-    --year-end 2026 `
-    --output data/processed/thesis.db
-}
+skemman oai-pmh --output data/processed/thesis.db
 ```
 
 Handles are mapped to Skemman's OAI-PMH community sets, so `1946/2064` becomes
 `com_1946_2064` and `1946/6870` becomes `com_1946_6870`. Use `--set` directly if you
-want to harvest a specific OAI-PMH set.
+want to harvest a specific OAI-PMH set. The default handles, year range and optional test
+limit are read from `config/collections.yaml`.
 
 ## Step 2: Load Metadata
 
@@ -162,6 +144,9 @@ Each PDF is fetched, its first eight pages are extracted as **plain text** to
 `data/raw/pdf_text/<thesis_id>.txt`, and the PDF is then deleted. The text is what the
 parser reads, so the whole master's population costs roughly 20 MB on disk instead of
 about 12 GB of PDFs.
+
+The number of PDF pages kept as text is controlled by `titlepage_pages` in
+`config/collections.yaml`. Leave it blank to extract the whole PDF.
 
 `<thesis_id>` is the Skemman handle suffix throughout, so `data/raw/pdf_text/10688.txt`,
 `data/raw/items/10688.html` and <https://skemman.is/handle/1946/10688> are the same thesis.
