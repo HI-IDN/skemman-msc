@@ -224,6 +224,42 @@ draw_all <- function(pause = interactive()) {
   invisible(NULL)
 }
 
+#' Save every figure in R/plots/ as an image, and all of them in one PDF.
+#'
+#' Each script is sourced in turn, and the plot it ends on is what source()
+#' returns, because display() hands the object back. Images are named after
+#' the script, so outputs/figures/rq1-ggplot.png is the figure the chunk
+#' rq1-ggplot shows. PNG by default: a chart is flat colour and hard edges,
+#' which JPEG blurs. Pass format = "jpg" when a JPEG is needed anyway.
+save_figures <- function(dir = file.path(.root, "outputs", "figures"),
+                         pdf_file = file.path(.root, "outputs", "figures.pdf"),
+                         format = c("png", "jpg"),
+                         width = 9, height = 5.5, dpi = 150) {
+  format <- match.arg(format)
+  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
+  files <- sort(list.files(file.path(.root, "R", "plots"), "[.][Rr]$", full.names = TRUE))
+
+  # display() draws on the current device, so with the PDF open each script
+  # adds its own page. ggsave() opens a device of its own and returns to this.
+  grDevices::pdf(pdf_file, width = width, height = height)
+  on.exit(grDevices::dev.off(), add = TRUE)
+
+  written <- character()
+  for (f in files) {
+    name <- tools::file_path_sans_ext(basename(f))
+    p <- tryCatch(source(f, local = globalenv())$value, error = function(e) {
+      message("    skipped ", name, ": ", conditionMessage(e))
+      NULL
+    })
+    if (!inherits(p, "ggplot")) next
+    out <- file.path(dir, paste0(name, ".", format))
+    ggsave(out, p, width = width, height = height, dpi = dpi, bg = "white")
+    written <- c(written, out)
+  }
+  message("Wrote ", length(written), " figures to ", dir, " and ", pdf_file)
+  invisible(written)
+}
+
 message(sprintf(
   "Population: master's theses %d-%d (whole years %s). Source a script from R/, or draw_all().",
   YEAR_FROM, YEAR_TO, stable_label

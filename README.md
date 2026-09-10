@@ -38,21 +38,40 @@ git submodule update --init
 
 ## Rebuild Data
 
-The project-specific configuration is in `config/collections.yaml`. The full rebuild path is:
+The project-specific configuration is in `config/collections.yaml`. `scripts/rebuild.sh`
+builds the study from Skemman to figures in four phases; with no flag it runs all of them:
 
 ```bash
-scripts/rebuild.sh --dry-run
-scripts/rebuild.sh
+bash scripts/rebuild.sh --dry-run          # print the steps, run nothing
+bash scripts/rebuild.sh                    # everything, in order
+bash scripts/rebuild.sh --preprocessing    # fetch from Skemman: records, file lists, PDFs
+bash scripts/rebuild.sh --dataprocessing   # derive from data/raw; no network
+bash scripts/rebuild.sh --postprocessing   # the population and the views over it
+bash scripts/rebuild.sh --visualise        # every figure as outputs/figures/*.png, and one PDF
 ```
 
-The rebuild initializes DuckDB, harvests OAI-PMH records, loads file metadata, reads title
-pages, and applies the discipline mapping. The resulting database is
-`data/processed/thesis.db`.
+Phases combine, so `--dataprocessing --postprocessing` re-derives the whole database from
+the cache without a single request. From PowerShell keep the `bash` in front, or the script
+opens in its own window and its output is lost.
+
+The population is defined once, in `scripts/population.sql`: `v_thesis_msc` holds the
+master's theses in the years set under `analysis:` in the config. Everything downstream
+reads it rather than `thesis`, which also holds bachelor's theses, diplomas and years
+outside the study. The database is `data/processed/thesis.db`; set `THESIS_DB` to point
+the rebuild, the R scripts and the book at a copy instead.
 
 ## Render The Book
 
 ```bash
 quarto render
+```
+
+The site is written to `site/`, which is gitignored. Every chunk reads its code from a
+script in `R/`, so a single figure or table can be looked at without rendering:
+
+```r
+source("R/global.R")
+source("R/plots/rq1-ggplot.R")
 ```
 
 Disconnect `thesis.db` from IDE database panels before rendering or loading data. DuckDB
@@ -61,7 +80,7 @@ allows only one writer/connection pattern safely at a time on Windows.
 ## Where Details Live
 
 - Harvester commands and crawler behavior: `skemman-harvester/docs/`
-- Database mapping: `schema.qmd`
+- Database mapping: `docs/schema.qmd`
 - Book chapters: `docs/` (`index.qmd` stays at the root, where Quarto requires it)
 - Study-specific collection and year settings: `config/collections.yaml`
 - Discipline mapping: `scripts/discipline_map.sql`

@@ -1,31 +1,52 @@
 #!/usr/bin/env bash
 #
-# Run the whole harvest from nothing, in the order the README describes.
+# Build the study from Skemman to figures, in four phases.
 #
-# Every step is resumable and caches what it fetches, so this is safe to re-run:
-# it only does what is missing. Stopping it and starting it again costs nothing
-# but the request that was in flight.
+#   scripts/rebuild.sh                    every phase, in order
+#   scripts/rebuild.sh --preprocessing    fetch from Skemman: records, file lists, PDFs
+#   scripts/rebuild.sh --dataprocessing   derive from what is on disk; no network
+#   scripts/rebuild.sh --postprocessing   the population and the views over it
+#   scripts/rebuild.sh --visualise        every figure in R/plots/ as PNG, and one PDF
 #
-#   scripts/rebuild.sh                # all steps, in order
-#   scripts/rebuild.sh --dry-run      # print the commands, run nothing
-#   scripts/rebuild.sh --from files   # skip ahead
-#   scripts/rebuild.sh --only oai     # one step
-#   scripts/rebuild.sh --limit 10     # a trial run
-#   scripts/rebuild.sh --fresh        # rebuild the database from cache
-#   scripts/rebuild.sh --only access  # item pages, for the access status
+# Phases combine: `--dataprocessing --postprocessing` re-derives everything
+# from the cache without a single request. Single steps still work:
 #
-# DuckDB allows one process on the file at a time, so close any IDE database
-# panel first.
+#   scripts/rebuild.sh --only access      one step
+#   scripts/rebuild.sh --from population  this step and everything after it
+#   scripts/rebuild.sh --dry-run          print the commands, run nothing
+#   scripts/rebuild.sh --limit 10         a trial run
+#   scripts/rebuild.sh --fresh            move the database aside first
+#
+# From PowerShell, run it through bash -- `bash scripts/rebuild.sh ...` --
+# or it opens in a separate window and its output is lost.
+#
+# Every network step reads its cache first, so re-running costs only what is
+# missing. DuckDB allows one writer at a time: close any IDE database panel.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-DB="data/processed/thesis.db"
+# THESIS_DB points every step at another database -- a copy, to try a change
+# without touching the real one. R/global.R and the book honour it too.
+DB="${THESIS_DB:-data/processed/thesis.db}"
 CONFIG="config/collections.yaml"
-STEPS=(init oai metadata files titlepage disciplines)
-# `access` exists as a step but is deliberately not in STEPS; see step_access.
+
+# Every step, in the order they have to run. A phase is a selection from this
+# list, so combining phases never reorders anything.
+ALL_STEPS=(init oai xoai metadata files titlepage access parse population disciplines figures)
+
+# Fetching from Skemman. `files` is here as well as in dataprocessing: the
+# title-page download needs the PDF URLs that files-load writes, so fetching
+# cannot finish without it. It reads the xoai pages already on disk.
+PRE=(init oai xoai files titlepage access)
+# Deriving from data/raw alone. Nothing here makes a request.
+DATA=(init metadata files parse)
+# Defining the population and the study's views over it.
+POST=(population disciplines)
+# Running the R.
+VIS=(figures)
 
 # Put the virtualenv first on PATH rather than trusting whatever is there.
 # `skemman` on PATH can belong to a different Python altogether -- on this
@@ -58,22 +79,27 @@ FROM=""
 ONLY=""
 LIMIT=""
 DEGREE_LEVEL="master"
+PHASES=()
 
 usage() {
-    sed -n '3,17p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    awk 'NR > 2 && /^#/ { sub(/^# ?/, ""); print; next } NR > 2 { exit }' "${BASH_SOURCE[0]}"
     exit "${1:-0}"
 }
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --dry-run)      DRY_RUN=1; shift ;;
-        --fresh)        FRESH=1; shift ;;
-        --from)         FROM="$2"; shift 2 ;;
-        --only)         ONLY="$2"; shift 2 ;;
-        --limit)        LIMIT="$2"; shift 2 ;;
-        --degree-level) DEGREE_LEVEL="$2"; shift 2 ;;
-        -h|--help)      usage 0 ;;
-        *)              echo "unknown argument: $1" >&2; usage 1 ;;
+        --preprocessing)  PHASES+=(PRE); shift ;;
+        --dataprocessing) PHASES+=(DATA); shift ;;
+        --postprocessing) PHASES+=(POST); shift ;;
+        --visualise)      PHASES+=(VIS); shift ;;
+        --dry-run)        DRY_RUN=1; shift ;;
+        --fresh)          FRESH=1; shift ;;
+        --from)           FROM="$2"; shift 2 ;;
+        --only)           ONLY="$2"; shift 2 ;;
+        --limit)          LIMIT="$2"; shift 2 ;;
+        --degree-level)   DEGREE_LEVEL="$2"; shift 2 ;;
+        -h|--help)        usage 0 ;;
+        *)                echo "unknown argument: $1" >&2; usage 1 ;;
     esac
 done
 
@@ -114,6 +140,8 @@ EOF
     exit 1
 }
 
+# --- Steps -------------------------------------------------------------------
+
 step_init() {
     echo "[init] Create the tables. Existing data is left alone -- the SQL is idempotent."
     run_sql scripts/create_thesis_db.sql
@@ -122,8 +150,18 @@ step_init() {
 step_oai() {
     echo "[oai] Harvest the configured handles over OAI-PMH."
     # The only step that decides which theses exist; everything after it works
-    # from the rows this produces.
+    # from the rows this produces. Cached pages are read from disk.
     run "$SKEMMAN" oai-pmh --output "$DB" --config "$CONFIG" $(limit_args)
+}
+
+step_xoai() {
+    echo "[xoai] Harvest the xoai bundle listing: every attached file, about 66 requests."
+    # DSpace's own metadata format. It carries each file's name, size, type,
+    # download URL, and whether DSpace filed it as COMPLETE_TEXT or DECLARATION
+    # -- the repository saying which attachment is the thesis. files-index reads
+    # the same off item pages at one request each, 6291 of them.
+    run "$SKEMMAN" oai-pmh --metadata-prefix xoai --config "$CONFIG" \
+        --output "$DB" $(limit_args)
 }
 
 step_metadata() {
@@ -133,28 +171,23 @@ step_metadata() {
 }
 
 step_files() {
-    echo "[files] Harvest the xoai bundle listing, then read it into thesis_file."
-    # xoai is DSpace's own metadata format and it carries every attached file:
-    # name, size, type, download URL, and whether DSpace filed it as
-    # COMPLETE_TEXT or DECLARATION. That is the repository saying which
-    # attachment is the thesis. One paged sweep -- about 66 requests -- where
-    # `files-index` reads the same thing off item pages at one request each,
-    # 6291 of them.
-    #
-    # Run before title pages: it is what gives the loader a PDF URL at all, and
-    # what lets it tell the thesis from the declaration form.
-    run "$SKEMMAN" oai-pmh --metadata-prefix xoai --config "$CONFIG"         --output "$DB" $(limit_args)
+    echo "[files] Read the cached xoai pages into thesis_file, and the degree. No network."
     run "$SKEMMAN" files-load --db "$DB"
 }
 
-# Run after titlepage. xoai does not carry the access status -- 'Opinn' and
-# "Lokadur til dd.mm.yyyy" are stated only on the item page -- so files loaded
-# from it have `access` null, and titlepage-load treats unknown as worth trying.
-# A thesis that turns out to be closed fails once and is recorded, which is what
-# makes this step cheap: the theses worth asking about are exactly the ones that
-# failed, a couple of hundred rather than all 6291. It is what puts the embargo
-# and its end date in the database, so the closed ones can be counted and their
-# release dates read. A later files-load keeps what it finds.
+step_titlepage() {
+    echo "[titlepage] Fetch open PDFs and keep their first pages as text."
+    # The long one. At the 30-second delay robots.txt asks for, the full
+    # master's population is an overnight run.
+    run "$SKEMMAN" titlepage-load --db "$DB" --degree-level "$DEGREE_LEVEL" $(limit_args)
+}
+
+# xoai does not carry the access status -- 'Opinn' and "Lokadur til dd.mm.yyyy"
+# are stated only on the item page -- so titlepage treats unknown as worth
+# trying, and a closed thesis fails once and is recorded. That is what makes
+# this step cheap: the theses worth asking about are exactly those failures, a
+# couple of hundred rather than all 6291. It puts the embargo and its end date
+# in the database. A later files-load keeps what it finds.
 step_access() {
     echo "[access] Fetch item pages for the theses whose PDF could not be opened."
     if [[ $DRY_RUN -eq 1 ]]; then
@@ -174,16 +207,66 @@ step_access() {
     run "$SKEMMAN" files-index --db "$DB" --ids "$ids"
 }
 
-step_titlepage() {
-    echo "[titlepage] Fetch open PDFs and read what the document itself states."
-    # The long one. At the 30-second delay robots.txt asks for, the full
-    # master's population is an overnight run.
-    run "$SKEMMAN" titlepage-load --db "$DB" --degree-level "$DEGREE_LEVEL" $(limit_args)
+step_parse() {
+    echo "[parse] Re-read every cached title page into thesis_titlepage. No network."
+    # The same parser titlepage runs, over the text already on disk. After a
+    # parser change this is the whole update: nothing is downloaded again.
+    run "$SKEMMAN" titlepage-load --db "$DB" --degree-level "$DEGREE_LEVEL" --cached-only
+}
+
+step_population() {
+    echo "[population] The study population: master's theses in the analysis years."
+    # SQL cannot read YAML, so the years travel from the config's `analysis:`
+    # block into scripts/population.sql as environment variables. The config
+    # stays the only place they are written.
+    local years
+    years="$(python -c '
+import sys, yaml
+a = yaml.safe_load(open(sys.argv[1], encoding="utf-8"))["analysis"]
+print(a["year_start"], a["year_end"], a["stable_start"], a["stable_end"])
+' "$CONFIG")"
+    read -r ANALYSIS_YEAR_START ANALYSIS_YEAR_END ANALYSIS_STABLE_START ANALYSIS_STABLE_END <<< "$years"
+    export ANALYSIS_YEAR_START ANALYSIS_YEAR_END ANALYSIS_STABLE_START ANALYSIS_STABLE_END
+    echo "  years $ANALYSIS_YEAR_START-$ANALYSIS_YEAR_END, whole years" \
+         "$ANALYSIS_STABLE_START-$ANALYSIS_STABLE_END, from $CONFIG"
+    run_sql scripts/population.sql
 }
 
 step_disciplines() {
-    echo "[disciplines] Apply this study's keyword-to-discipline mapping and its views."
+    echo "[disciplines] Apply this study's keyword-to-discipline mapping over the population."
     run_sql scripts/discipline_map.sql
+}
+
+step_figures() {
+    echo "[figures] Every figure in R/plots/ to outputs/figures/*.png and outputs/figures.pdf."
+    local rscript
+    rscript="$(command -v Rscript || true)"
+    if [[ -z "$rscript" ]]; then
+        # R's Windows installer does not put itself on PATH.
+        rscript="$(ls -d /c/Program\ Files/R/R-*/bin/Rscript.exe 2>/dev/null | sort -V | tail -1 || true)"
+    fi
+    if [[ -z "$rscript" ]]; then
+        echo "error: Rscript is neither on PATH nor under C:/Program Files/R" >&2
+        exit 1
+    fi
+    if [[ $DRY_RUN -eq 0 ]]; then mkdir -p outputs; fi
+    # One -e per statement. A single -e holding several lines reaches R intact
+    # on Linux but not on Windows, where only the first line arrives: the PDF
+    # was opened, nothing was drawn into it, and the run still said it worked.
+    #
+    # save_figures() is in R/global.R: one PNG per script, named after it, and
+    # every figure again in a single PDF. What a script skips, and why, is
+    # reported on stderr.
+    run "$rscript"         -e 'source("R/global.R")'         -e 'save_figures()'
+}
+
+# --- Which steps ---------------------------------------------------------------
+
+contains() {
+    local needle="$1"; shift
+    local s
+    for s in "$@"; do [[ "$s" == "$needle" ]] && return 0; done
+    return 1
 }
 
 wanted=()
@@ -191,13 +274,23 @@ if [[ -n "$ONLY" ]]; then
     wanted=("$ONLY")
 elif [[ -n "$FROM" ]]; then
     seen=0
-    for s in "${STEPS[@]}"; do
+    for s in "${ALL_STEPS[@]}"; do
         if [[ "$s" == "$FROM" ]]; then seen=1; fi
         if [[ $seen -eq 1 ]]; then wanted+=("$s"); fi
     done
     if [[ ${#wanted[@]} -eq 0 ]]; then echo "unknown step: $FROM" >&2; exit 1; fi
+elif [[ ${#PHASES[@]} -gt 0 ]]; then
+    selected=()
+    for phase in "${PHASES[@]}"; do
+        declare -n members="$phase"
+        selected+=("${members[@]}")
+        unset -n members
+    done
+    for s in "${ALL_STEPS[@]}"; do
+        if contains "$s" "${selected[@]}"; then wanted+=("$s"); fi
+    done
 else
-    wanted=("${STEPS[@]}")
+    wanted=("${ALL_STEPS[@]}")
 fi
 
 echo "Root:     $ROOT"
@@ -210,10 +303,10 @@ if [[ $DRY_RUN -eq 0 ]]; then
     check_lock
 fi
 
-# --fresh means the database, not the downloads. data/raw is 324 MB of material
-# that cost one polite request each -- 6291 item pages alone -- and every table
-# can be rebuilt from it without touching Skemman. The old file is moved aside
-# rather than deleted, so a rebuild that goes wrong is one `mv` from undone.
+# --fresh means the database, not the downloads. data/raw is material that cost
+# one polite request each, and every table can be rebuilt from it without
+# touching Skemman. The old file is moved aside rather than deleted, so a
+# rebuild that goes wrong is one `mv` from undone.
 if [[ $FRESH -eq 1 && $DRY_RUN -eq 0 && -f "$DB" ]]; then
     stamp="$(date +%Y%m%d-%H%M%S)"
     for f in "$DB" "$DB.wal"; do
