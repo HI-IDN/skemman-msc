@@ -14,14 +14,14 @@ d_rq1_volume <- masters_by_year()
 p_rq1_volume <- ggplot(d_rq1_volume, aes(yr, n, colour = uni)) +
   geom_vline(xintercept = 2020, linetype = "dashed", colour = "grey55") +
   annotate(
-    "text", x = 2020, y = 0, label = "Covid-19",
+    "text", x = 2020, y = 0, label = "COVID-19",
     angle = 90, hjust = -0.08, vjust = -0.5, size = 3.4, colour = "grey40"
   ) +
   geom_line(linewidth = 1) +
   geom_point(size = 2) +
   scale_colour_manual(values = hi_colors) +
   scale_y_continuous(labels = comma, limits = c(0, NA)) +
-  scale_x_continuous(breaks = seq(2010, 2026, 2)) +
+  scale_x_continuous(breaks = year_breaks()) +
   labs(x = NULL, y = "Fjöldi ritgerða", colour = NULL)
 
 print(p_rq1_volume)

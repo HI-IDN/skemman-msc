@@ -19,7 +19,7 @@ p_rq4_sponsor <- ggplot(d_rq4_sponsor, aes(yr, hlutfall, colour = uni)) +
   geom_point(size = 2) +
   scale_colour_manual(values = hi_colors) +
   scale_y_continuous(labels = percent, limits = c(0, NA)) +
-  scale_x_continuous(breaks = seq(2010, 2026, 2)) +
+  scale_x_continuous(breaks = year_breaks()) +
   labs(x = NULL, y = "Með skráðan styrktaraðila", colour = NULL)
 
 print(p_rq4_sponsor)

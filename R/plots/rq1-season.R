@@ -9,8 +9,8 @@
 
 if (!exists("hi_colors")) source("R/global.R")
 
-season_from <- 2012
-season_to   <- 2025
+season_from <- STABLE_FROM
+season_to   <- STABLE_TO
 
 d_rq1_season <- masters(season_from, season_to) |>
   count(man, uni, name = "n") |>

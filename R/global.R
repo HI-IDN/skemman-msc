@@ -71,6 +71,27 @@ theme_set(
 MONTHS_IS <- c("jan", "feb", "mar", "apr", "maí", "jún",
                "júl", "ágú", "sep", "okt", "nóv", "des")
 
+# --- Years ------------------------------------------------------------------
+#
+# Read from the `analysis:` block of config/collections.yaml, the same file the
+# harvester reads. It is separate from the top-level year_start and year_end on
+# purpose: those filter what is harvested, and a figure should never be able
+# to narrow the next harvest.
+
+.analysis <- yaml::read_yaml(file.path(.root, "config", "collections.yaml"))$analysis
+if (is.null(.analysis)) {
+  stop("config/collections.yaml has no `analysis:` block with year_start, ",
+       "year_end, stable_start and stable_end.", call. = FALSE)
+}
+
+YEAR_FROM   <- as.integer(.analysis$year_start)
+YEAR_TO     <- as.integer(.analysis$year_end)
+STABLE_FROM <- as.integer(.analysis$stable_start)
+STABLE_TO   <- as.integer(.analysis$stable_end)
+
+#' Axis breaks across the analysis years.
+year_breaks <- function(by = 2) seq(YEAR_FROM, YEAR_TO, by)
+
 # --- Shared data ------------------------------------------------------------
 
 #' Master's theses in scope, one row per thesis.
@@ -78,7 +99,7 @@ MONTHS_IS <- c("jan", "feb", "mar", "apr", "maí", "jún",
 #' NOTE: this is not yet the population defined in the research plan. It is
 #' every master's thesis in the two collections; narrowing it to engineering is
 #' what the discipline mapping does.
-masters <- function(from = 2010, to = 2026) {
+masters <- function(from = YEAR_FROM, to = YEAR_TO) {
   q(sprintf("
     select t.id,
            year(t.date_accepted)  as yr,

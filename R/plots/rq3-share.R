@@ -18,7 +18,7 @@ p_rq3_share <- ggplot(d_rq3_share, aes(yr, hlutfall, fill = uni)) +
   geom_area(alpha = 0.85) +
   scale_fill_manual(values = hi_colors) +
   scale_y_continuous(labels = percent) +
-  scale_x_continuous(breaks = seq(2010, 2026, 2)) +
+  scale_x_continuous(breaks = year_breaks()) +
   labs(x = NULL, y = NULL, fill = NULL)
 
 print(p_rq3_share)
