@@ -1,24 +1,18 @@
-#' Shared setup for every figure in the book, and the loader for all of them.
+#' Shared setup for the figures in R/plots/.
 #'
-#' Rendering the book to look at one plot is slow, and it fails outright while a
-#' loader holds the database. Sourcing this file gives every figure as a
-#' function that returns a ggplot object, so it can be drawn, modified, or have
-#' its data pulled out.
+#' Source this once, then source whichever figure you want to look at:
 #'
-#' Usage:
 #'   source("R/global.R")
-#'   rq1_volume()          # draws it
-#'   p <- rq1_season()     # or keep it and modify
-#'   p + labs(title = "...")
-#'   figures()             # what is available
-#'   draw_all()            # draw everything in turn
+#'   source("R/plots/rq1-ggplot.R")    # draws it; p_rq1_volume holds the plot
 #'
-#' One file per figure lives in R/plots/, named after the Quarto chunk it
-#' replaces, so a figure in the book and its definition are one search apart.
-#' Adding a figure means adding a file there; this loader finds it.
+#' Each file in R/plots/ is a plain script named after the Quarto chunk it
+#' corresponds to. It draws its figure and leaves two objects behind: the plot
+#' (p_*) to modify, and the data behind it (d_*) to check a number without
+#' re-typing the query. A figure file sources this one itself if it has not been
+#' sourced yet, so it also runs on its own.
 #'
-#' Data is re-queried on every call, so a figure drawn after a loader has
-#' written more rows shows the new ones. Nothing is cached.
+#' Data is queried when a figure is sourced, so sourcing it again after a
+#' loader has written more rows shows the new ones.
 
 suppressMessages({
   library(dplyr)
@@ -29,9 +23,8 @@ suppressMessages({
 
 # --- Project root ----------------------------------------------------------
 #
-# `source()` gives no reliable way to ask where the sourced file is -- it
-# depends on how it was sourced -- so walk up to the project marker instead,
-# the same way scripts/query.R does. Everything below is relative to this.
+# `source()` gives no reliable way to ask where the sourced file is, so walk up
+# to the project marker instead, the same way scripts/query.R does.
 
 .root <- local({
   d <- normalizePath(getwd(), winslash = "/", mustWork = TRUE)
@@ -47,8 +40,7 @@ suppressMessages({
 
 # q() opens a connection, runs one statement and closes it, falling back to the
 # Parquet snapshot in data/db/ when the database is locked. That fallback is why
-# the figures work while a harvest is running, which report_setup.R cannot do:
-# it holds a connection open from the moment it is sourced.
+# the figures can be drawn while a harvest is running.
 source(file.path(.root, "scripts", "query.R"))
 
 # --- Look -------------------------------------------------------------------
@@ -92,9 +84,7 @@ masters <- function(from = 2010, to = 2026) {
            year(t.date_accepted)  as yr,
            month(t.date_accepted) as man,
            m.university           as uni,
-           m.sponsor              as sponsor,
-           m.degree_level         as degree_level,
-           m.degree_raw           as degree_raw
+           m.sponsor              as sponsor
     from thesis t
     join thesis_metadata m on m.thesis_id = t.id
     where m.degree_level = 'master'
@@ -128,54 +118,24 @@ require_table <- function(name) {
   invisible(TRUE)
 }
 
-# --- Figures ----------------------------------------------------------------
-#
-# Each file in R/plots/ defines one function and registers it by calling
-# register_figure(). Nothing here needs to know what they are.
-
-.figures <- new.env(parent = emptyenv())
-
-#' Announce a figure so figures() and draw_all() can find it.
-#'
-#' @param name The function's name, as a string.
-#' @param description One line, in Icelandic: it is read, not executed.
-register_figure <- function(name, description) {
-  assign(name, description, envir = .figures)
-  invisible(name)
-}
-
-for (f in sort(list.files(file.path(.root, "R", "plots"), "[.][Rr]$", full.names = TRUE))) {
-  source(f)
-}
-
-#' What figures are defined, and where each one appears in the book.
-figures <- function() {
-  names <- sort(ls(.figures))
-  data.frame(
-    figure = names,
-    description = vapply(names, function(n) get(n, envir = .figures), character(1)),
-    row.names = NULL
-  )
-}
-
-#' Draw every figure in turn. Interactively, each one waits for Enter.
+#' Source every figure in R/plots/ in turn. Interactively, each waits for Enter.
 #'
 #' A figure whose data is not in the database yet is skipped with its reason
 #' rather than stopping the rest.
 draw_all <- function(pause = interactive()) {
-  names <- sort(ls(.figures))
-  for (name in names) {
-    message("--- ", name, ": ", get(name, envir = .figures))
-    p <- tryCatch(get(name)(), error = function(e) {
+  files <- sort(list.files(file.path(.root, "R", "plots"), "[.][Rr]$", full.names = TRUE))
+  for (f in files) {
+    message("--- ", basename(f))
+    ok <- tryCatch({
+      source(f, local = globalenv())
+      TRUE
+    }, error = function(e) {
       message("    skipped: ", conditionMessage(e))
-      NULL
+      FALSE
     })
-    if (is.null(p)) next
-    print(p)
-    if (pause && name != tail(names, 1)) readline("Enter for the next figure...")
+    if (ok && pause && f != tail(files, 1)) readline("Enter for the next figure...")
   }
   invisible(NULL)
 }
 
-message("Loaded ", length(ls(.figures)),
-        " figures. figures() lists them, draw_all() draws them all.")
+message("Ready. Source a figure, e.g. source(\"R/plots/rq1-ggplot.R\"), or draw_all().")
