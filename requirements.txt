@@ -1,3 +1,10 @@
 # The harvester lives in its own repository, vendored here as a submodule so
 # the two can be developed together. Run `git submodule update --init` first.
 -e ./skemman-harvester
+
+# One DuckDB version for everything that opens thesis.db: this Python package,
+# the duckdb CLI that rebuild.sh runs SQL with, and R's duckdb package are all
+# 1.5.2. It did not cause the index failure of 2026-09-10 -- both versions
+# pass on the same file -- but one writer version is one variable fewer the
+# next time the file misbehaves. Raise all three together.
+duckdb==1.5.2
