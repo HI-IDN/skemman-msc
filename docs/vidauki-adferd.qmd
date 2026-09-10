@@ -2,7 +2,7 @@
 
 ```{r vidauki-setup}
 #| include: false
-source("../scripts/report_setup.R")
+source("../R/global.R")
 ```
 
 Áður en skólarnir eru bornir saman þarf að svara því hvað telst verkfræði og hvað er
@@ -55,28 +55,7 @@ blandaðra, þar sem náttúruvísindin eru á stærð við verkfræðina. Hvort
 skerast frá eftir á.
 
 ```{r vidauki-sofn}
-library(kableExtra)
-
-sofn <- dbGetQuery(con, "
-  select m.school         as \"Svið\",
-         m.study_category as \"Safn\",
-         count(*)         as \"Fjöldi\"
-  from thesis_metadata m
-  group by 1, 2
-  order by 1, 3 desc
-")
-
-# Söfnin þrjú sem þýðið er dregið úr. Hjá HÍ er það eitt safn sem svarar til
-# beggja safna HR, sem er einmitt ástæðan fyrir ólíkri meðferð skólanna.
-valin <- c(
-  "Meistaraprófsritgerðir - Verkfræði- og náttúruvísindasvið",
-  "MEd/MPM/MSc Verkfræðideild (áður Tækni- og verkfræðideild) og íþróttafræðideild -2019 / Department of Engineering (was Dep. of Science and Engineering)",
-  "MSc Tölvunarfræðideild / Department of Computer Science"
-)
-
-kbl(sofn, caption = "Söfnin sem leitin skilar. Feitletruð söfn mynda þýðið.") |>
-  row_spec(which(sofn$Safn %in% valin), bold = TRUE) |>
-  kable_styling(full_width = FALSE)
+#| file: ../R/tables/vidauki-sofn.R
 ```
 
 ::: {.callout-note title="Í brennidepli"}
@@ -109,52 +88,13 @@ gerð, svo sameiginleg tafla myndi láta þá líta út fyrir að vera sambæril
 
 ::: {.sortable}
 ```{r vidauki-namsleidir-hi}
-# Flokkarnir eru enskir lyklar í gagnagrunninum og eiga að vera það — þeir eru
-# kóði. Þýðingin á heima hér, í framsetningunni. Röðin ræður líka röð flokka
-# þegar raðað er eftir flokki.
-flokkaheiti <- c(
-  engineering  = "Verkfræði",
-  professional = "Fagnám",
-  applied      = "Iðnfræði",
-  science      = "Náttúruvísindi"
-)
-
-namsleidir <- function(uni, caption, raða = c("fjölda", "námsleið", "flokk")) {
-  raða <- match.arg(raða)
-
-  tafla <- dbGetQuery(con, sprintf("
-    select discipline as namsleid,
-           category   as flokkur,
-           count(*)   as fjoldi
-    from v_thesis_unit_named
-    where degree_level = 'master'
-      and discipline is not null
-      and university_short = '%s'
-    group by 1, 2
-  ", uni)) |>
-    mutate(
-      flokkur = coalesce(unname(flokkaheiti[flokkur]), flokkur),
-      flokkur = factor(flokkur, levels = unname(flokkaheiti))
-    )
-
-  tafla <- switch(raða,
-    "fjölda"   = arrange(tafla, desc(fjoldi)),
-    "námsleið" = arrange(tafla, namsleid),
-    "flokk"    = arrange(tafla, flokkur, desc(fjoldi))
-  )
-
-  tafla |>
-    rename(Námsleið = namsleid, Flokkur = flokkur, Fjöldi = fjoldi) |>
-    knitr::kable(caption = caption)
-}
-
-namsleidir("HÍ", "HÍ: námsleiðir sem leitarorðin gefa, allt meistarastigið.", raða = "flokk")
+#| file: ../R/tables/vidauki-namsleidir-hi.R
 ```
 :::
 
 ::: {.sortable}
 ```{r vidauki-namsleidir-hr}
-namsleidir("HR", "HR: námsleiðir sem leitarorðin gefa, allt meistarastigið.", raða = "flokk")
+#| file: ../R/tables/vidauki-namsleidir-hr.R
 ```
 :::
 
@@ -169,24 +109,7 @@ sambærilegum greinum á samræmt heiti, svo `Rekstrarverkfræði` og `Iðnaðar
 saman þegar það á við.
 
 ```{r vidauki-fjolflokkun}
-dbGetQuery(con, "
-  with fjoldi as (
-    select tk.thesis_id, count(distinct d.discipline) as n
-    from thesis_keywords tk
-    join keywords k on k.id = tk.keyword_id
-    join discipline_keyword d on d.keyword_norm = k.keyword_norm
-    join v_thesis_unit u on u.thesis_id = tk.thesis_id
-    where u.degree_level = 'master'
-    group by 1
-  )
-  select case when n = 1 then '1 námsleið' else n || ' námsleiðir' end as \"Leitarorð benda á\",
-         count(*) as \"Ritgerðir\",
-         round(100.0 * count(*) / sum(count(*)) over (), 1) as \"Hlutfall (%)\"
-  from fjoldi
-  group by n
-  order by n
-") |>
-  knitr::kable(caption = "Hversu margar ritgerðir bera leitarorð fleiri en einnar námsleiðar.")
+#| file: ../R/tables/vidauki-fjolflokkun.R
 ```
 
 Tæp 7% bera fleiri en eina námsleið, og reglan um fyrsta orðið breytir úthlutun aðeins 2,5%
@@ -203,50 +126,7 @@ tafla. Tölurnar eru meistararitgerðir.
 #|   Meistararitgerðir HÍ eftir deild og námsleið. Hæð hvers reits er í hlutfalli við
 #|   fjölda námsleiða í deildinni, svo deildirnar séu samanburðarhæfar.
 #| fig-height: 8
-greinalitir <- c("Verkfræði" = "#10099F", "Náttúruvísindi" = "#2DD2C0")
-
-tre <- dbGetQuery(con, "
-  select case when category = 'engineering' then 'Verkfræði' else 'Náttúruvísindi' end as grein,
-         unit_short  as deild,
-         discipline  as namsleid,
-         count(*)    as n
-  from v_thesis_unit_named
-  where university_short = 'HÍ'
-    and degree_level = 'master'
-    and discipline is not null
-  group by 1, 2, 3
-")
-
-# Verkfræðideildirnar fremst, hvor hópur eftir stærð. Deild telst verkfræði ef
-# meirihluti ritgerða hennar er það — (óflokkað) á ritgerðir í báðum flokkum.
-rod <- tre |>
-  summarise(
-    alls = sum(n),
-    verk = sum(n[grein == "Verkfræði"]) > sum(n[grein != "Verkfræði"]),
-    .by = deild
-  ) |>
-  arrange(desc(verk), desc(alls))
-
-tre <- tre |>
-  mutate(
-    namsleid = forcats::fct_reorder(namsleid, n),
-    deild = factor(deild, levels = rod$deild)
-  )
-
-ggplot(tre, aes(n, namsleid, fill = grein)) +
-  geom_col(width = 0.72) +
-  geom_text(aes(label = n), hjust = -0.25, size = 3, colour = "grey30") +
-  facet_grid(deild ~ ., scales = "free_y", space = "free_y", switch = "y") +
-  scale_fill_manual(values = greinalitir) +
-  scale_x_continuous(expand = expansion(mult = c(0, 0.12))) +
-  labs(x = NULL, y = NULL, fill = NULL) +
-  theme(
-    strip.placement = "outside",
-    strip.text.y.left = element_text(angle = 0, face = "bold", hjust = 1),
-    panel.grid.major.y = element_blank(),
-    axis.text.x = element_blank(),
-    axis.ticks = element_blank()
-  )
+#| file: ../R/plots/vidauki-hi-tre.R
 ```
 
 Verkfræðideildirnar þrjár — IVT, UmBygg og RT — eru innan við helmingur sviðsins.
@@ -259,24 +139,7 @@ standi utan sviðsins.
 ## HR: tæknisvið eftir námsleið
 
 ```{r vidauki-hr}
-hr_leidir <- dbGetQuery(con, "
-  select u.unit_label       as \"Námsleið\",
-         count(*)           as \"Fjöldi\",
-         max(u.in_core::int) as kjarni
-  from v_thesis_unit_named u
-  join thesis_metadata m on m.thesis_id = u.thesis_id
-  where u.university_short = 'HR'
-    and u.degree_level = 'master'
-    and (m.study_category like 'MEd/MPM/MSc Verkfræðideild%'
-      or m.study_category like 'MSc Tölvunarfræðideild%')
-  group by 1
-  order by 2 desc
-")
-
-kbl(subset(hr_leidir, select = -kjarni),
-    caption = "Meistararitgerðir HR úr söfnunum tveimur, allt safnið. Feitletraðar námsleiðir mynda þýðið.") |>
-  row_spec(which(hr_leidir$kjarni == 1), bold = TRUE) |>
-  kable_styling(full_width = FALSE)
+#| file: ../R/tables/vidauki-hr.R
 ```
 
 MPM er atvinnutengt meistaranám í verkefnastjórnun, vistað hjá verkfræðideild og vottað af
@@ -290,19 +153,7 @@ utan kjarnans.
 listinn er tekinn í heild því hann sýnir hvaða varpanir vantar.
 
 ```{r vidauki-oflokkad}
-dbGetQuery(con, "
-  select u.university as \"Skóli\",
-         u.yr         as \"Ár\",
-         u.thesis_id  as \"Auðkenni\",
-         coalesce(m.raw_keywords, '(engin leitarorð)') as \"Leitarorð\"
-  from v_thesis_unit_named u
-  join thesis_metadata m on m.thesis_id = u.thesis_id
-  where u.degree_level = 'master'
-    and u.discipline is null
-  order by 1, 2
-") |>
-  kbl(caption = "Allar óflokkaðar meistararitgerðir og leitarorð þeirra.") |>
-  kable_styling(full_width = FALSE, font_size = 12)
+#| file: ../R/tables/vidauki-oflokkad.R
 ```
 
 Flest eru raunverulegar eyður sem má loka: `Tölvuverkfræði`, `Applied data science`,
@@ -314,16 +165,7 @@ Flest eru raunverulegar eyður sem má loka: `Tölvuverkfræði`, `Applied data 
 ## Samanburðarhæfi kjarninn
 
 ```{r vidauki-kjarni}
-dbGetQuery(con, "
-  select university as \"Skóli\",
-         count(*) filter (where in_core)     as \"Í kjarna\",
-         count(*) filter (where not in_core) as \"Utan kjarna\",
-         round(100.0 * count(*) filter (where in_core) / count(*), 1) as \"% eftir\"
-  from v_thesis_unit
-  where degree_level = 'master'
-  group by 1
-") |>
-  knitr::kable(caption = "Hvað stendur eftir þegar aðeins verkfræði og tölvunarfræði eru talin.")
+#| file: ../R/tables/vidauki-kjarni.R
 ```
 
 Báðir skólar missa um helming, af gjörólíkum ástæðum: HÍ vegna náttúruvísinda, HR vegna
@@ -336,46 +178,10 @@ efnisorðavigrum greinanna, að frádregnum greinaheitunum sjálfum, svo samsvö
 viðfangsefnum en ekki nöfnum.
 
 ```{r vidauki-samsvorun}
-dbGetQuery(con, "
-  with dkw as (
-    select d.university as uni, d.discipline as disc, k.keyword_norm as kw, count(*) as n
-    from v_thesis_discipline d
-    join thesis_keywords tk on tk.thesis_id = d.thesis_id
-    join keywords k on k.id = tk.keyword_id
-    where d.degree_level = 'master'
-      and d.category = 'engineering'
-      and d.discipline is not null
-      and k.keyword_norm not in (select keyword_norm from discipline_keyword)
-      and k.keyword_norm not in ('meistaraprófsritgerðir', 'tækni- og verkfræðideild',
-                                 'school of science and engineering', 'rannsóknir', 'ísland')
-    group by 1, 2, 3
-  ),
-  a  as (select disc, kw, n from dkw where uni = 'Háskóli Íslands'),
-  b  as (select disc, kw, n from dkw where uni = 'Háskólinn í Reykjavík'),
-  na as (select disc, sqrt(sum(n * n)) as m from a group by 1),
-  nb as (select disc, sqrt(sum(n * n)) as m from b group by 1)
-  select a.disc as \"HÍ\",
-         b.disc as \"HR\",
-         round(sum(a.n * b.n) / (max(na.m) * max(nb.m)), 3) as \"Líkindi\",
-         count(*) as \"Sameiginleg orð\"
-  from a
-  join b  on a.kw = b.kw
-  join na on na.disc = a.disc
-  join nb on nb.disc = b.disc
-  group by 1, 2
-  having count(*) >= 20
-  order by \"Líkindi\" desc
-  limit 8
-") |>
-  knitr::kable(caption = "Greinar sem fjalla um það sama undir ólíkum nöfnum.")
+#| file: ../R/tables/vidauki-samsvorun.R
 ```
 
 Tvö pör skera sig úr, og dreifingin staðfestir þau: **Iðnaðarverkfræði** er 118 ritgerðir hjá
 HÍ en 9 hjá HR, sem kallar sömu grein **Rekstrarverkfræði** (135). **Orkuverkfræði** er 100
 hjá HR en 1 hjá HÍ, sem vistar orkuvinnuna inni í **Vélaverkfræði** (123). Greinarnar eru
 gagnkvæmt útilokandi — sama efni, sitt hvort nafnið.
-
-```{r vidauki-teardown}
-#| include: false
-dbDisconnect(con, shutdown = TRUE)
-```

@@ -2,7 +2,7 @@
 
 ```{r rq2-setup}
 #| include: false
-source("../scripts/report_setup.R")
+source("../R/global.R")
 ```
 
 > Hvernig hefur samsetning verkfræði- og tæknigreina breyst yfir tímabilið?
@@ -22,35 +22,14 @@ leitarorðum og `study_category` á samræmdan greinalista**.
 ## Hvers vegna þetta virkar ekki enn
 
 ```{r rq2-study-category}
-dbGetQuery(con, "
-  select m.university     as \"Skóli\",
-         m.study_category as \"Flokkur\",
-         count(*)         as \"Fjöldi\"
-  from thesis t
-  join thesis_metadata m on m.thesis_id = t.id
-  where m.degree_level = 'master'
-  group by 1, 2
-  order by 1, 3 desc
-") |>
-  knitr::kable(caption = "`study_category` aðgreinir greinar hjá HR en ekki hjá HÍ.")
+#| file: ../R/tables/rq2-study-category.R
 ```
 
 Hjá HÍ fellur nánast allt í einn flokk, svo greinin verður að koma úr leitarorðum. Hjá HR
 er flokkurinn nothæfur en grófur — meirihlutinn lendir í einni deild.
 
 ```{r rq2-keywords}
-dbGetQuery(con, "
-  select m.university as \"Skóli\", k.keyword as \"Leitarorð\", count(*) as \"Fjöldi\"
-  from thesis t
-  join thesis_metadata m on m.thesis_id = t.id
-  join thesis_keywords tk on tk.thesis_id = t.id
-  join keywords k on k.id = tk.keyword_id
-  where m.degree_level = 'master'
-  group by 1, 2
-  qualify row_number() over (partition by m.university order by count(*) desc) <= 10
-  order by 1, 3 desc
-") |>
-  knitr::kable(caption = "Tíðustu leitarorð, tíu efstu hjá hvorum skóla.")
+#| file: ../R/tables/rq2-keywords.R
 ```
 
 Hjá HÍ eru leitarorðin efnisleg (*Vélaverkfræði*, *Iðnaðarverkfræði*). Hjá HR eru efstu
@@ -61,23 +40,7 @@ Taflan sýnir líka hvers vegna ekki má telja leitarorð beint. *MPM* er skamms
 *Master of Project Management*, svo þessar tvær raðir lýsa sömu námsleiðinni:
 
 ```{r rq2-mpm}
-dbGetQuery(con, "
-  with tagged as (
-    select tk.thesis_id,
-           max(case when k.keyword_norm = 'mpm' then 1 else 0 end)                          as mpm,
-           max(case when k.keyword_norm = 'master of project management' then 1 else 0 end) as mopm,
-           max(case when k.keyword_norm = 'verkefnastjórnun' then 1 else 0 end)             as vst
-    from thesis_keywords tk
-    join keywords k on k.id = tk.keyword_id
-    group by 1
-  )
-  select sum(mpm)                                        as \"MPM\",
-         sum(mopm)                                       as \"Master of project management\",
-         sum(vst)                                        as \"Verkefnastjórnun\",
-         sum(case when mpm + mopm + vst > 0 then 1 else 0 end) as \"Ólíkar ritgerðir\"
-  from tagged
-") |>
-  knitr::kable(caption = "Þrjú leitarorð um sömu námsleið. Samtala þeirra er 945 en ritgerðirnar eru 399.")
+#| file: ../R/tables/rq2-mpm.R
 ```
 
 Bein samlagning tvítelur því ritgerðirnar meira en tvöfalt. Vörpunin leysir þetta með því

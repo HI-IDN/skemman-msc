@@ -36,7 +36,8 @@ suppressMessages({
 }
 
 .root <- .find_root()
-.db_path <- file.path(.root, "data/processed/thesis.db")
+# THESIS_DB points at another database, e.g. a copy to try a change against.
+.db_path <- Sys.getenv("THESIS_DB", unset = file.path(.root, "data/processed/thesis.db"))
 .parquet_dir <- file.path(.root, "data/db")
 
 #' Is the database file available to open right now?

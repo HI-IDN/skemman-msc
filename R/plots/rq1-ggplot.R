@@ -7,7 +7,7 @@
 #   source("R/global.R")
 #   source("R/plots/rq1-ggplot.R")
 
-if (!exists("hi_colors")) source("R/global.R")
+if (!exists(".root")) source("R/global.R")
 
 d_rq1_volume <- masters_by_year()
 
@@ -24,4 +24,4 @@ p_rq1_volume <- ggplot(d_rq1_volume, aes(yr, n, colour = uni)) +
   scale_x_continuous(breaks = year_breaks()) +
   labs(x = NULL, y = "Fjöldi ritgerða", colour = NULL)
 
-print(p_rq1_volume)
+display(p_rq1_volume)

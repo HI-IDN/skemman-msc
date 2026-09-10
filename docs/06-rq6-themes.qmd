@@ -2,7 +2,7 @@
 
 ```{r rq6-setup}
 #| include: false
-source("../scripts/report_setup.R")
+source("../R/global.R")
 ```
 
 > Hvaða efnisþemu birtast í ritgerðunum og hvernig hafa þau þróast?
@@ -18,21 +18,7 @@ gagnavinnsla, hugbúnaðarþróun, heilbrigðistækni, fjarskipti.
 ## Þekja texta
 
 ```{r rq6-coverage}
-masters |>
-  summarise(
-    alls = n(),
-    `útdráttur (is)` = percent(mean(!is.na(abstract_is)), accuracy = 0.1),
-    `útdráttur (en)` = percent(mean(!is.na(abstract_en)), accuracy = 0.1),
-    `útdráttur (annað hvort)` = percent(
-      mean(!is.na(abstract_is) | !is.na(abstract_en)), accuracy = 0.1
-    ),
-    .by = uni
-  ) |>
-  rename(Skóli = uni, Alls = alls,
-         `Útdráttur (is)` = `útdráttur (is)`,
-         `Útdráttur (en)` = `útdráttur (en)`,
-         `Útdráttur (annað hvort)` = `útdráttur (annað hvort)`) |>
-  knitr::kable(caption = "Þekja útdrátta meðal meistararitgerða.")
+#| file: ../R/tables/rq6-coverage.R
 ```
 
 Tungumálaskiptingin er ólík milli skóla, svo efnisgreining þarf annaðhvort að vinna á

@@ -2,7 +2,7 @@
 
 ```{r rq1-setup}
 #| include: false
-source("../scripts/report_setup.R")
+source("../R/global.R")
 ```
 
 > Hvernig hefur fjöldi meistararitgerða í verkfræði og tæknigreinum þróast við HÍ og HR
@@ -11,10 +11,7 @@ source("../scripts/report_setup.R")
 ## Fjöldi eftir ári og skóla
 
 ```{r rq1-table}
-masters_by_year |>
-  pivot_wider(names_from = uni, values_from = n) |>
-  rename(Ár = yr) |>
-  knitr::kable(caption = "Meistararitgerðir eftir ári og skóla.")
+#| file: ../R/tables/rq1-table.R
 ```
 
 ## Þróun yfir tímabilið
@@ -24,18 +21,7 @@ masters_by_year |>
 #|   Fjöldi meistararitgerða á ári. Brotalínan markar 2020, þegar heimsfaraldurinn
 #|   raskaði námi. Athugið að 2010 er ekki nothæfur grunnpunktur fyrir HR og að
 #|   2026 er ókláruð.
-ggplot(masters_by_year, aes(yr, n, colour = uni)) +
-  geom_vline(xintercept = 2020, linetype = "dashed", colour = "grey55") +
-  annotate(
-    "text", x = 2020, y = 0, label = "Covid-19",
-    angle = 90, hjust = -0.08, vjust = -0.5, size = 3.4, colour = "grey40"
-  ) +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  scale_colour_manual(values = hi_colors) +
-  scale_y_continuous(labels = comma, limits = c(0, NA)) +
-  scale_x_continuous(breaks = seq(2010, 2026, 2)) +
-  labs(x = NULL, y = "Fjöldi ritgerða", colour = NULL)
+#| file: ../R/plots/rq1-ggplot.R
 ```
 
 ## Hvenær er skilað?
@@ -47,29 +33,7 @@ sýnir í hvaða mánuði ritgerðir berast Skemmunni, sem hlutfall af ársskilu
 #| fig-cap: >
 #|   Hlutfall ársskila eftir mánuði, 2012–2025. Jaðarárin eru undanskilin því 2010–2011
 #|   og 2026 eru ekki heil ár.
-manudir <- c("jan", "feb", "mar", "apr", "maí", "jún",
-             "júl", "ágú", "sep", "okt", "nóv", "des")
-
-season <- dbGetQuery(con, "
-  select month(t.date_accepted) as man,
-         m.university           as uni,
-         count(*)               as n
-  from thesis t
-  join thesis_metadata m on m.thesis_id = t.id
-  where m.degree_level = 'master'
-    and year(t.date_accepted) between 2012 and 2025
-  group by 1, 2
-") |>
-  mutate(man = factor(manudir[man], levels = manudir)) |>
-  group_by(uni) |>
-  mutate(hlutfall = n / sum(n)) |>
-  ungroup()
-
-ggplot(season, aes(man, hlutfall, fill = uni)) +
-  geom_col(position = position_dodge(width = 0.8), width = 0.75) +
-  scale_fill_manual(values = hi_colors) +
-  scale_y_continuous(labels = percent) +
-  labs(x = NULL, y = "Hlutfall ársskila", fill = NULL)
+#| file: ../R/plots/rq1-season.R
 ```
 
 Þrjár brautskráningarlotur sjást skýrt: vor (maí–júní), haust (ágúst–október) og vetur
@@ -78,20 +42,7 @@ umtalsverð haustskil í september og október. HR þjappar tæpum helmingi árs
 og á sérstakan ágústtopp sem HÍ hefur nánast ekki.
 
 ```{r rq1-truncation}
-dbGetQuery(con, "
-  select m.university as \"Skóli\",
-         count(*)     as \"Ritgerðir á ári\",
-         round(
-           100.0 * sum(case when dayofyear(t.date_accepted) > dayofyear(date '2020-06-18')
-                            then 1 else 0 end) / count(*), 1
-         ) as \"% eftir 18. júní\"
-  from thesis t
-  join thesis_metadata m on m.thesis_id = t.id
-  where m.degree_level = 'master'
-    and year(t.date_accepted) between 2012 and 2025
-  group by 1
-") |>
-  knitr::kable(caption = "Hlutfall ársskila sem berst eftir 18. júní, dagsetningu nýjustu ritgerðar í grunninum.")
+#| file: ../R/tables/rq1-truncation.R
 ```
 
 ::: {.callout-important title="Skerðingin á 2026 er ekki sú sama fyrir báða skóla"}
@@ -104,28 +55,7 @@ rúmum fjórðungi. Lokapunktur tímaraðarinnar vantelur því HR nærri tvöfa
 
 ```{r rq1-findings}
 #| output: asis
-stable <- masters_by_year |> filter(yr >= 2012, yr <= 2025)
-hi <- stable |> filter(uni == "Háskóli Íslands")
-hr <- stable |> filter(uni == "Háskólinn í Reykjavík")
-
-crossover <- masters_by_year |>
-  pivot_wider(names_from = uni, values_from = n) |>
-  filter(`Háskólinn í Reykjavík` > `Háskóli Íslands`) |>
-  slice_min(yr, n = 1) |>
-  pull(yr)
-
-cat(sprintf(
-  paste0(
-    "- Á stöðugu tímabili (2012–2025) skilar HÍ að meðaltali **%.0f** ritgerðum á ári ",
-    "(bil %d–%d) og HR **%.0f** (bil %d–%d).\n",
-    "- HR fer fram úr HÍ árið **%d** og helst yfir eftir það.\n",
-    "- Hvorugur skólinn sýnir skýra leitni innan tímabilsins; breytileiki milli ára er ",
-    "meiri en nokkur undirliggjandi þróun.\n"
-  ),
-  mean(hi$n), min(hi$n), max(hi$n),
-  mean(hr$n), min(hr$n), max(hr$n),
-  crossover
-))
+#| file: ../R/text/rq1-findings.R
 ```
 
 Vöxtur HR fram til 2013 er að stórum hluta þekjuáhrif: skólinn var að byrja að skila í

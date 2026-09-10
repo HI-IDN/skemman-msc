@@ -1,24 +1,31 @@
-#' Shared setup for the figures in R/plots/.
+#' Shared setup for every figure and table in the book.
 #'
-#' Source this once, then source whichever figure you want to look at:
+#' All R the book runs lives in R/: the chapters source this file, and each
+#' chunk reads its code from one script, named after the chunk.
+#'
+#'   R/plots/   figures      p_* the plot, d_* the data behind it
+#'   R/tables/  tables       t_* the table, d_* the data behind it
+#'   R/text/    generated prose
+#'
+#' At the console:
 #'
 #'   source("R/global.R")
-#'   source("R/plots/rq1-ggplot.R")    # draws it; p_rq1_volume holds the plot
+#'   source("R/plots/rq1-ggplot.R")     # draws it
+#'   source("R/tables/rq1-table.R")     # shows it
+#'   draw_all()                         # every script in turn
 #'
-#' Each file in R/plots/ is a plain script named after the Quarto chunk it
-#' corresponds to. It draws its figure and leaves two objects behind: the plot
-#' (p_*) to modify, and the data behind it (d_*) to check a number without
-#' re-typing the query. A figure file sources this one itself if it has not been
-#' sourced yet, so it also runs on its own.
-#'
-#' Data is queried when a figure is sourced, so sourcing it again after a
-#' loader has written more rows shows the new ones.
+#' The population is defined once, in the database: v_thesis_msc holds the
+#' master's theses in the analysis years, and analysis_period holds those years.
+#' Both come from scripts/population.sql, which rebuild.sh fills from the
+#' `analysis:` block of config/collections.yaml. Nothing here reads `thesis`
+#' directly, and no year is written into the code.
 
 suppressMessages({
   library(dplyr)
   library(tidyr)
   library(ggplot2)
   library(scales)
+  library(kableExtra)
 })
 
 # --- Project root ----------------------------------------------------------
@@ -39,9 +46,35 @@ suppressMessages({
 })
 
 # q() opens a connection, runs one statement and closes it, falling back to the
-# Parquet snapshot in data/db/ when the database is locked. That fallback is why
-# the figures can be drawn while a harvest is running.
+# Parquet snapshot in data/db/ when the database is locked. THESIS_DB points it
+# at another database.
 source(file.path(.root, "scripts", "query.R"))
+
+#' Stop with an explanation rather than a binder error when a view is missing.
+require_table <- function(name) {
+  have <- q(sprintf(
+    "select count(*) as n from information_schema.tables where table_name = '%s'",
+    name
+  ), quiet = TRUE)$n
+  if (!have) {
+    stop(name, " does not exist yet. It is created by the postprocessing step:\n",
+         "  bash scripts/rebuild.sh --postprocessing\n",
+         "or, if the database is locked, refresh the snapshot with snapshot().",
+         call. = FALSE)
+  }
+  invisible(TRUE)
+}
+
+#' Show a figure or a table, in the book and at the console alike.
+#'
+#' Inside knitr the object is returned visibly, so knitr renders it the way it
+#' renders any chunk result -- a kable as a table, not as its markdown source.
+#' At the console, where `source()` prints nothing on its own, it is printed.
+display <- function(x) {
+  if (isTRUE(getOption("knitr.in.progress"))) return(x)
+  print(x)
+  invisible(x)
+}
 
 # --- Look -------------------------------------------------------------------
 
@@ -71,82 +104,114 @@ theme_set(
 MONTHS_IS <- c("jan", "feb", "mar", "apr", "maí", "jún",
                "júl", "ágú", "sep", "okt", "nóv", "des")
 
-# --- Years ------------------------------------------------------------------
-#
-# Read from the `analysis:` block of config/collections.yaml, the same file the
-# harvester reads. It is separate from the top-level year_start and year_end on
-# purpose: those filter what is harvested, and a figure should never be able
-# to narrow the next harvest.
-
-.analysis <- yaml::read_yaml(file.path(.root, "config", "collections.yaml"))$analysis
-if (is.null(.analysis)) {
-  stop("config/collections.yaml has no `analysis:` block with year_start, ",
-       "year_end, stable_start and stable_end.", call. = FALSE)
+#' Icelandic long date, e.g. "18. júní 2026". By hand for the same reason.
+format_is_date <- function(d) {
+  manudir <- c(
+    "janúar", "febrúar", "mars", "apríl", "maí", "júní",
+    "júlí", "ágúst", "september", "október", "nóvember", "desember"
+  )
+  sprintf(
+    "%d. %s %d",
+    as.integer(format(d, "%d")),
+    manudir[as.integer(format(d, "%m"))],
+    as.integer(format(d, "%Y"))
+  )
 }
 
-YEAR_FROM   <- as.integer(.analysis$year_start)
-YEAR_TO     <- as.integer(.analysis$year_end)
-STABLE_FROM <- as.integer(.analysis$stable_start)
-STABLE_TO   <- as.integer(.analysis$stable_end)
+# The analysis' own labels for the discipline categories. The database keeps
+# English keys, which are code; the translation belongs in the presentation,
+# and this order is the order categories sort in.
+flokkaheiti <- c(
+  engineering  = "Verkfræði",
+  professional = "Fagnám",
+  applied      = "Iðnfræði",
+  science      = "Náttúruvísindi"
+)
+
+# --- Population -------------------------------------------------------------
+
+require_table("analysis_period")
+require_table("v_thesis_msc")
+
+.period <- q("select * from analysis_period", quiet = TRUE)
+YEAR_FROM   <- as.integer(.period$year_start)
+YEAR_TO     <- as.integer(.period$year_end)
+STABLE_FROM <- as.integer(.period$stable_start)
+STABLE_TO   <- as.integer(.period$stable_end)
+
+#' The whole years as text, "2012–2025", for captions.
+stable_label <- sprintf("%d–%d", STABLE_FROM, STABLE_TO)
 
 #' Axis breaks across the analysis years.
 year_breaks <- function(by = 2) seq(YEAR_FROM, YEAR_TO, by)
 
-# --- Shared data ------------------------------------------------------------
-
-#' Master's theses in scope, one row per thesis.
+#' The population, one row per thesis.
 #'
-#' NOTE: this is not yet the population defined in the research plan. It is
-#' every master's thesis in the two collections; narrowing it to engineering is
-#' what the discipline mapping does.
-masters <- function(from = YEAR_FROM, to = YEAR_TO) {
-  q(sprintf("
-    select t.id,
-           year(t.date_accepted)  as yr,
-           month(t.date_accepted) as man,
-           m.university           as uni,
-           m.sponsor              as sponsor
-    from thesis t
-    join thesis_metadata m on m.thesis_id = t.id
-    where m.degree_level = 'master'
-      and year(t.date_accepted) between %d and %d
-  ", from, to), quiet = TRUE)
+#' NOTE: this is every master's thesis in the two collections and the analysis
+#' years, not yet the engineering population in the research plan; narrowing
+#' it is what the discipline mapping does.
+masters <- function() {
+  q("
+    select thesis_id, yr, man, university as uni,
+           sponsor, abstract_is, abstract_en, in_stable_period
+    from v_thesis_msc
+  ", quiet = TRUE)
 }
 
 #' Theses per year and school.
-masters_by_year <- function(...) {
-  masters(...) |>
+masters_by_year <- function() {
+  masters() |>
     count(yr, uni, name = "n") |>
     arrange(yr, uni)
 }
 
-#' Stop with an explanation rather than a binder error when a view is missing.
+#' Newest thesis in the population, which dates the "final year is incomplete"
+#' caveat.
+latest_thesis <- q("select max(date_accepted) as d from v_thesis_msc", quiet = TRUE)$d[1]
+
+#' Study lines the keywords give for one school, as a table.
 #'
-#' v_thesis_unit and friends are created by scripts/discipline_map.sql, the last
-#' step of the pipeline. A database that has not reached it yet is a normal
-#' state, not a broken one.
-require_table <- function(name) {
-  have <- q(sprintf(
-    "select count(*) as n from information_schema.tables where table_name = '%s'",
-    name
-  ), quiet = TRUE)$n
-  if (!have) {
-    stop(name, " does not exist yet. It is created by the last pipeline step:\n",
-         "  duckdb data/processed/thesis.db < scripts/discipline_map.sql\n",
-         "or, if the database is locked, refresh the snapshot with snapshot().",
-         call. = FALSE)
-  }
-  invisible(TRUE)
+#' Used by both appendix tables, HÍ and HR, so it lives here rather than in
+#' either script.
+namsleidir <- function(uni, caption, raða = c("fjölda", "námsleið", "flokk")) {
+  raða <- match.arg(raða)
+  require_table("v_thesis_unit_named")
+
+  tafla <- q(sprintf("
+    select discipline as namsleid,
+           category   as flokkur,
+           count(*)   as fjoldi
+    from v_thesis_unit_named
+    where discipline is not null
+      and university_short = '%s'
+    group by 1, 2
+  ", uni), quiet = TRUE) |>
+    mutate(
+      flokkur = coalesce(unname(flokkaheiti[flokkur]), flokkur),
+      flokkur = factor(flokkur, levels = unname(flokkaheiti))
+    )
+
+  tafla <- switch(raða,
+    "fjölda"   = arrange(tafla, desc(fjoldi)),
+    "námsleið" = arrange(tafla, namsleid),
+    "flokk"    = arrange(tafla, flokkur, desc(fjoldi))
+  )
+
+  tafla |>
+    rename(Námsleið = namsleid, Flokkur = flokkur, Fjöldi = fjoldi) |>
+    knitr::kable(caption = caption)
 }
 
-#' Source every figure in R/plots/ in turn. Interactively, each waits for Enter.
+#' Run every script in R/plots, R/tables and R/text in turn.
 #'
-#' A figure whose data is not in the database yet is skipped with its reason
-#' rather than stopping the rest.
+#' Interactively each waits for Enter. A script whose data is not in the
+#' database yet is skipped with its reason rather than stopping the rest.
 draw_all <- function(pause = interactive()) {
-  files <- sort(list.files(file.path(.root, "R", "plots"), "[.][Rr]$", full.names = TRUE))
+  files <- unlist(lapply(c("plots", "tables", "text"), function(dir) {
+    sort(list.files(file.path(.root, "R", dir), "[.][Rr]$", full.names = TRUE))
+  }))
   for (f in files) {
-    message("--- ", basename(f))
+    message("--- ", basename(dirname(f)), "/", basename(f))
     ok <- tryCatch({
       source(f, local = globalenv())
       TRUE
@@ -154,9 +219,12 @@ draw_all <- function(pause = interactive()) {
       message("    skipped: ", conditionMessage(e))
       FALSE
     })
-    if (ok && pause && f != tail(files, 1)) readline("Enter for the next figure...")
+    if (ok && pause && f != tail(files, 1)) readline("Enter for the next one...")
   }
   invisible(NULL)
 }
 
-message("Ready. Source a figure, e.g. source(\"R/plots/rq1-ggplot.R\"), or draw_all().")
+message(sprintf(
+  "Population: master's theses %d-%d (whole years %s). Source a script from R/, or draw_all().",
+  YEAR_FROM, YEAR_TO, stable_label
+))

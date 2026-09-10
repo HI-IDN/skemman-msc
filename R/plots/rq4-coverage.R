@@ -8,7 +8,7 @@
 #   source("R/global.R")
 #   source("R/plots/rq4-coverage.R")
 
-if (!exists("hi_colors")) source("R/global.R")
+if (!exists(".root")) source("R/global.R")
 
 d_rq4_sponsor <- masters() |>
   group_by(yr, uni) |>
@@ -22,4 +22,4 @@ p_rq4_sponsor <- ggplot(d_rq4_sponsor, aes(yr, hlutfall, colour = uni)) +
   scale_x_continuous(breaks = year_breaks()) +
   labs(x = NULL, y = "Með skráðan styrktaraðila", colour = NULL)
 
-print(p_rq4_sponsor)
+display(p_rq4_sponsor)

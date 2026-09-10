@@ -2,7 +2,7 @@
 
 ```{r schema-setup}
 #| include: false
-source("../scripts/report_setup.R")
+source("../R/global.R")
 ```
 
 Hvernig færslur úr Skemmunni verða að töflum í DuckDB.
@@ -140,18 +140,7 @@ erDiagram
 ```
 
 ```{r schema-sizes}
-dbGetQuery(con, "
-  select 'thesis' as \"Tafla\", count(*) as \"Raðir\" from thesis
-  union all select 'thesis_metadata', count(*) from thesis_metadata
-  union all select 'people', count(*) from people
-  union all select 'thesis_people', count(*) from thesis_people
-  union all select 'keywords', count(*) from keywords
-  union all select 'thesis_keywords', count(*) from thesis_keywords
-  union all select 'thesis_file', count(*) from thesis_file
-  union all select 'thesis_file_index_status', count(*) from thesis_file_index_status
-  order by raðir desc
-") |>
-  knitr::kable(caption = "Fjöldi raða í hverri töflu í núverandi byggingu.")
+#| file: ../R/tables/schema-sizes.R
 ```
 
 ## Dálkar lýsigagna
@@ -226,53 +215,22 @@ annarrar og leiðbeinandi hinnar, með fimmtán ára millibili:
 - [50249](https://skemman.is/handle/1946/50249) — meistararitgerð frá 2025.
 
 ```{r daemi-thesis}
-dbGetQuery(con, "
-  select id, date_accepted, title, authors
-  from thesis
-  where id in (4445, 50249)
-  order by id
-") |>
-  knitr::kable(caption = "`thesis` — ein röð á hverja leitarniðurstöðu, þátta úr leitartöflunni.")
+#| file: ../R/tables/daemi-thesis.R
 ```
 
 Lýsigögnin eru hér sett á hliðina, einn dálkur á línu, svo raðirnar tvær megi bera saman.
 Löng gildi eru stytt.
 
 ```{r daemi-metadata}
-dbGetQuery(con, "select * from thesis_metadata where thesis_id in (4445, 50249)") |>
-  mutate(across(everything(), as.character)) |>
-  pivot_longer(-thesis_id, names_to = "Dálkur", values_to = "gildi") |>
-  mutate(gildi = if_else(
-    !is.na(gildi) & nchar(gildi) > 80,
-    paste0(substr(gildi, 1, 80), " …"),
-    gildi
-  )) |>
-  pivot_wider(names_from = thesis_id, values_from = gildi) |>
-  knitr::kable(caption = "`thesis_metadata` — ein röð á hverja ritgerð, sýnd á hliðinni.")
+#| file: ../R/tables/daemi-metadata.R
 ```
 
 ```{r daemi-folk}
-dbGetQuery(con, "
-  select tp.thesis_id as \"Ritgerð\", tp.role as \"Hlutverk\", tp.sort_order as \"Röð\",
-         p.id as \"Auðkenni\", p.name as \"Nafn\", p.year_born as \"Fæðingarár\"
-  from thesis_people tp
-  join people p on p.id = tp.person_id
-  where tp.thesis_id in (4445, 50249)
-  order by tp.thesis_id, tp.role, tp.sort_order
-") |>
-  knitr::kable(caption = "`thesis_people` og `people` — hlutverk og upprunaröð varðveitast.")
+#| file: ../R/tables/daemi-folk.R
 ```
 
 ```{r daemi-leitarord}
-dbGetQuery(con, "
-  select tk.thesis_id as \"Ritgerð\", tk.sort_order as \"Röð\", k.id as \"Auðkenni\",
-         k.keyword as \"Leitarorð\", k.keyword_norm as \"Staðlað\"
-  from thesis_keywords tk
-  join keywords k on k.id = tk.keyword_id
-  where tk.thesis_id in (4445, 50249)
-  order by tk.thesis_id, tk.sort_order
-") |>
-  knitr::kable(caption = "`thesis_keywords` og `keywords` — `raw_keywords` eftir klofningu.")
+#| file: ../R/tables/daemi-leitarord.R
 ```
 
 ::: {.callout-important title="Hvað dæmin afhjúpa"}

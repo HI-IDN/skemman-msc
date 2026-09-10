@@ -12,47 +12,22 @@ við fyrirtæki og stofnanir.
 
 ```{r}
 #| include: false
-source("scripts/report_setup.R")
+source("R/global.R")
 ```
 
 ## Gögnin
 
 Gögnin eru sótt úr Skemmunni í tveimur skrefum og geymd í DuckDB gagnagrunni. Vinnsluferlið
-er skjalfest í [viðauka](schema.qmd).
+er skjalfest í [viðauka](docs/schema.qmd).
 
 ```{r}
-#| label: overview
-dbGetQuery(con, "
-  select coalesce(m.degree_level, 'óþekkt') as \"Námsstig\",
-         count(*)                           as \"Fjöldi\",
-         min(year(t.date_accepted))         as \"Fyrsta ár\",
-         max(year(t.date_accepted))         as \"Síðasta ár\"
-  from thesis t
-  left join thesis_metadata m on m.thesis_id = t.id
-  group by 1
-  order by 2 desc
-") |>
-  knitr::kable(caption = "Allar færslur í grunninum, eftir námsstigi.")
+#| label: index-overview
+#| file: R/tables/index-overview.R
 ```
 
 ```{r}
-#| label: coverage
-dbGetQuery(con, "
-  select 'Titill (is)' as \"Breyta\",
-         round(100.0 * count(title_is) / count(*), 1) as \"Þekja (%)\"
-  from thesis_metadata
-  union all select 'Útdráttur (hvaða mál sem er)',
-         round(100.0 * count(coalesce(abstract_is, abstract_en)) / count(*), 1) from thesis_metadata
-  union all select 'Leitarorð',
-         round(100.0 * count(raw_keywords) / count(*), 1) from thesis_metadata
-  union all select 'Námsstig',
-         round(100.0 * count(degree_level) / count(*), 1) from thesis_metadata
-  union all select 'Styrktaraðili',
-         round(100.0 * count(sponsor) / count(*), 1) from thesis_metadata
-  union all select 'Deild (faculty)',
-         round(100.0 * count(faculty) / count(*), 1) from thesis_metadata
-") |>
-  knitr::kable(caption = "Þekja lykilbreyta í `thesis_metadata`, hlutfall útfyllt.")
+#| label: index-coverage
+#| file: R/tables/index-coverage.R
 ```
 
 Þekjan ræður því hvaða spurningum er hægt að svara. Námsstig, titlar og leitarorð eru
@@ -61,18 +36,8 @@ nánast alltaf til staðar; styrktaraðili sjaldan; deild aldrei.
 ## Staða rannsóknarspurninga
 
 ```{r}
-#| label: status
-tibble::tribble(
-  ~Spurning, ~Efni,                        ~Staða,
-  "RS1",     "Þróun umfangs",              "Svarað",
-  "RS2",     "Þróun fræðasviða",           "Bíður greinaflokkunar",
-  "RS3",     "Samanburður HÍ og HR",       "Að hluta",
-  "RS4",     "Samstarf við atvinnulíf",    "Gögn ófullnægjandi",
-  "RS5",     "Tegund samstarfsaðila",      "Gögn ófullnægjandi",
-  "RS6",     "Þróun rannsóknarviðfangsefna", "Framkvæmanlegt",
-  "RS7",     "Þekkingaryfirfærsla",        "Háð RS4 og RS5"
-) |>
-  knitr::kable()
+#| label: index-status
+#| file: R/tables/index-status.R
 ```
 
 ## Fyrirvarar

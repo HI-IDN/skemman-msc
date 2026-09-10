@@ -11,7 +11,7 @@
 #   source("R/global.R")
 #   source("R/plots/vidauki-hi-tre.R")
 
-if (!exists("hi_colors")) source("R/global.R")
+if (!exists(".root")) source("R/global.R")
 
 require_table("v_thesis_unit_named")
 
@@ -22,7 +22,6 @@ d_hi_tree <- q("
          count(*)    as n
   from v_thesis_unit_named
   where university_short = 'HÍ'
-    and degree_level = 'master'
     and discipline is not null
   group by 1, 2, 3
 ", quiet = TRUE)
@@ -59,4 +58,4 @@ p_hi_tree <- d_hi_tree |>
     axis.ticks = element_blank()
   )
 
-print(p_hi_tree)
+display(p_hi_tree)

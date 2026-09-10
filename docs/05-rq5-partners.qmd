@@ -2,7 +2,7 @@
 
 ```{r rq5-setup}
 #| include: false
-source("../scripts/report_setup.R")
+source("../R/global.R")
 ```
 
 > Hvaða fyrirtæki og stofnanir koma oftast að meistaraverkefnum?
@@ -21,16 +21,7 @@ tvennt: **samræmingu heita** og **aðgreiningu styrkveitenda frá samstarfsaði
 ## Skráðir styrktaraðilar
 
 ```{r rq5-top}
-dbGetQuery(con, "
-  select m.sponsor as \"Styrktaraðili\", count(*) as \"Fjöldi\"
-  from thesis t
-  join thesis_metadata m on m.thesis_id = t.id
-  where m.degree_level = 'master' and m.sponsor is not null
-  group by 1
-  order by 2 desc
-  limit 20
-") |>
-  knitr::kable(caption = "Tuttugu tíðustu gildi í `sponsor`, óhreinsuð.")
+#| file: ../R/tables/rq5-top.R
 ```
 
 ## Tvö vandamál sem taflan sýnir

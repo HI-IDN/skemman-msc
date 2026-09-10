@@ -7,7 +7,7 @@
 #   source("R/global.R")
 #   source("R/plots/rq3-share.R")
 
-if (!exists("hi_colors")) source("R/global.R")
+if (!exists(".root")) source("R/global.R")
 
 d_rq3_share <- masters_by_year() |>
   group_by(yr) |>
@@ -21,4 +21,4 @@ p_rq3_share <- ggplot(d_rq3_share, aes(yr, hlutfall, fill = uni)) +
   scale_x_continuous(breaks = year_breaks()) +
   labs(x = NULL, y = NULL, fill = NULL)
 
-print(p_rq3_share)
+display(p_rq3_share)

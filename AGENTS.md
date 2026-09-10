@@ -72,16 +72,32 @@ database; it matters only for extension installs, which are keyed by DuckDB vers
 This is a Quarto book, not a single article. Keep `index.qmd` as the welcome page. Chapter
 order is controlled by `_quarto.yml`.
 
-Chapters with R code source the shared setup file:
+All R the book runs lives in `R/`. Each chapter sources the shared setup once:
 
 ```r
 #| include: false
-source("../scripts/report_setup.R")
+source("../R/global.R")
 ```
 
-`scripts/report_setup.R` loads packages, opens `thesis.db` read-only, loads the ggsql
-extension, defines `hi_colors`, sets the ggplot theme, and loads the `masters` and
-`masters_by_year` tables used across chapters.
+and every other chunk reads its code from one script, named after the chunk:
+
+```r
+#| fig-cap: ...
+#| file: ../R/plots/rq1-ggplot.R
+```
+
+`R/plots/` holds figures, `R/tables/` tables and `R/text/` generated prose. Each script
+ends in `display()`, which renders in the book and prints at the console, so
+`source("R/global.R"); source("R/plots/rq1-ggplot.R")` draws the same figure outside
+Quarto. Figure captions stay in the `.qmd`, where they are read; table captions are set
+in the script, where they can be computed.
+
+`R/global.R` loads packages, defines `hi_colors` and the theme, and reads the population:
+`v_thesis_msc`, the master's theses in the analysis years, and `analysis_period`, those
+years. Both are created by `scripts/population.sql` from the `analysis:` block of
+`config/collections.yaml`. Downstream code reads the population and never `thesis`
+directly; the front page and the schema appendix are the exceptions, because they describe
+the harvest itself. No year is written into code.
 
 Chapter files start with a single `#` heading and need no YAML header. Current sections:
 
@@ -147,7 +163,7 @@ Nothing it offered was worth those three costs for charts ggplot2 already draws 
 
 ## Figures
 
-Use `hi_colors` from `scripts/report_setup.R` for university series so colours stay
+Use `hi_colors` from `R/global.R` for university series so colours stay
 consistent across chapters. The HÍ palette in `styles/hi-book.scss` is for site chrome;
 do not restyle analysis figures with it beyond the university scale.
 

@@ -61,4 +61,7 @@ Thumbs.db
 
 **/*.quarto_ipynb
 *.knit.md
+# Quarto's intermediate for a page with R chunks. It is removed when a render
+# finishes, and left behind when one is interrupted.
+*.rmarkdown
 logs/

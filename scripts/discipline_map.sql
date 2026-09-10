@@ -229,18 +229,20 @@ with matches as (
     join discipline_keyword d
       on d.keyword_norm = regexp_replace(k.keyword_norm, '\s*\(námsgrein\)$', '')
 )
+-- Built on the population, not on `thesis`: every row here is a master's
+-- thesis in the analysis years. Bachelor's theses and diplomas carry the same
+-- keywords and would be classified just as happily, so leaving them in meant
+-- every query downstream had to remember to filter them out again.
 select
     m.thesis_id,
-    year(t.date_accepted) as yr,
+    m.yr,
     m.university,
-    m.degree_level,
     x.discipline,
     x.category,
     x.category = 'engineering' as is_engineering,
     x.category in ('engineering', 'professional') as in_scope_broad,
     x.discipline is null as unclassified
-from thesis_metadata m
-join thesis t on t.id = m.thesis_id
+from v_thesis_msc m
 left join matches x on x.thesis_id = m.thesis_id and x.rn = 1;
 
 
@@ -374,7 +376,7 @@ select
         else coalesce(u.in_core, false)
     end as in_core
 from v_thesis_discipline d
-join thesis_metadata m on m.thesis_id = d.thesis_id
+join v_thesis_msc m on m.thesis_id = d.thesis_id
 left join discipline_unit u
        on u.university = d.university and u.discipline = d.discipline
 left join org_short_name us
