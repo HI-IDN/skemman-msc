@@ -1,9 +1,11 @@
 project:
   type: book
-  output-dir: docs
+  output-dir: site
   resources:
     - .nojekyll
-    - img/hi
+    # Anchored with a leading slash. Unanchored, the pattern matches img/hi at
+    # any depth, and pulls in skemman-harvester/docs/img/hi as well.
+    - /img/hi
 
 book:
   title: "Meistararitgerðir í verkfræði og tæknigreinum"
@@ -32,16 +34,16 @@ book:
     background: light
   chapters:
     - index.qmd
-    - sections/01-rq1-volume.qmd
-    - sections/02-rq2-disciplines.qmd
-    - sections/03-rq3-comparison.qmd
-    - sections/04-rq4-collaboration.qmd
-    - sections/05-rq5-partners.qmd
-    - sections/06-rq6-themes.qmd
-    - sections/07-rq7-knowledge-transfer.qmd
+    - docs/01-rq1-volume.qmd
+    - docs/02-rq2-disciplines.qmd
+    - docs/03-rq3-comparison.qmd
+    - docs/04-rq4-collaboration.qmd
+    - docs/05-rq5-partners.qmd
+    - docs/06-rq6-themes.qmd
+    - docs/07-rq7-knowledge-transfer.qmd
   appendices:
-    - vidauki-adferd.qmd
-    - schema.qmd
+    - docs/vidauki-adferd.qmd
+    - docs/schema.qmd
 
 # Quarto's built-in strings are English; the book is Icelandic. Only the ones
 # that actually surface in the rendered page are overridden here.

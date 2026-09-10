@@ -11,8 +11,8 @@ Reykjavík (HR). The research questions are tracked in
 own chapter.
 
 The deliverable is a Quarto book. `index.qmd` is the landing page, chapters live under
-`sections/`, the database mapping is an appendix in `schema.qmd`, and the rendered site is
-written to `docs/` (gitignored — see *Publishing*).
+`docs/`, the database mapping is an appendix in `schema.qmd`, and the rendered site is
+written to `site/` (gitignored — see *Publishing*).
 
 ## Workflow
 
@@ -174,7 +174,7 @@ The consequence: **rendering locally and committing `_freeze/` is part of any ch
 touches computed output.** A chapter edited without a local render will publish stale
 results. The workflow fails early with an explicit message if `_freeze/` is missing.
 
-`docs/` is rendered output and is gitignored. Do not commit it; the Action uploads it as a
+`site/` is rendered output and is gitignored. Do not commit it; the Action uploads it as a
 Pages artifact.
 
 ## Git hygiene

@@ -2,7 +2,7 @@
 
 ```{r schema-setup}
 #| include: false
-source("scripts/report_setup.R")
+source("../scripts/report_setup.R")
 ```
 
 Hvernig færslur úr Skemmunni verða að töflum í DuckDB.
@@ -179,7 +179,7 @@ set faculty = null;
 ```
 
 ::: {.callout-note title="Hvers vegna þetta skiptir máli"}
-Að `faculty` sé tómt er ástæðan fyrir því að [RQ2](sections/02-rq2-disciplines.qmd) verður
+Að `faculty` sé tómt er ástæðan fyrir því að [RQ2](02-rq2-disciplines.qmd) verður
 ekki svarað án greinaflokkunar, og ástæðan fyrir því að þýðið í þessari bók er víðara en
 rannsóknaráætlunin skilgreinir.
 :::
@@ -283,16 +283,16 @@ Raðirnar tvær sýna fjóra annmarka sem hafa bein áhrif á rannsóknarspurnin
    þótt útdrátturinn sé á ensku.
 2. **Össur kemur hvergi fram í `sponsor` í 50249** — fyrirtækið sést aðeins í titli og
    útdrætti. Samstarf sem er sýnilegt í textanum skilar sér ekki í lýsigögnin, sem er
-   ástæðan fyrir því að `sponsor` einn og sér vanmetur [RQ4](sections/04-rq4-collaboration.qmd).
+   ástæðan fyrir því að `sponsor` einn og sér vanmetur [RQ4](04-rq4-collaboration.qmd).
 3. **`sponsor` í 4445 er rannsóknasjóður**, ekki fyrirtæki. Dálkurinn blandar saman
    fjármögnun og samstarfsaðilum og þarf flokkun áður en hlutfall samstarfsverkefna er reiknað.
 4. **Leitarorðin þynnast.** 4445 hefur fjögur, 50249 aðeins eitt. Námsgreinin helst en
-   efnisorðin hverfa, sem takmarkar [RQ6](sections/06-rq6-themes.qmd) fyrir HÍ eftir 2020.
+   efnisorðin hverfa, sem takmarkar [RQ6](06-rq6-themes.qmd) fyrir HÍ eftir 2020.
 5. **Nafnasnið er ósamræmt.** `Lalot, Sylvain` stendur með eftirnafn fremst og án
    fæðingarárs, ólíkt íslensku nöfnunum. Sameining í `people` byggir á `name` og
    `year_born`, svo sami erlendi leiðbeinandinn getur endað sem fleiri en ein röð — sem
    bitnar á talningu endurtekinna samstarfstengsla í
-   [RQ7](sections/07-rq7-knowledge-transfer.qmd).
+   [RQ7](07-rq7-knowledge-transfer.qmd).
 
 `faculty` og `thesis_type_label` eru tóm í báðum, eins og í grunninum öllum. Á móti sést
 sameiningin virka: `person_id` 56 er sami leiðbeinandinn í báðum ritgerðum, fimmtán árum

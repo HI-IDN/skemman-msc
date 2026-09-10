@@ -62,7 +62,7 @@ allows only one writer/connection pattern safely at a time on Windows.
 
 - Harvester commands and crawler behavior: `skemman-harvester/docs/`
 - Database mapping: `schema.qmd`
-- Book chapters: `sections/`
+- Book chapters: `docs/` (`index.qmd` stays at the root, where Quarto requires it)
 - Study-specific collection and year settings: `config/collections.yaml`
 - Discipline mapping: `scripts/discipline_map.sql`
 

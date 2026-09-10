@@ -53,7 +53,7 @@ Thumbs.db
 .idea/
 
 # Quarto
-/docs/
+/site/
 /.quarto/
 /_freeze/
 *_files/

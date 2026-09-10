@@ -2,7 +2,7 @@
 
 ```{r vidauki-setup}
 #| include: false
-source("scripts/report_setup.R")
+source("../scripts/report_setup.R")
 ```
 
 Áður en skólarnir eru bornir saman þarf að svara því hvað telst verkfræði og hvað er
