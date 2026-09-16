@@ -206,6 +206,80 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('næringarfræði',                  'Næringarfræði',              'science', 10),
 ('heilsuþjálfun og kennsla',       'Íþróttavísindi',             'science', 12);
 
+-- Titilsíðugreinar (title-page subjects) --------------------------------------
+--
+-- thesis_titlepage.subject (skemman-harvester's titlepage_load.py) states what the
+-- thesis's own title page says the degree is in -- "degree in X" / "meistaraprófs í
+-- X" -- independent of Skemman's subject keywords. It is mostly English and names
+-- programmes the way a degree certificate would, not the way a submitter tagged
+-- keywords, so it needs its own vocabulary rather than reusing the keyword forms
+-- above verbatim. Discipline and category stay the same either way; this batch adds
+-- the English/inflected forms the title page uses for disciplines already listed.
+--
+-- Threshold: added where a normalized subject occurred at least twice among
+-- population theses and named an existing discipline unambiguously. A bare,
+-- one-off, or truncated-past-recognition string ("iceland before she", "geo-") is
+-- left unmapped; such a thesis falls back to its keyword-based discipline instead
+-- of being guessed at.
+insert into discipline_keyword (keyword_norm, discipline, category, priority) values
+-- Earth and physical sciences -- HÍ states these in English on the title page far
+-- more often than the Icelandic keyword list does.
+('geology',                            'Jarðfræði',                    'science', 10),
+('geophysics',                         'Jarðeðlisfræði',               'science', 10),
+('earth sciences',                     'Jarðvísindi',                  'science', 15),
+('earth science',                      'Jarðvísindi',                  'science', 15),
+('geosciences',                        'Jarðvísindi',                  'science', 15),
+('chemistry',                          'Efnafræði',                    'science', 10),
+('organic chemistry',                  'Efnafræði',                    'science', 12),
+('inorganic chemistry',                'Efnafræði',                    'science', 12),
+('physics',                            'Eðlisfræði',                   'science', 10),
+('engineering physics',                'Eðlisfræði',                   'science', 12),
+('theoretical physics',                'Eðlisfræði',                   'science', 15),
+('astrophysics',                       'Eðlisfræði',                   'science', 15),
+('mathematics',                        'Stærðfræði',                   'science', 10),
+('statistics',                         'Tölfræði',                     'science', 10),
+('applied statistics',                 'Tölfræði',                     'science', 15),
+('geography',                          'Landfræði',                    'science', 10),
+('biology',                            'Líffræði',                     'science', 10),
+('marine biology',                     'Líffræði',                     'science', 15),
+('molecular biology',                  'Líffræði',                     'science', 15),
+('biochemistry',                       'Lífefnafræði',                 'science', 10),
+('bioinformatics',                     'Lífupplýsingafræði',           'science', 10),
+('industrial biotechnology',           'Líftækni',                     'science', 15),
+('food science',                       'Matvælafræði',                 'science', 10),
+('tourism studies',                    'Ferðamálafræði',               'science', 10),
+('environment and natural resources',  'Umhverfis- og auðlindafræði',  'science', 10),
+('environment and natural',            'Umhverfis- og auðlindafræði',  'science', 15),
+('environmental and natural resources','Umhverfis- og auðlindafræði',  'science', 12),
+('íþróttavísindum og þjálfun',         'Íþróttavísindi',               'science', 10),
+-- No Icelandic keyword names this programme; the title page is the only source.
+('geo-information science and earth',  'Landupplýsinga- og umhverfisfræði', 'science', 12),
+
+-- Engineering -- combined English programme names fold onto the same discipline
+-- their combined Icelandic keywords already do, for the same reason: the name
+-- describes the deild, not a separate field.
+('environmental engineering',              'Umhverfisverkfræði', 'engineering', 10),
+('civil and environmental engineering',    'Byggingarverkfræði', 'engineering', 10),
+('structural engineering',                 'Byggingarverkfræði', 'engineering', 20),
+('civil engineering with',                 'Byggingarverkfræði', 'engineering', 15),
+('byggingarverkfræði með',                 'Byggingarverkfræði', 'engineering', 15),
+('byggingarverkfræði með sérhæfingu í',    'Byggingarverkfræði', 'engineering', 15),
+('byggingarverkfræði við háskóla íslands', 'Byggingarverkfræði', 'engineering', 20),
+('electrical and computer engineering',       'Rafmagnsverkfræði', 'engineering', 10),
+('electrical and computer engineering at the','Rafmagnsverkfræði', 'engineering', 15),
+('computational en-',                      'Reikniverkfræði',    'engineering', 20),
+('bioengineering',                         'Heilbrigðisverkfræði', 'engineering', 20),
+('decision engineering',                   'Iðnaðarverkfræði',   'engineering', 20),
+('renewable energy sciences',              'Orkuverkfræði',      'engineering', 12),
+('energy engineering -',                   'Orkuverkfræði',      'engineering', 12),
+('sustainable energy engineering - ise',   'Orkuverkfræði',      'engineering', 12),
+('skipulagsfræði og samgöngum',            'Skipulagsfræði og samgöngur', 'engineering', 15),
+
+-- Spelling variants of what is already mapped above -- no new judgment, just a
+-- typo the title page carries that the keyword list does not.
+('verkefnastjórnum',                       'Verkefnastjórnun',   'professional', 15),
+('rekstarverkfræði',                       'Rekstrarverkfræði',  'engineering', 10);
+
 -- One discipline per thesis: the FIRST matching keyword in Skemman's own subject
 -- order wins. Both schools list the namsgrein first and topical terms after, so
 -- sort_order carries real signal; `priority` only breaks ties within one
