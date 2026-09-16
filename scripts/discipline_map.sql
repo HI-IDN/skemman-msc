@@ -32,7 +32,14 @@ create table discipline_keyword
     keyword_norm   varchar,
     discipline     varchar,
     category       varchar,
-    priority       integer default 100
+    priority       integer default 100,
+    -- Cuts across category: a degree whose home faculty is not the one its thesis
+    -- topic and supervising department suggest. 'teacher_education' is Menntavísindi
+    -- (School of Education) theses with a science/engineering kjörsvið (elective
+    -- specialization) -- the thesis is cross-listed into that subject's collection
+    -- and can even be supervised there, but the náms­braut (degree programme) is the
+    -- School of Education's, not SENS's. See issue #5 (thesis 38678).
+    flag           varchar
 );
 
 create unique index discipline_keyword_uq on discipline_keyword (keyword_norm);
@@ -212,6 +219,12 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('næringarfræði',                  'Næringarfræði',              'science', 10),
 ('heilsuþjálfun og kennsla',       'Íþróttavísindi',             'science', 12);
 
+-- Teacher-education theses (see the `flag` column's own comment above): 7 in the
+-- population, all correctly resolved to Menntavísindi already because Skemman lists
+-- this keyword first every time -- the flag makes that visible rather than implicit.
+update discipline_keyword set flag = 'teacher_education'
+where keyword_norm = 'menntun framhaldsskólakennara';
+
 -- Titilsíðugreinar (title-page subjects) --------------------------------------
 --
 -- thesis_titlepage.subject (skemman-harvester's titlepage_load.py) states what the
@@ -302,6 +315,7 @@ with matches as (
         tk.thesis_id,
         d.discipline,
         d.category,
+        d.flag,
         row_number() over (
             partition by tk.thesis_id
             order by tk.sort_order, d.priority, d.discipline
@@ -323,6 +337,7 @@ select
     m.university,
     x.discipline,
     x.category,
+    x.flag,
     x.discipline is null as unclassified
 from v_thesis_msc m
 left join matches x on x.thesis_id = m.thesis_id and x.rn = 1;
@@ -337,7 +352,8 @@ select
     m.yr,
     m.university,
     d.discipline,
-    d.category
+    d.category,
+    d.flag
 from v_thesis_msc m
 join thesis_titlepage p on p.thesis_id = m.thesis_id
 join discipline_keyword d on d.keyword_norm = lower(trim(p.subject))
@@ -427,7 +443,11 @@ select
         when tp.discipline is not null then 'titlepage'
         when c.discipline is not null  then 'keyword'
         else null
-    end                                                                    as discipline_source
+    end                                                                    as discipline_source,
+    -- No override column for this -- an override always names a specific discipline
+    -- and a human already looked at the thesis, so the flag's job (flagging something
+    -- worth a second look) is already done for those rows.
+    coalesce(tp.flag, c.flag) = 'teacher_education'                       as is_teacher_education
 from v_thesis_discipline_candidate c
 left join v_thesis_discipline_titlepage tp on tp.thesis_id = c.thesis_id
 left join discipline_override o on o.thesis_id = c.thesis_id;

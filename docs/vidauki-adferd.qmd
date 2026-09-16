@@ -162,6 +162,25 @@ Flest eru raunverulegar eyður sem má loka: `Tölvuverkfræði`, `Applied data 
 þekkir ekki enn. Tvær ritgerðir bera **engin leitarorð** og verða aldrei flokkaðar af
 þessari aðferð.
 
+## Kennaranám með kjörsviði
+
+Átta ritgerðir í þýðinu eru `Menntun framhaldsskólakennara` — meistaranám á
+Menntavísindasviði (School of Education), ekki Verkfræði- og náttúruvísindasviði (SENS).
+Nemandinn velur kjörsvið (t.d. tölvunarfræði, líffræði, eðlisfræði) og lokaverkefnið er
+oft leiðbeint og krosstengt inn í kjörsviðsdeildina, en náms­brautin — gráðan sjálf — er
+alltaf Menntavísindasviðs. `discipline_keyword.flag = 'teacher_education'` merkir þetta
+sérstaklega, óháð flokki, og `v_thesis_discipline.is_teacher_education` ber það áfram á
+lokaniðurstöðuna.
+
+Tvö dæmi sýna hvers vegna þetta er sitt eigið merki, ekki bara enn ein grein: ritgerð
+38678 er vefsíða til að kenna forritun — `deild` hennar er Iðnaðarverkfræði-,
+vélaverkfræði- og tölvunarfræðideild (IVT), en gráðan er kennaranám. Ritgerð 18157 er
+rannsókn á frumuvefjum úr blöðruhálskirtli — fyrsta leitarorðið er `Líffræði`, því
+`Líffræðikennsla` (annað leitarorðið) er ekki í uppflettitöflunni, en titilsíðan segir
+skýrt `Menntun framhaldsskólakennara`. Bæði flokkast réttilega sem `Menntavísindi`, en af
+ólíkum ástæðum — annað af leitarorði, annað af titilsíðu — og merkið gerir þá ástæðu
+sýnilega í stað þess að hún sé aðeins tilviljunarkennd afleiðing af röð leitarorðanna.
+
 ## Samanburðarhæfi kjarninn
 
 ```{r vidauki-kjarni}
