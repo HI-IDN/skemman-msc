@@ -375,13 +375,29 @@ create table if not exists discipline_override
 create unique index if not exists discipline_override_pk on discipline_override (thesis_id);
 
 insert into discipline_override (thesis_id, discipline, category, reason)
-values (
+values
+(
     36353, 'Verkefnastjórnun', 'professional',
     'titlepage subject "computer science" is a confirmed parser bug -- pulled from an '
     'interviewee''s biography, not the actual title page. All four keywords '
     '(Verkefnastjórnun, MPM, Project management, Master of project management) agree '
     'with each other and with the true title page text ("9 ECTS for the degree of '
     'Master of Project Management (MPM)"). See issue #5.'
+),
+(
+    -- No keyword matched at all. Title-page subject truncated to "Innovative and
+    -- Sustainable" (parser bug, same class as 36353's but a cut-off rather than a wrong
+    -- page). Human-confirmed full degree: Magister Scientiarum in Innovative and
+    -- Sustainable Energy Engineering, Faculty of Industrial Engineering, Mechanical
+    -- Engineering and Computer Science. Treated as Orkuverkfraedi for now, same as HR's
+    -- "sustainable energy engineering - ise" -- a one-off override, not a vocabulary
+    -- entry, because only this thesis's subject is known to be this specific truncation.
+    -- If this faculty name recurs for other theses, it deserves its own crosswalk
+    -- (like discipline_unit) rather than more one-off overrides -- not done yet.
+    24869, 'Orkuverkfræði', 'engineering',
+    'titlepage subject truncated to "Innovative and Sustainable"; full degree confirmed '
+    'human-side as Innovative and Sustainable Energy Engineering, Faculty of Industrial '
+    'Engineering, Mechanical Engineering and Computer Science. See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
