@@ -128,6 +128,8 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 -- Energy, additional spellings
 ('sjálfbær orkuvísindi - reyst',   'Orkuverkfræði',              'engineering', 12),
 ('sjálfbær orkuvísindi',           'Orkuverkfræði',              'engineering', 12),
+('sjálfbær orka',                  'Orkuverkfræði',              'engineering', 12),
+('sjálfbær orka og verkfræði',     'Orkuverkfræði',              'engineering', 12),
 
 -- Idnfraedi -- HR's Dip Taeknifraedideild / Department of Applied Engineering.
 -- A professional diploma taken alongside work, not a verkfraedi degree; the same
@@ -177,6 +179,8 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('lífefnafræði',                   'Lífefnafræði',               'science', 10),
 ('lífupplýsingafræði',             'Lífupplýsingafræði',         'science', 10),
 ('jarðfræði',                      'Jarðfræði',                  'science', 10),
+-- Bergfræði (petrology) is a Jarðfræði subfield, not its own discipline.
+('bergfræði',                      'Jarðfræði',                  'science', 15),
 ('jarðeðlisfræði',                 'Jarðeðlisfræði',             'science', 10),
 ('jarðvísindi',                    'Jarðvísindi',                'science', 15),
 ('jarðefnafræði',                  'Jarðefnafræði',              'science', 15),
@@ -195,6 +199,8 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('exercise science and coaching',  'Íþróttavísindi',             'science', 10),
 ('skammtafræði',                   'Eðlisfræði',                 'science', 20),
 ('iðnaðarlíftækni',                'Líftækni',                   'science', 15),
+-- The discipline's own bare name was missing -- only its 'iðnaðar-' compound was mapped.
+('líftækni',                       'Líftækni',                   'science', 10),
 ('sameindalíffræði',               'Líffræði',                   'science', 15),
 ('landafræði',                     'Landfræði',                  'science', 10),
 ('verkfræðileg eðlisfræði',        'Eðlisfræði',                 'science', 12),
