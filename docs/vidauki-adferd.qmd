@@ -200,21 +200,27 @@ milligöngu leitarorða: `skemman-harvester` les þetta nú þegar af PDF-skjöl
 #| file: ../R/tables/vidauki-titilsida.R
 ```
 
-95,8% samræmi er sterk staðfesting á leitarorðaflokkuninni — en þekjan er ófullkomin: titilsíðan
-er þátta fyrir 1.113 af 2.484 ritgerðum þýðisins (45%), svo hún kemur ekki í stað
-leitarorðanna, aðeins til viðbótar þar sem hún er til. Ósamræmið sjálft er líka upplýsandi:
+96,0% samræmi er sterk staðfesting á leitarorðaflokkuninni — en þekjan er ófullkomin: titilsíðan
+er þátta fyrir um helming ritgerða þýðisins, svo hún kemur ekki í stað leitarorðanna, aðeins
+til viðbótar þar sem hún er til. Ósamræmið sjálft er líka upplýsandi:
 
 - **Flest ósamræmi haldast innan sama flokks** — Jarðfræði/Jarðvísindi,
   Tölvunarfræði/Hugbúnaðarverkfræði, Byggingarverkfræði/Skipulagsfræði og samgöngur — greinar
   sem liggja svo nærri hvor annarri að skiptingin er að hluta til smekksatriði, ekki merki um
   ranga flokkun.
-- **Sjö tilvik skipta um flokk.** Fjögur MPM/framkvæmdastjórnunarverkefni hjá HR bera
+- **Sex tilvik skipta um flokk.** Fjögur MPM/framkvæmdastjórnunarverkefni hjá HR bera
   leitarorðið `Byggingarverkfræði` en titilsíðan segir `Construction Management` — þau eru
-  fagnám (`professional`), ekki verkfræði. Eitt HR-verkefni ber leitarorðið
-  `Verkefnastjórnun` en titilsíðan segir `computer science`. Tvö HÍ-verkefni með
-  leitarorðið `Jarðfræði` heita `Sustainable Energy Engineering`/`Sustainable Energy` á
-  titilsíðunni.
+  fagnám (`professional`), ekki verkfræði. Tvö HÍ-verkefni með leitarorðið `Jarðfræði` heita
+  `Sustainable Energy Engineering`/`Sustainable Energy` á titilsíðunni. Öll sex eru sama
+  mynstrið: leitarorðið sem `v_thesis_discipline_candidate` velur er ekki rangt flokkað í
+  Skemman, það stendur bara ekki fremst í röðinni sem sú vörpun fer eftir.
+- **Eitt tilvik er þáttunarvilla, ekki ósamræmi í gögnunum.** Ritgerð 36353 ber fjögur
+  samhljóða MPM-leitarorð, en titilsíðan þáttaðist sem `computer science` — úr æviágripi
+  viðmælanda langt inni í skjalinu, ekki af titilsíðunni sjálfri. Handvirk leiðrétting í
+  `discipline_override`.
 
-Hvernig þessi sjö tilvik — og ósamræmið almennt — eiga að vega á móti leitarorðunum í
-lokaflokkun hverrar ritgerðar er ákvörðun sem á eftir að taka (issue #5, næsta skref); þessi
-viðauki skjalfestir aðeins samanburðinn sjálfan.
+Sjálfgefna reglan er: **titilsíðan vinnur þar sem hún er til**, `discipline_override` vinnur
+yfir báðum þar sem manneskja hefur skoðað stakt tilvik (eins og 36353). Þess vegna heitir
+leitarorðaflokkunin `v_thesis_discipline_candidate` — fyrsta, ódýra ágiskun sem ákvarðar hvað
+er þess virði að lesa titilsíðu fyrir, ekki lokasvarið — og `v_thesis_discipline` er sameinaða
+niðurstaðan sem hver annar kafli, tafla og mynd les.

@@ -9,12 +9,12 @@
 
 if (!exists(".root")) source("R/global.R")
 
-require_table("v_thesis_discipline")
+require_table("v_thesis_discipline_candidate")
 
 d_vidauki_samsvorun <- q("
   with dkw as (
     select d.university as uni, d.discipline as disc, k.keyword_norm as kw, count(*) as n
-    from v_thesis_discipline d
+    from v_thesis_discipline_candidate d
     join thesis_keywords tk on tk.thesis_id = d.thesis_id
     join keywords k on k.id = tk.keyword_id
     where d.category = 'engineering'

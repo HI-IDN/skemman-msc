@@ -286,13 +286,17 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('verkefnastjórnum',                       'Verkefnastjórnun',   'professional', 15),
 ('rekstarverkfræði',                       'Rekstrarverkfræði',  'engineering', 10);
 
--- One discipline per thesis: the FIRST matching keyword in Skemman's own subject
--- order wins. Both schools list the namsgrein first and topical terms after, so
--- sort_order carries real signal; `priority` only breaks ties within one
--- position. The earlier rule ordered by priority and fell back to alphabetical,
--- which was arbitrary -- "Idnadarverkfraedi; Fjarmalaverkfraedi; ..." was filed
--- under Fjarmalaverkfraedi purely because F sorts before I.
-create or replace view v_thesis_discipline as
+-- One CANDIDATE discipline per thesis: the FIRST matching keyword in Skemman's own
+-- subject order wins. This is a cheap first guess, not a final answer -- see issue #5.
+-- Both schools usually list the namsgrein first and topical terms after, so sort_order
+-- carries real signal, but Skemman does not always follow that convention, and this view
+-- has no way to notice when it does not. That is fine: it only has to be good enough to
+-- decide what is worth reading a title page for, not to be the last word on any one
+-- thesis. `priority` only breaks ties within one sort_order position. The earlier rule
+-- ordered by priority and fell back to alphabetical, which was arbitrary --
+-- "Idnadarverkfraedi; Fjarmalaverkfraedi; ..." was filed under Fjarmalaverkfraedi purely
+-- because F sorts before I.
+create or replace view v_thesis_discipline_candidate as
 with matches as (
     select
         tk.thesis_id,
@@ -319,8 +323,6 @@ select
     m.university,
     x.discipline,
     x.category,
-    x.category = 'engineering' as is_engineering,
-    x.category in ('engineering', 'professional') as in_scope_broad,
     x.discipline is null as unclassified
 from v_thesis_msc m
 left join matches x on x.thesis_id = m.thesis_id and x.rn = 1;
@@ -329,11 +331,6 @@ left join matches x on x.thesis_id = m.thesis_id and x.rn = 1;
 -- Skemman's keywords -- see issue #5. `subject` is one string per thesis, not a
 -- ranked list, so there is no tie-break to make: at most one discipline_keyword
 -- row can match a given normalized subject, because keyword_norm is unique.
---
--- Kept separate from v_thesis_discipline rather than merged into it: the two
--- disagree on 43 of 1,031 theses that carry both signals (v_rq2_discipline_agreement
--- below), and deciding how a disagreement should resolve for every downstream
--- chapter is a bigger call than this view -- see issue #5's plan, step 4.
 create or replace view v_thesis_discipline_titlepage as
 select
     m.thesis_id,
@@ -347,8 +344,9 @@ join discipline_keyword d on d.keyword_norm = lower(trim(p.subject))
 where p.subject is not null;
 
 -- Where both signals exist, how often they agree -- and where they do not, what
--- each one said. 988/1,031 agree; the appendix table in vidauki-titilsida.R reads
--- straight off this view.
+-- each one said. 990/1,031 agree; the appendix table in vidauki-titilsida.R reads
+-- straight off this view. Compares the two RAW signals, before either the parser-bug
+-- correction or the override table below apply -- it is the diagnostic, not the answer.
 create or replace view v_rq2_discipline_agreement as
 select
     kd.thesis_id,
@@ -358,9 +356,65 @@ select
     tp.discipline as titlepage_discipline,
     tp.category   as titlepage_category,
     kd.discipline is not distinct from tp.discipline as agrees
-from v_thesis_discipline kd
+from v_thesis_discipline_candidate kd
 join v_thesis_discipline_titlepage tp on tp.thesis_id = kd.thesis_id
 where kd.discipline is not null;
+
+-- Manual corrections from reviewing issue #5's disagreement list -- a thesis where
+-- neither automated signal is trusted as-is. Currently just the one confirmed parser
+-- bug; grows as review of outputs/rq2-*.csv turns up more. `reason` is for humans, not
+-- read by any view.
+create table if not exists discipline_override
+(
+    thesis_id  integer,
+    discipline varchar,
+    category   varchar,
+    reason     varchar
+);
+
+create unique index if not exists discipline_override_pk on discipline_override (thesis_id);
+
+insert into discipline_override (thesis_id, discipline, category, reason)
+values (
+    36353, 'Verkefnastjórnun', 'professional',
+    'titlepage subject "computer science" is a confirmed parser bug -- pulled from an '
+    'interviewee''s biography, not the actual title page. All four keywords '
+    '(Verkefnastjórnun, MPM, Project management, Master of project management) agree '
+    'with each other and with the true title page text ("9 ECTS for the degree of '
+    'Master of Project Management (MPM)"). See issue #5.'
+)
+on conflict (thesis_id) do update set
+    discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
+
+-- The OFFICIAL discipline: what every other chapter, table and figure should read.
+-- Precedence is override > title page > keyword candidate -- the title page is the
+-- authority the harvester itself claims ("states the faculty, the credits and the
+-- degree outright"), the keyword guess is only ever a fallback for the ~55% of the
+-- population a title page has not (yet) resolved a subject for, and an override exists
+-- only where a human has looked at a specific thesis and said neither automated signal
+-- is right. Because the title page wins on disagreement, the "first keyword wins" quirk
+-- in v_thesis_discipline_candidate (see issue #5: sort_order picks the wrong sibling
+-- keyword for a handful of theses) never reaches here -- it is a candidate-only problem.
+create or replace view v_thesis_discipline as
+select
+    c.thesis_id,
+    c.yr,
+    c.university,
+    coalesce(o.discipline, tp.discipline, c.discipline)                    as discipline,
+    coalesce(o.category, tp.category, c.category)                         as category,
+    coalesce(o.category, tp.category, c.category) = 'engineering'         as is_engineering,
+    coalesce(o.category, tp.category, c.category) in ('engineering', 'professional')
+                                                                            as in_scope_broad,
+    coalesce(o.discipline, tp.discipline, c.discipline) is null           as unclassified,
+    case
+        when o.discipline is not null  then 'override'
+        when tp.discipline is not null then 'titlepage'
+        when c.discipline is not null  then 'keyword'
+        else null
+    end                                                                    as discipline_source
+from v_thesis_discipline_candidate c
+left join v_thesis_discipline_titlepage tp on tp.thesis_id = c.thesis_id
+left join discipline_override o on o.thesis_id = c.thesis_id;
 
 
 -- ---------------------------------------------------------------------------
