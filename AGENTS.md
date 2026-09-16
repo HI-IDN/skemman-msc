@@ -14,6 +14,31 @@ The deliverable is a Quarto book. `index.qmd` is the landing page, chapters live
 `docs/`, the database mapping is an appendix in `schema.qmd`, and the rendered site is
 written to `site/` (gitignored — see *Publishing*).
 
+## Progress tracking
+
+**Progress lives in GitHub Issues, not in memory or scratch notes.** State at the start of a
+session is whatever the issues and the [project board](https://github.com/orgs/HI-IDN/projects/5)
+say — read those before assuming what's done.
+
+- Each research question (RQ1–RQ7, one per chapter under `docs/`) is a **sub-issue of
+  [issue #1](https://github.com/HI-IDN/skemman-msc/issues/1)**, currently issues #4–#10. A
+  chapter's callout (`Að hluta svarað`, `Bíður ...`, `Framkvæmanlegt`, etc.) is the source of
+  truth for whether the matching sub-issue is Todo, In Progress, or Done — keep them in sync
+  when a chapter's status changes.
+- Cross-cutting work that isn't one RQ (data extraction, database distribution, tooling) gets
+  its own top-level issue, e.g. [#2](https://github.com/HI-IDN/skemman-msc/issues/2)
+  (PDF/full-text extraction) and [#3](https://github.com/HI-IDN/skemman-msc/issues/3)
+  (database sharing).
+- All issues, RQ sub-issues included, are added to the **Skemman MSc Thesis Analysis**
+  project (org `HI-IDN`, project number 5) — a Kanban board with Todo / In Progress / Done
+  columns. Use `gh project item-list 5 --owner HI-IDN` to see the board's current state, and
+  `gh project item-edit` to move an item when its status changes.
+- Before starting non-trivial work, check whether an issue already covers it; if not, open
+  one (`gh issue create`) and add it to the board (`gh project item-add 5 --owner HI-IDN
+  --url <issue-url>`) rather than tracking the work only in conversation.
+- Link new sub-issues to their parent with the `addSubIssue` GraphQL mutation (`gh api
+  graphql`) — the `gh` CLI has no `--parent` flag for this yet.
+
 ## Workflow
 
 The pipeline is driven by the `skemman` CLI from the `skemman-harvester/` submodule:
