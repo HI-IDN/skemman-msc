@@ -319,6 +319,43 @@ select
 from v_thesis_msc m
 left join matches x on x.thesis_id = m.thesis_id and x.rn = 1;
 
+-- The same crosswalk, matched on the title page's own stated subject instead of
+-- Skemman's keywords -- see issue #5. `subject` is one string per thesis, not a
+-- ranked list, so there is no tie-break to make: at most one discipline_keyword
+-- row can match a given normalized subject, because keyword_norm is unique.
+--
+-- Kept separate from v_thesis_discipline rather than merged into it: the two
+-- disagree on 43 of 1,031 theses that carry both signals (v_rq2_discipline_agreement
+-- below), and deciding how a disagreement should resolve for every downstream
+-- chapter is a bigger call than this view -- see issue #5's plan, step 4.
+create or replace view v_thesis_discipline_titlepage as
+select
+    m.thesis_id,
+    m.yr,
+    m.university,
+    d.discipline,
+    d.category
+from v_thesis_msc m
+join thesis_titlepage p on p.thesis_id = m.thesis_id
+join discipline_keyword d on d.keyword_norm = lower(trim(p.subject))
+where p.subject is not null;
+
+-- Where both signals exist, how often they agree -- and where they do not, what
+-- each one said. 988/1,031 agree; the appendix table in vidauki-titilsida.R reads
+-- straight off this view.
+create or replace view v_rq2_discipline_agreement as
+select
+    kd.thesis_id,
+    kd.university,
+    kd.discipline as keyword_discipline,
+    kd.category   as keyword_category,
+    tp.discipline as titlepage_discipline,
+    tp.category   as titlepage_category,
+    kd.discipline is not distinct from tp.discipline as agrees
+from v_thesis_discipline kd
+join v_thesis_discipline_titlepage tp on tp.thesis_id = kd.thesis_id
+where kd.discipline is not null;
+
 
 -- ---------------------------------------------------------------------------
 -- Deildarlag (RQ0)

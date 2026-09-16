@@ -185,3 +185,36 @@ Tvö pör skera sig úr, og dreifingin staðfestir þau: **Iðnaðarverkfræði*
 HÍ en 9 hjá HR, sem kallar sömu grein **Rekstrarverkfræði** (135). **Orkuverkfræði** er 100
 hjá HR en 1 hjá HÍ, sem vistar orkuvinnuna inni í **Vélaverkfræði** (123). Greinarnar eru
 gagnkvæmt útilokandi — sama efni, sitt hvort nafnið.
+
+## Staðfesting gegn titilsíðunni
+
+Ofangreind flokkun byggir eingöngu á leitarorðum Skemmunnar — vali sem einhver gerði þegar
+færslan var skráð. Titilsíða hverrar ritgerðar segir hins vegar sjálf hvað gráðan er í, án
+milligöngu leitarorða: `skemman-harvester` les þetta nú þegar af PDF-skjölunum (sjá
+[issue #5](https://github.com/HI-IDN/skemman-msc/issues/5)) og geymir í
+`thesis_titlepage.subject`, oftast á ensku og óháð `thesis_keywords`.
+
+Þar sem hvort tveggja er til fyrir sömu ritgerð má bera saman:
+
+```{r vidauki-titilsida-yfirlit}
+#| file: ../R/tables/vidauki-titilsida.R
+```
+
+95,8% samræmi er sterk staðfesting á leitarorðaflokkuninni — en þekjan er ófullkomin: titilsíðan
+er þátta fyrir 1.113 af 2.484 ritgerðum þýðisins (45%), svo hún kemur ekki í stað
+leitarorðanna, aðeins til viðbótar þar sem hún er til. Ósamræmið sjálft er líka upplýsandi:
+
+- **Flest ósamræmi haldast innan sama flokks** — Jarðfræði/Jarðvísindi,
+  Tölvunarfræði/Hugbúnaðarverkfræði, Byggingarverkfræði/Skipulagsfræði og samgöngur — greinar
+  sem liggja svo nærri hvor annarri að skiptingin er að hluta til smekksatriði, ekki merki um
+  ranga flokkun.
+- **Sjö tilvik skipta um flokk.** Fjögur MPM/framkvæmdastjórnunarverkefni hjá HR bera
+  leitarorðið `Byggingarverkfræði` en titilsíðan segir `Construction Management` — þau eru
+  fagnám (`professional`), ekki verkfræði. Eitt HR-verkefni ber leitarorðið
+  `Verkefnastjórnun` en titilsíðan segir `computer science`. Tvö HÍ-verkefni með
+  leitarorðið `Jarðfræði` heita `Sustainable Energy Engineering`/`Sustainable Energy` á
+  titilsíðunni.
+
+Hvernig þessi sjö tilvik — og ósamræmið almennt — eiga að vega á móti leitarorðunum í
+lokaflokkun hverrar ritgerðar er ákvörðun sem á eftir að taka (issue #5, næsta skref); þessi
+viðauki skjalfestir aðeins samanburðinn sjálfan.
