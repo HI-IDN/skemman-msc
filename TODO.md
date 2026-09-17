@@ -7,13 +7,17 @@ comment, this file's own history in git is the record).
 
 ## Open
 
-- **9 master's theses have no discipline at all** — neither a matching keyword nor a
+- **8 master's theses have no discipline at all** — neither a matching keyword nor a
   parsed title-page subject. Not yet individually reviewed.
-  `4446, 21992, 31238, 31876, 31878, 33203, 41556, 47224, 47700`
+  `21992, 31238, 31876, 31878, 33203, 41556, 47224, 47700`
   (`select * from v_thesis_discipline where discipline is null`)
 
 ## Resolved
 
+- **4446** — override to Fjármálaverkfræði/engineering: PDF access is `Lokaður`
+  (closed), so no title page was ever fetchable; keywords (Fjármál, Stjórnun, Bestun)
+  are all topical, none name the study line. Human-confirmed from outside the automated
+  signals entirely.
 - **38678** — Menntavísindi/science confirmed correct: námsbraut is Menntun
   framhaldsskólakennara (School of Education), kjörsvið tölvunarfræði; IVT is only the
   kjörsvið's supervising department, not the degree's home faculty.

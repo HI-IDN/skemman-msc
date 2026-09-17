@@ -414,6 +414,15 @@ values
     'titlepage subject truncated to "Innovative and Sustainable"; full degree confirmed '
     'human-side as Innovative and Sustainable Energy Engineering, Faculty of Industrial '
     'Engineering, Mechanical Engineering and Computer Science. See issue #5.'
+),
+(
+    -- No keyword matched (only generic Fjármál/Stjórnun/Bestun -- none of them the
+    -- námsgrein itself), and no title page exists to check: the PDF's access is
+    -- "Lokaður" (closed), so titlepage-load could never fetch it. Human-confirmed from
+    -- outside the automated signals entirely.
+    4446, 'Fjármálaverkfræði', 'engineering',
+    'closed/restricted PDF, no title page ever fetchable; keywords (Fjármál, Stjórnun, '
+    'Bestun) are all topical, none name the study line. Human-confirmed. See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
