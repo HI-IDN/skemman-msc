@@ -38,6 +38,11 @@ say — read those before assuming what's done.
   --url <issue-url>`) rather than tracking the work only in conversation.
 - Link new sub-issues to their parent with the `addSubIssue` GraphQL mutation (`gh api
   graphql`) — the `gh` CLI has no `--parent` flag for this yet.
+- **`TODO.md`** (repo root, tracked in git) holds items that need a domain expert's
+  judgment call, not another automated fix — e.g. a specific thesis whose classification
+  is ambiguous. Check it alongside the issues at the start of a session. It is not a
+  replacement for issues: an item belongs here when it is a small, specific question
+  blocking on human input, not a unit of work to plan or track progress on.
 
 ## Workflow
 
