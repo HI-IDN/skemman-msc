@@ -177,7 +177,7 @@ Tvö dæmi sýna hvers vegna þetta er sitt eigið merki, ekki bara enn ein grei
 vélaverkfræði- og tölvunarfræðideild (IVT), en gráðan er kennaranám. Ritgerð 18157 er
 rannsókn á frumuvefjum úr blöðruhálskirtli — fyrsta leitarorðið er `Líffræði`, því
 `Líffræðikennsla` (annað leitarorðið) er ekki í uppflettitöflunni, en titilsíðan segir
-skýrt `Menntun framhaldsskólakennara`. Bæði flokkast réttilega sem `Menntavísindi`, en af
+skýrt `Menntun framhaldsskólakennara`. Bæði flokkast réttilega sem `Menntavísindadeild`, en af
 ólíkum ástæðum — annað af leitarorði, annað af titilsíðu — og merkið gerir þá ástæðu
 sýnilega í stað þess að hún sé aðeins tilviljunarkennd afleiðing af röð leitarorðanna.
 

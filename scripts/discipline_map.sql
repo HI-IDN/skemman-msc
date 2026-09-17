@@ -34,7 +34,7 @@ create table discipline_keyword
     category       varchar,
     priority       integer default 100,
     -- Cuts across category: a degree whose home faculty is not the one its thesis
-    -- topic and supervising department suggest. 'teacher_education' is Menntavísindi
+    -- topic and supervising department suggest. 'teacher_education' is Menntavísindadeild
     -- (School of Education) theses with a science/engineering kjörsvið (elective
     -- specialization) -- the thesis is cross-listed into that subject's collection
     -- and can even be supervised there, but the náms­braut (degree programme) is the
@@ -214,13 +214,13 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('stjarneðlisfræði',               'Eðlisfræði',                 'science', 15),
 ('lífeðlisfræði',                  'Eðlisfræði',                 'science', 15),
 ('hljóðeðlisfræði',                'Eðlisfræði',                 'science', 15),
-('menntun framhaldsskólakennara',  'Menntavísindi',              'science', 10),
+('menntun framhaldsskólakennara',  'Menntavísindadeild',         'science', 10),
 ('matvælafræði',                   'Matvælafræði',               'science', 10),
 ('næringarfræði',                  'Næringarfræði',              'science', 10),
 ('heilsuþjálfun og kennsla',       'Íþróttavísindi',             'science', 12);
 
 -- Teacher-education theses (see the `flag` column's own comment above): 7 in the
--- population, all correctly resolved to Menntavísindi already because Skemman lists
+-- population, all correctly resolved to Menntavísindadeild already because Skemman lists
 -- this keyword first every time -- the flag makes that visible rather than implicit.
 update discipline_keyword set flag = 'teacher_education'
 where keyword_norm = 'menntun framhaldsskólakennara';
