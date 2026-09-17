@@ -122,10 +122,11 @@ format_is_date <- function(d) {
 # English keys, which are code; the translation belongs in the presentation,
 # and this order is the order categories sort in.
 flokkaheiti <- c(
-  engineering  = "Verkfræði",
-  professional = "Fagnám",
-  applied      = "Iðnfræði",
-  science      = "Náttúruvísindi"
+  engineering   = "Verkfræði",
+  professional  = "Fagnám",
+  applied       = "Iðnfræði",
+  science       = "Náttúruvísindi",
+  out_of_scope  = "Utan sviðs"
 )
 
 # --- Population -------------------------------------------------------------

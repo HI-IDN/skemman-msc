@@ -149,18 +149,13 @@ utan kjarnans.
 
 ## Óflokkaðar ritgerðir
 
-Þær ritgerðir sem ekkert leitarorð varpast fyrir. Þær eru 31 af 2.543 — rúmt prósent — en
-listinn er tekinn í heild því hann sýnir hvaða varpanir vantar.
-
-```{r vidauki-oflokkad}
-#| file: ../R/tables/vidauki-oflokkad.R
-```
-
-Flest eru raunverulegar eyður sem má loka: `Tölvuverkfræði`, `Applied data science`,
-`Skipulagsfræði`, `Matvælafræði`, `Lífræn efnafræði`, `Líftölfræði` og
-`Landupplýsinga- og umhverfisfræði` eru allt gild námsgreinaheiti sem `discipline_keyword`
-þekkir ekki enn. Tvær ritgerðir bera **engin leitarorð** og verða aldrei flokkaðar af
-þessari aðferð.
+Ekki lengur til: allar 2.484 ritgerðir þýðisins flokkast núna, síðasta gatið lokað með
+titilsíðunni og handvirkum leiðréttingum (`discipline_override`, issue #5). Leitarorðin
+einsömul ná ekki alveg svona langt — 11 ritgerðir bera engin leitarorð sem
+`discipline_keyword` þekkir, oftast því sjálft námsgreinaheitið er stakt tilvik
+(`Tölvuverkfræði`, `Skipulagsfræði` og fleiri eru gild heiti sem uppflettitöfluna vantaði
+þar til yfirferðin fann þau) eða ritgerðin ber engin leitarorð yfirhöfuð. Titilsíðan eða
+handvirk leiðrétting fyllir í hvert þessara 11 tilvika.
 
 ## Kennaranám með kjörsviði
 
@@ -219,20 +214,24 @@ milligöngu leitarorða: `skemman-harvester` les þetta nú þegar af PDF-skjöl
 #| file: ../R/tables/vidauki-titilsida.R
 ```
 
-96,0% samræmi er sterk staðfesting á leitarorðaflokkuninni — en þekjan er ófullkomin: titilsíðan
-er þátta fyrir um helming ritgerða þýðisins, svo hún kemur ekki í stað leitarorðanna, aðeins
-til viðbótar þar sem hún er til. Ósamræmið sjálft er líka upplýsandi:
+95,8% samræmi (1.121/1.170) er sterk staðfesting á leitarorðaflokkuninni — en þekjan er
+ófullkomin: titilsíðan er þátta fyrir um helming ritgerða þýðisins, svo hún kemur ekki í
+stað leitarorðanna, aðeins til viðbótar þar sem hún er til. Ósamræmið sjálft er líka
+upplýsandi:
 
 - **Flest ósamræmi haldast innan sama flokks** — Jarðfræði/Jarðvísindi,
   Tölvunarfræði/Hugbúnaðarverkfræði, Byggingarverkfræði/Skipulagsfræði og samgöngur — greinar
   sem liggja svo nærri hvor annarri að skiptingin er að hluta til smekksatriði, ekki merki um
   ranga flokkun.
-- **Sex tilvik skipta um flokk.** Fjögur MPM/framkvæmdastjórnunarverkefni hjá HR bera
-  leitarorðið `Byggingarverkfræði` en titilsíðan segir `Construction Management` — þau eru
-  fagnám (`professional`), ekki verkfræði. Tvö HÍ-verkefni með leitarorðið `Jarðfræði` heita
-  `Sustainable Energy Engineering`/`Sustainable Energy` á titilsíðunni. Öll sex eru sama
-  mynstrið: leitarorðið sem `v_thesis_discipline_candidate` velur er ekki rangt flokkað í
-  Skemman, það stendur bara ekki fremst í röðinni sem sú vörpun fer eftir.
+- **Átta tilvik skipta um flokk, öll sama mynstrið.** Fjögur MPM/framkvæmdastjórnunarverkefni
+  hjá HR bera leitarorðið `Byggingarverkfræði` en titilsíðan segir `Construction Management`
+  — fagnám (`professional`), ekki verkfræði. Tvö HÍ-verkefni með leitarorðið `Jarðfræði`
+  heita orkutengdum nöfnum á titilsíðunni (`Sustainable Energy Engineering`/`Sustainable
+  Energy`). Tvö kennaranámsverkefni (sjá næsta kafla) bera fyrst leitarorð úr kjörsviðinu
+  (`Eðlisfræði`, `Stærðfræði`) þar sem `Menntun framhaldsskólakennara` er líka meðal
+  leitarorðanna, bara ekki fremst. Í öllum átta er leitarorðið sem
+  `v_thesis_discipline_candidate` velur ekki rangt flokkað í Skemman, það stendur bara ekki
+  fremst í röðinni sem sú vörpun fer eftir.
 - **Eitt tilvik er þáttunarvilla, ekki ósamræmi í gögnunum.** Ritgerð 36353 ber fjögur
   samhljóða MPM-leitarorð, en titilsíðan þáttaðist sem `computer science` — úr æviágripi
   viðmælanda langt inni í skjalinu, ekki af titilsíðunni sjálfri. Handvirk leiðrétting í

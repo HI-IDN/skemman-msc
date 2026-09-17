@@ -8,17 +8,22 @@
 --
 -- This file seeds a keyword -> discipline lookup. A thesis takes the discipline
 -- of its lowest-priority matching keyword. `category` defines the population
--- boundary for issue #1, in four tiers:
+-- boundary for issue #1, in five tiers:
 --
---   engineering  -- core verkfrædi/taeknigreinar, always in scope
---   professional -- professional master's adjacent to engineering (MPM). In
---                   scope for the broad population, out for the strict one:
---                   report both rather than picking one.
---   applied      -- idnfraedi: HR's applied-engineering diplomas. Out of the
---                   engineering population, kept separate so HR's mix stays visible.
---   science      -- natural, earth and social sciences. HI's listing is the
---                   whole Verkfraedi- og natturuvisindasvid, so these have to
---                   be excluded by name.
+--   engineering   -- core verkfrædi/taeknigreinar, always in scope
+--   professional  -- professional master's adjacent to engineering (MPM). In
+--                    scope for the broad population, out for the strict one:
+--                    report both rather than picking one.
+--   applied       -- idnfraedi: HR's applied-engineering diplomas. Out of the
+--                    engineering population, kept separate so HR's mix stays visible.
+--   science       -- natural, earth and social sciences. HI's listing is the
+--                    whole Verkfraedi- og natturuvisindasvid, so these have to
+--                    be excluded by name.
+--   out_of_scope  -- not a discipline at all, and not "science" either: a degree
+--                    from a different school entirely (Menntavisindasvid), or a
+--                    thesis filed in the wrong collection by mistake. Distinct from
+--                    science so it is never silently counted as natural-science
+--                    output when someone reports that category.
 --
 --   duckdb data/processed/thesis.db < scripts/discipline_map.sql
 
@@ -74,6 +79,7 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 
 -- Project management (HR's MPM -- a professional master's, see note below)
 ('verkefnastjórnun',               'Verkefnastjórnun',           'professional', 15),
+('verkefnastjórar',                 'Verkefnastjórnun',           'professional', 15),
 ('project management',             'Verkefnastjórnun',           'professional', 15),
 ('master of project management',   'Verkefnastjórnun',           'professional', 15),
 ('mpm',                            'Verkefnastjórnun',           'professional', 15),
@@ -107,6 +113,7 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('sustainable energy engineering', 'Orkuverkfræði',              'engineering', 10),
 ('orkuvísindi',                    'Orkuverkfræði',              'engineering', 12),
 ('sustainable energy',             'Orkuverkfræði',              'engineering', 12),
+('energy systems',                 'Orkuverkfræði',              'engineering', 12),
 ('sustainable energy sciences',    'Orkuverkfræði',              'engineering', 12),
 ('sustainable energy science',     'Orkuverkfræði',              'engineering', 12),
 
@@ -197,8 +204,10 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('eðlisfræði',                     'Eðlisfræði',                 'science', 10),
 ('stærðfræði',                     'Stærðfræði',                 'science', 10),
 ('tölfræði',                       'Tölfræði',                   'science', 15),
+('líftölfræði',                    'Tölfræði',                   'science', 15),
 ('hagnýt tölfræði',                'Tölfræði',                   'science', 15),
 ('landfræði',                      'Landfræði',                  'science', 10),
+('náttúrulandfræði',                'Landfræði',                  'science', 12),
 ('ferðamálafræði',                 'Ferðamálafræði',             'science', 10),
 ('umhverfis- og auðlindafræði',    'Umhverfis- og auðlindafræði','science', 10),
 ('umhverfisfræði',                 'Umhverfis- og auðlindafræði','science', 15),
@@ -214,10 +223,16 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('stjarneðlisfræði',               'Eðlisfræði',                 'science', 15),
 ('lífeðlisfræði',                  'Eðlisfræði',                 'science', 15),
 ('hljóðeðlisfræði',                'Eðlisfræði',                 'science', 15),
-('menntun framhaldsskólakennara',  'Menntavísindadeild',         'science', 10),
+('menntun framhaldsskólakennara',  'Menntavísindadeild',         'out_of_scope', 10),
 ('matvælafræði',                   'Matvælafræði',               'science', 10),
 ('næringarfræði',                  'Næringarfræði',              'science', 10),
-('heilsuþjálfun og kennsla',       'Íþróttavísindi',             'science', 12);
+('heilsuþjálfun og kennsla',       'Íþróttavísindi',             'science', 12),
+-- Thesis 31238 (title page: MSc in Marketing) is genuinely out of scope, not a
+-- discipline this study should count at all -- see issue #5 and TODO.md. Mapped as
+-- a keyword rather than a one-off override because "Markaðsfræði" as a term is
+-- unambiguous on its own; any other thesis carrying it is presumably the same kind
+-- of mis-filed record, not a marketing specialization worth its own tier.
+('markaðsfræði',                   'Markaðsfræði',               'out_of_scope', 10);
 
 -- Teacher-education theses (see the `flag` column's own comment above): 7 in the
 -- population, all correctly resolved to Menntavísindadeild already because Skemman lists
@@ -272,7 +287,19 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('environmental and natural resources','Umhverfis- og auðlindafræði',  'science', 12),
 ('íþróttavísindum og þjálfun',         'Íþróttavísindi',               'science', 10),
 -- No Icelandic keyword names this programme; the title page is the only source.
-('geo-information science and earth',  'Landupplýsinga- og umhverfisfræði', 'science', 12),
+-- The full programme name, now that the title-page parser reads it whole (see
+-- issue #5) rather than truncated at a line wrap. Four spellings on record:
+-- with/without "and Management" (once doubled, on the title page itself, not an
+-- extraction bug -- thesis 33203), British/American "Modelling"/"Modeling", and
+-- hyphenated/unhyphenated "Geo-information"/"Geoinformation".
+('geo-information science and earth observation for environmental modelling and management',
+                                        'Landupplýsinga- og umhverfisfræði', 'science', 12),
+('geo-information science and earth observation for environmental modeling and management',
+                                        'Landupplýsinga- og umhverfisfræði', 'science', 12),
+('geoinformation science and earth observation for environmental management and management',
+                                        'Landupplýsinga- og umhverfisfræði', 'science', 12),
+('geo-information science and earth observation for environmental modelling',
+                                        'Landupplýsinga- og umhverfisfræði', 'science', 12),
 
 -- Engineering -- combined English programme names fold onto the same discipline
 -- their combined Icelandic keywords already do, for the same reason: the name
