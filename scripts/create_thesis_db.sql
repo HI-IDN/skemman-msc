@@ -144,3 +144,34 @@ from thesis_metadata m
 left join author_lists a on a.thesis_id = m.thesis_id
 left join advisor_lists ad on ad.thesis_id = m.thesis_id
 left join keyword_lists k on k.thesis_id = m.thesis_id;
+
+-- A comparable form of a person's name: lower case, no accents, eth -> d, thorn -> th, ae and o
+-- for the ligatures strip_accents leaves alone (without them Sævarsdóttir splits in two), no
+-- years or bracketed notes, "Last, First" -> "First Last", letters and single spaces only.
+create or replace macro name_key(s) as
+    trim(regexp_replace(
+        regexp_replace(
+            replace(replace(replace(replace(lower(strip_accents(
+                case
+                    when contains(regexp_replace(s, '\(.*?\)', '', 'g'), ',')
+                    then trim(split_part(regexp_replace(s, '\(.*?\)', '', 'g'), ',', 2))
+                         || ' ' ||
+                         trim(split_part(regexp_replace(s, '\(.*?\)', '', 'g'), ',', 1))
+                    else regexp_replace(s, '\(.*?\)', '', 'g')
+                end)), 'ð', 'd'), 'þ', 'th'), 'æ', 'ae'), 'ø', 'o'),
+            '[^a-z ]', ' ', 'g'),
+        '\s+', ' ', 'g'));
+
+-- The government lists of licensed engineers (verkfraedingar) and technologists
+-- (taeknifraedingar): name, birth year and licence date only -- never the kennitala. Filled by
+-- scripts/load_licences.sql from data/processed/engineer_licences.csv (scripts/fetch_engineer_licences.py);
+-- empty until then, so the views over it always exist.
+create table if not exists engineer_licence
+(
+    name         varchar,
+    birth_year   integer,
+    licence_year integer,
+    licence_date date,
+    list         varchar,
+    raw_date     varchar
+);

@@ -14,22 +14,8 @@
 -- People are matched on a normalised name, not on person_id: the scrapers were run against an
 -- older people table whose ids no longer exist, and a name is also all a staff page has.
 
--- A comparable form of a person's name: lower case, no accents, eth -> d, thorn -> th, ae and o
--- for the ligatures strip_accents leaves alone (without them Sævarsdóttir splits in two), no
--- years or bracketed notes, "Last, First" -> "First Last", letters and single spaces only.
-create or replace macro name_key(s) as
-    trim(regexp_replace(
-        regexp_replace(
-            replace(replace(replace(replace(lower(strip_accents(
-                case
-                    when contains(regexp_replace(s, '\(.*?\)', '', 'g'), ',')
-                    then trim(split_part(regexp_replace(s, '\(.*?\)', '', 'g'), ',', 2))
-                         || ' ' ||
-                         trim(split_part(regexp_replace(s, '\(.*?\)', '', 'g'), ',', 1))
-                    else regexp_replace(s, '\(.*?\)', '', 'g')
-                end)), 'ð', 'd'), 'þ', 'th'), 'æ', 'ae'), 'ø', 'o'),
-            '[^a-z ]', ' ', 'g'),
-        '\s+', ' ', 'g'));
+-- name_key(), the normalised name used to match people to staff pages, is defined in
+-- scripts/create_thesis_db.sql (the `init` step) so the licence matching shares it.
 
 create or replace table advisor_unit_raw as
 select 'HÍ' as page_school, name, status, title, school as svid, unit as unit_raw, url, fetched
