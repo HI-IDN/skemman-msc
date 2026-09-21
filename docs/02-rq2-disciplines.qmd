@@ -124,6 +124,26 @@ höfundurinn sækir um verkfræðingsleyfi. Enginn höfundur þeirra hefur gert 
 sem fæðingarár er þekkt, á móti 15 af 72 hjá þeim sem titilsíðan nefnir *Sustainable Energy
 Engineering*), svo þær eru flokkaðar sem náttúruvísindi og ekki með í töflunni.
 
+## Hvaðan leiðbeinendurnir koma
+
+Til þessa hefur ritgerðin verið flokkuð eftir deild *ritgerðarinnar*. Starfsmannasíður skólanna
+(`scripts/advisor_units.sql`) segja líka hvar leiðbeinandinn á sjálfur heima, svo hægt er að spyrja
+hvort verkfræðiritgerðum sé leiðbeint innan verkfræðinnar eða utan hennar. Sami maður getur verið
+skráður undir fleiri en einu nafni í `people` (*Guðrún A. Sævarsdóttir* og *Guðrún Arnbjörg
+Sævarsdóttir*); tvær raðir teljast sami leiðbeinandi aðeins ef fæðingarár er hið sama og bæði nöfn
+og millinöfn samrýmast (`advisor_identity`), svo nafnar með annað fæðingarár rugla ekki saman.
+
+```{r rq2-leidbeinendur}
+#| file: ../R/tables/rq2-leidbeinendur.R
+```
+
+Þegar heimadeild leiðbeinandans er þekkt er hún nær alltaf verkfræði eða tölvunarfræði: 96% hjá HR og
+90% hjá HÍ. Hjá HÍ koma 6,4% frá öðrum sviðum (matvælafræði, læknisfræði og viðskiptafræði mest) og
+3,6% úr raunvísindadeildunum. Fyrirvarinn er þekjan: starfsmannasíða er aðeins til fyrir þá sem starfa
+enn hjá skólanum (eða, hjá HÍ, störfuðu þar), svo heimadeild er þekkt fyrir 63% leiðbeininga hjá báðum
+skólum en aðeins um fjórðung leiðbeinenda; þeir sem hafa hætt, einkum stundakennarar og erlendir
+leiðbeinendur, vantar. Niðurstaðan segir því til um núverandi starfsfólk, ekki um alla sem hafa leiðbeint.
+
 ## Það sem stendur eftir
 
 - **2 HR-ritgerðir fá greinina frá leiðbeinanda** (`discipline_source = 'advisor'`) — titilsíðan

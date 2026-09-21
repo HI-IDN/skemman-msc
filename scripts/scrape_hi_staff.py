@@ -130,12 +130,14 @@ def main():
     ap.add_argument("--delay", type=float, default=1.0)
     args = ap.parse_args()
 
+    # Resumed by NAME, not person_id: a staff page knows only a name, and person ids change
+    # whenever the people table is rebuilt (scripts/rebuild.sh --only people).
     done = {}
     if OUT.exists():
         with OUT.open(encoding="utf-8", newline="") as f:
-            done = {int(r["person_id"]): r for r in csv.DictReader(f)}
+            done = {r["name"]: r for r in csv.DictReader(f)}
     todo = [a for a in advisors()
-            if a[0] not in done or (args.retry and done[a[0]]["status"] != "ok")]
+            if a[1] not in done or (args.retry and done[a[1]]["status"] != "ok")]
     if args.limit:
         todo = todo[:args.limit]
     print(f"{len(todo)} advisors to look up ({len(done)} already in {OUT.name})", file=sys.stderr)
@@ -152,7 +154,7 @@ def main():
             row.update(person_id=pid, name=name, n_theses=n, fetched=date.today().isoformat(),
                        url=f"https://hi.is/starfsfolk/{res['username']}" if res.get("username")
                        and ";" not in res["username"] else "", **res)
-            done[pid] = row
+            done[name] = row
             print(f"[{i}/{len(todo)}] {name}: {row['status']} {row['unit']}", file=sys.stderr)
             with OUT.open("w", encoding="utf-8", newline="") as f:
                 w = csv.DictWriter(f, FIELDS)

@@ -13,11 +13,17 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
 
 ## In progress / ideas (no action needed from you yet)
 
-- **Advisor home department from staff pages.** `scripts/scrape_hi_staff.py` (retry run
-  finished or finishing) and `scripts/scrape_hr_staff.py` (done: 99 of 430 matched; directory
-  lists current staff only) write `data/processed/hi_staff_units.csv` / `hr_staff_units.csv`.
-  Next: strip HÍ's ", kennsla" suffix, join into an `advisor_unit` view, redo the per-faculty
-  advisor profile. HÍ former-staff page not yet checked.
+- **Advisor home departments -- built, first results in.** `scripts/advisor_units.sql` (rebuild
+  step `advisors`, runs only when `data/processed/hi_staff_units.csv` and `hr_staff_units.csv`
+  exist) gives `v_advisor_unit`, `v_advisor_unit_coverage`, `v_thesis_advisor_unit` and an
+  `advisor_identity` alias table (same non-null birth year, same first/last name, compatible
+  middle names -- 16 aliases, e.g. Guðrún A. / Guðrún Arnbjörg Sævarsdóttir). Coverage: 63% of
+  supervisions at both schools, but only 161 of 700 advisors, all current or former staff; result:
+  96% (HR) and 90% (HÍ) of engineering theses with a known advisor department are advised from
+  engineering/computer science (`R/tables/rq2-leidbeinendur.R`, docs/02). To do: coverage of the
+  many departed / adjunct / foreign advisors (HÍ former-staff page, other sources); the
+  within-versus-across-faculty question can now be asked properly. The staff scrapers resume by
+  name now (person ids change when `people` is rebuilt).
 - **Licensed-engineer analysis.** `scripts/fetch_engineer_licences.py` ->
   `data/processed/engineer_licences.csv` (gitignored; name, birth year, licence date only --
   never the kennitala). Preliminary (engineering authors, verkfræðingur list): 49% matched

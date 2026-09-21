@@ -37,7 +37,7 @@ CONFIG="config/collections.yaml"
 
 # Every step, in the order they have to run. A phase is a selection from this
 # list, so combining phases never reorders anything.
-ALL_STEPS=(init oai xoai metadata people files titlepage access parse population disciplines figures)
+ALL_STEPS=(init oai xoai metadata people files titlepage access parse population disciplines advisors figures)
 
 # Fetching from Skemman. `files` is here as well as in dataprocessing: the
 # title-page download needs the PDF URLs that files-load writes, so fetching
@@ -46,7 +46,7 @@ PRE=(init oai xoai files titlepage access)
 # Deriving from data/raw alone. Nothing here makes a request.
 DATA=(init metadata people files parse)
 # Defining the population and the study's views over it.
-POST=(population disciplines)
+POST=(population disciplines advisors)
 # Running the R.
 VIS=(figures)
 
@@ -266,6 +266,17 @@ step_disciplines() {
             n="$(duckdb "$DB" -noheader -list                 -c "select count(*) from v_thesis_discipline where discipline_source = 'advisor'"                 2>/dev/null || echo '?')"
             echo "  advisor tier: $n thesis(es) take their advisor's field"
         fi
+    fi
+}
+
+step_advisors() {
+    echo "[advisors] Each advisor's own department, from the scraped staff pages."
+    # The CSVs come from scripts/scrape_hi_staff.py and scripts/scrape_hr_staff.py, which need
+    # the network and a headless browser, so they are run by hand and are not a step here.
+    if [[ -f data/processed/hi_staff_units.csv && -f data/processed/hr_staff_units.csv ]]; then
+        run_sql scripts/advisor_units.sql
+    else
+        echo "  skipped: data/processed/hi_staff_units.csv or hr_staff_units.csv is missing"              "(run scripts/scrape_hi_staff.py and scripts/scrape_hr_staff.py)" >&2
     fi
 }
 
