@@ -123,7 +123,7 @@ sem titilsíðan nefnir *Sustainable Energy Engineering*.
 
 ## Það sem stendur eftir
 
-- **12 HR-ritgerðir án námsleiðar á titilsíðu** — þær bera enn aðeins `Verkfræði
+- **11 HR-ritgerðir án námsleiðar á titilsíðu** — þær bera enn aðeins `Verkfræði
   (ótilgreind)`: titilsíðan segir bara *Master of Science* eða *Engineering*, eða er ekki
   til í skyndiminninu. Leiðbeinendaályktun (`v_thesis_discipline_advisor_suggestion`) gefur
   tillögu fyrir hverja; þær bíða yfirferðar í `TODO.md`.

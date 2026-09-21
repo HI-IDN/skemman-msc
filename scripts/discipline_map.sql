@@ -533,6 +533,17 @@ values
     50986, 'Rekstrarverkfræði', 'engineering',
     'garbled PDF font; title page read by a human: MSc in Electric Power Management, Department '
     'of Engineering. Advisor supervises engineering management. See issue #5.'
+),
+(
+    -- No title page in the cache, and the keywords mislead ("Geothermal brines" looks like a
+    -- stray tag; the advisor suggestion, Orkuverkfraedi, follows it). The abstract is a study of
+    -- Elkem Iceland's ferrosilicon furnaces: physical and chemical attributes of silica fume
+    -- against raw-material selection -- a chemical/process-engineering thesis. The author is a
+    -- licensed verkfraedingur (licence 2025), so it is an engineering degree. Human's guess
+    -- (chemical engineering) matches the abstract.
+    50850, 'Efnaverkfræði', 'engineering',
+    'ferrosilicon furnace silica fume (Elkem Iceland): chemical/process engineering; author '
+    'licensed engineer; advisor suggestion (Orkuverkfraedi) followed a stray keyword. See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;

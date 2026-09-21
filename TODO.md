@@ -7,16 +7,18 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-1. **12 HR theses whose title page names no programme** (only a bare "Master of Science", or
+1. **11 HR theses whose title page names no programme** (only a bare "Master of Science", or
    "Engineering", or no title page in the cache). Nothing more can be parsed; the advisor's
    own history suggests a discipline. Accept, change, or leave generic (`Verkfræði
    (ótilgreind)`, still `engineering` and in the right deild either way):
-   - Orkuverkfræði: 42324 (D. Finger), 50803 (X. Guardia Muguruza), 50850, 50913 (G. A.
+   - Orkuverkfræði: 42324 (D. Finger), 50803 (X. Guardia Muguruza), 50913 (G. A.
      Sævarsdóttir), 50875 (Á. Gylfason), 51060 (J. A. Newson)
    - Rekstrarverkfræði: 46301 (P. Jensson), 50794 (P. K. Pálsson), 50907 (E. I.
      Ásgeirsson), 50928, 50984 (H. Stefánsson)
    - Vélaverkfræði: 50871 (I. S. Ríkharðsson)
-   (50850, 50871, 50913, 50984, 51060, 46301, 50794 have no cached title page. 50986, font-garbled,
+   (50871, 50913, 50984, 51060, 46301, 50794 have no cached title page. 50850 (ferrosilicon silica
+   fume, Elkem; author a licensed engineer) is now an Efnaverkfræði override -- its "Geothermal
+   brines" keyword misled the advisor suggestion. 50986, font-garbled,
    was read by hand: "Electric Power Management" -> Rekstrarverkfræði override, Raforkuverkfræði
    the alternative.)
 2. **"Sustainable Energy Science" (about 28 theses): engineering or science?** Iceland School

@@ -213,9 +213,9 @@ ofan), svo titilsíðan þar sem hún er til, og loks handvirk leiðrétting
 [issue #5](https://github.com/HI-IDN/skemman-msc/issues/5) fyrir alla yfirferðina.
 
 Öll 2.484 ritgerðir þýðisins flokkast núna: titilsíðan ræður 1.719 þeirra, leitarorðin
-ein 757 og handvirk leiðrétting (`discipline_override`) átta. Leitarorðin ein og sér ná ekki
+ein 756 og handvirk leiðrétting (`discipline_override`) níu. Leitarorðin ein og sér ná ekki
 alveg svona langt — 11 ritgerðir báru annaðhvort ekkert þekkt leitarorð eða ekkert
-leitarorð yfirhöfuð — og titilsíðan eða handvirk leiðrétting fyllti upp í hvert þeirra. 12
+leitarorð yfirhöfuð — og titilsíðan eða handvirk leiðrétting fyllti upp í hvert þeirra. 11
 HR-ritgerðir bera enn aðeins `Verkfræði (ótilgreind)`, því hvorki leitarorð né titilsíða nefnir
 námsleið þeirra.
 
