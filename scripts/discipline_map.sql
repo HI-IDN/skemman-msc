@@ -590,6 +590,12 @@ values
     -- depend on the advisor tables being loaded.
     50803, 'Orkuverkfræði', 'engineering',
     'human-confirmed energy engineering (supersonic ejectors, geothermal steam). See issue #5.'
+),
+(
+    -- Harnessing wind and heat pump technologies for sustainable heating in cold regions. No
+    -- title-page subject; the advisor tier said Orkuverkfraedi and a human confirmed it.
+    50875, 'Orkuverkfræði', 'engineering',
+    'human-confirmed energy engineering (wind and heat pumps for heating). See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
