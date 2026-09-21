@@ -607,10 +607,14 @@ values
     -- Business plan for corporate daycare centers in Iceland (early childhood development). No
     -- title page in the cache; the advisor tier said Rekstrarverkfraedi (advisor Pall Kristjan
     -- Palsson) and a human agreed it is engineering, "maybe" management. The author is a licensed
-    -- verkfraedingur (2025), so it is an engineering degree either way.
+    -- verkfraedingur (2025), so it is an engineering degree either way. Considered and rejected:
+    -- Verkefnastjornun (MPM) -- keywords are Verkfraedi/Engineering with no MPM term, it is filed
+    -- under the Department of Engineering, the licence (2025-10-13) follows the thesis (accepted
+    -- 2025-06-18) by the usual ~4 months where MPM authors' licences predate theirs, and the
+    -- advisor supervises Rekstrarverkfraedi 6 times, Verkefnastjornun once.
     50794, 'Rekstrarverkfræði', 'engineering',
-    'engineering per human reading, probably management (business plan); author licensed. '
-    'See issue #5.'
+    'engineering per human reading, probably management (business plan); author licensed 4 months '
+    'after the thesis; MPM considered, rejected. See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
