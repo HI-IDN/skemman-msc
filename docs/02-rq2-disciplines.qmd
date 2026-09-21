@@ -18,7 +18,7 @@ Undirspurningar:
 `scripts/discipline_map.sql` leysir það með uppflettitöflu sem varpar leitarorðum,
 titilsíðuefni og handvirkum leiðréttingum á samræmdan greinalista
 (`v_thesis_discipline`). Allar 2.484 ritgerðir þýðisins hafa fengið grein, og titilsíðan
-ræður úrslitum fyrir 1.719 þeirra — sjá
+ræður úrslitum fyrir 1.718 þeirra — sjá
 [issue #5](https://github.com/HI-IDN/skemman-msc/issues/5) fyrir alla rannsóknarslóðina
 og [`docs/vidauki-adferd.qmd`](vidauki-adferd.qmd) fyrir aðferðina sjálfa.
 :::
@@ -116,16 +116,17 @@ Fjármálaverkfræði er ekki jafnt vaxandi námsleið heldur bundin við HR: H�
 neinni eftir 2014, en hjá HR heldur hún áfram með 1–8 ritgerðir á ári, þar af 7 árið 2024 og
 8 árið 2025. Hún er því horfin hjá HÍ en lifir hjá HR.
 
-Sjálfbær orkuvísindi (Iceland School of Energy, 42 HR-ritgerðir) eru flokkuð sem
-náttúruvísindi, ekki verkfræði, og því ekki með í töflunni: enginn höfundur þeirra hefur
-fengið verkfræðingsleyfi (0 af 31 þar sem fæðingarár er þekkt), á móti 15 af 72 hjá þeim
-sem titilsíðan nefnir *Sustainable Energy Engineering*.
+Sjálfbær orkuvísindi (Iceland School of Energy, 42 HR-ritgerðir) eru þverfagleg námsleið og
+merkt sem slík (`is_interdisciplinary`): náttúruvísindi að jafnaði, en verkfræði þegar
+höfundurinn sækir um verkfræðingsleyfi. Enginn höfundur þeirra hefur gert það (0 af 31 þar
+sem fæðingarár er þekkt, á móti 15 af 72 hjá þeim sem titilsíðan nefnir *Sustainable Energy
+Engineering*), svo þær eru flokkaðar sem náttúruvísindi og ekki með í töflunni.
 
 ## Það sem stendur eftir
 
-- **11 HR-ritgerðir án námsleiðar á titilsíðu** — þær bera enn aðeins `Verkfræði
-  (ótilgreind)`: titilsíðan segir bara *Master of Science* eða *Engineering*, eða er ekki
-  til í skyndiminninu. Leiðbeinendaályktun (`v_thesis_discipline_advisor_suggestion`) gefur
-  tillögu fyrir hverja; þær bíða yfirferðar í `TODO.md`.
+- **9 HR-ritgerðir fá greinina frá leiðbeinanda** (`discipline_source = 'advisor'`) — titilsíðan
+  segir bara *Master of Science* eða *Engineering*, eða er ekki til í skyndiminninu, og
+  leitarorðin nefna enga námsleið. Þá ræður sú grein sem leiðbeinandinn hefur oftast
+  (`v_thesis_discipline_advisor_suggestion`); þær bíða yfirferðar í `TODO.md`.
 - **Yfirgreinar** eru handvirk ákvörðun (`discipline_group`) og geta breyst; sjá
   athugasemdirnar í `scripts/discipline_map.sql` fyrir rökin á bak við hverja.

@@ -209,15 +209,17 @@ milli reglnanna tveggja — en hún er skjalfest hér svo ljóst sé hvað var v
 
 Flokkunin er þrepaskipt, öll í `scripts/discipline_map.sql`: fyrst leitarorðin (sjá að
 ofan), svo titilsíðan þar sem hún er til, og loks handvirk leiðrétting
-(`discipline_override`) fyrir stök tilvik sem hvorugt hitt leysir — sjá
+(`discipline_override`) fyrir stök tilvik sem hvorugt hitt leysir; ef enn ekkert nefnir
+námsleið ræður grein leiðbeinandans (`advisor`) — sjá
 [issue #5](https://github.com/HI-IDN/skemman-msc/issues/5) fyrir alla yfirferðina.
 
-Öll 2.484 ritgerðir þýðisins flokkast núna: titilsíðan ræður 1.719 þeirra, leitarorðin
-ein 756 og handvirk leiðrétting (`discipline_override`) níu. Leitarorðin ein og sér ná ekki
+Öll 2.484 ritgerðir þýðisins flokkast núna: titilsíðan ræður 1.718 þeirra, leitarorðin
+ein 746, handvirk leiðrétting (`discipline_override`) ellefu og leiðbeinandinn níu. Leitarorðin ein og sér ná ekki
 alveg svona langt — 11 ritgerðir báru annaðhvort ekkert þekkt leitarorð eða ekkert
-leitarorð yfirhöfuð — og titilsíðan eða handvirk leiðrétting fyllti upp í hvert þeirra. 11
-HR-ritgerðir bera enn aðeins `Verkfræði (ótilgreind)`, því hvorki leitarorð né titilsíða nefnir
-námsleið þeirra.
+leitarorð yfirhöfuð — og titilsíðan eða handvirk leiðrétting fyllti upp í hvert þeirra. Níu
+HR-ritgerðir nefna hvorki leitarorð né titilsíða námsleið; þær fá þá greinina sem leiðbeinandinn
+hefur oftast (`discipline_source = 'advisor'`), og engin ritgerð ber lengur aðeins
+`Verkfræði (ótilgreind)`.
 
 ## Kennaranám með kjörsviði
 

@@ -7,37 +7,37 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-1. **11 HR theses whose title page names no programme** (only a bare "Master of Science", or
-   "Engineering", or no title page in the cache). Nothing more can be parsed; the advisor's
-   own history suggests a discipline. Accept, change, or leave generic (`Verkfræði
-   (ótilgreind)`, still `engineering` and in the right deild either way):
-   - Orkuverkfræði: 42324 (D. Finger), 50803 (X. Guardia Muguruza), 50913 (G. A.
-     Sævarsdóttir), 50875 (Á. Gylfason), 51060 (J. A. Newson)
-   - Rekstrarverkfræði: 46301 (P. Jensson), 50794 (P. K. Pálsson), 50907 (E. I.
-     Ásgeirsson), 50928, 50984 (H. Stefánsson)
-   - Vélaverkfræði: 50871 (I. S. Ríkharðsson)
-   (50871, 50913, 50984, 51060, 46301, 50794 have no cached title page. 50850 (ferrosilicon silica
-   fume, Elkem; author a licensed engineer) is now an Efnaverkfræði override -- its "Geothermal
-   brines" keyword misled the advisor suggestion. 50986, font-garbled,
-   was read by hand: "Electric Power Management" -> Rekstrarverkfræði override, Raforkuverkfræði
-   the alternative.)
-2. **"Sustainable Energy Science" (about 28 theses): engineering or science?** Iceland School
-   of Energy programmes; the keyword map files all `sustainable energy ...` variants under
-   Orkuverkfræði/engineering. If "Science" is a distinct, non-engineering programme it should
-   be split out. Your call.
-3. **Two optional umbrellas** (each a row of `discipline_group`): Skipulagsfræði og samgöngur
+1. **9 HR theses whose discipline now comes from the advisor** (`discipline_source =
+   'advisor'`; no title page, keyword or override names a programme, so the advisor's
+   predominant field decides, as you asked). Skim, and add a `discipline_override` where you
+   know better:
+   - Orkuverkfræði: 50803 (X. Guardia Muguruza), 50875 (Á. Gylfason), 51060 (J. A. Newson),
+     50913 (G. A. Sævarsdóttir -- **check**: silicon/Al-Si alloy deposition, same advisor as 50850
+     which is Efnaverkfræði, and the author is a licensed engineer; likely Efnaverkfræði)
+   - Rekstrarverkfræði: 46301 (P. Jensson), 50794 (P. K. Pálsson), 50928, 50984 (H. Stefánsson)
+   - Vélaverkfræði: 50871 (I. S. Ríkharðsson; ice-slurry sensors, refrigeration)
+   Already settled by hand: 42324 (Orkuverkfræði, educated guess), 50850 (Efnaverkfræði), 50907
+   (Rekstrarverkfræði, educated guess; Fjármálaverkfræði the alternative, same umbrella), 50986
+   (Rekstrarverkfræði), 44748, 50796.
+2. **Two optional umbrellas** (each a row of `discipline_group`): Skipulagsfræði og samgöngur
    (11 HR theses) -> Umhverfisverkfræði (HÍ has a track "Sjálfbær byggð og öruggar
    samgöngur")? and where the 6 HÍ Orkuverkfræði theses (ISE era, filed under IVT) belong,
    given renewable energy is a track in four MS programmes across three engineering deilds. Low
    stakes.
-4. **Crosswalk vs today's HÍ catalogue** (`config/hi_ms_programmes.yaml`, VoN has six deildir).
-   Everything matches except two things that may just be history -- confirm or ignore:
-   `Gagnavísindi` is filed under IVT but the catalogue puts the MS under Raunvísindadeild
-   (no HÍ theses carry it today, so moot until one appears); and `Matvæla- og
-   næringarfræðideild` (Matvælafræði, Næringarfræði, a handful of theses) is in the crosswalk but is
-   not one of the six.
+3. **Crosswalk vs today's HÍ catalogue** (`config/hi_ms_programmes.yaml`, VoN has six deildir).
+   Everything matches except one thing that may just be history -- confirm or ignore:
+   `Matvæla- og næringarfræðideild` (Matvælafræði, Næringarfræði, two HÍ theses) is in the
+   crosswalk but is not one of the six. (`Gagnavísindi` is now under Raunvísindadeild, the
+   statistics sub-line, as confirmed.)
 
 ## In progress / ideas (no action needed from you yet)
+
+- **`people`/`thesis_people` are empty after `rebuild.sh --dataprocessing`** (the metadata step
+  loads theses and keywords but not people; `clean-people` reports 0). The advisor tier and the
+  advisor views need them, so I loaded them into `thesis.db` from `data/db/people.parquet` and
+  `thesis_people.parquet` (the `restore_db.sql` statements). A fresh rebuild will lose them again
+  until people are loaded by the pipeline, and then `v_thesis_discipline` silently loses the 9
+  `advisor` rows (they fall back to `Verkfræði (ótilgreind)`). Worth a proper loader step.
 
 - **Parser fix + niche disciplines + umbrella group: built, rebuilt (`--dataprocessing
   --postprocessing`, data/processed/thesis.db; backup `thesis.db.before-niche-umbrella.*`) and
@@ -68,6 +68,12 @@ comment, this file's own history in git is the record).
 - **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved
+
+- **Sustainable Energy Science (42 HR theses)** -- interdisciplinary (human call): science by
+  default, engineering when the author applies for the engineer title. Today 0 of 31 authors
+  with a known birth year are licensed, so all are science (`Sjálfbær orkuvísindi`); marked with
+  `discipline_keyword.flag = 'interdisciplinary'` and `v_thesis_discipline.is_interdisciplinary`
+  so the licence rule can be applied per thesis once the licence list is joined in.
 
 - **Human confirmations (this round)** -- 39936 stays Tölfræði/science (author's licence rests
   on an earlier Politecnico di Milano MSc, unrelated to the MAS: MAS does not lead to the

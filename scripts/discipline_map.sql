@@ -44,6 +44,9 @@ create table discipline_keyword
     -- specialization) -- the thesis is cross-listed into that subject's collection
     -- and can even be supervised there, but the náms­braut (degree programme) is the
     -- School of Education's, not SENS's. See issue #5 (thesis 38678).
+    -- 'interdisciplinary' marks a programme that is engineering or science depending on the
+    -- person: Sjálfbær orkuvísindi (Iceland School of Energy) -- science by default, engineering
+    -- when the author applies for the engineer title.
     flag           varchar
 );
 
@@ -114,10 +117,13 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('orkuvísindi',                    'Orkuverkfræði',              'engineering', 12),
 ('sustainable energy',             'Orkuverkfræði',              'engineering', 12),
 ('energy systems',                 'Orkuverkfræði',              'engineering', 12),
--- "Sustainable Energy Science" (Iceland School of Energy) is a science programme, not the
--- engineering one: none of its 31 HR authors with a known birth year is a licensed engineer
--- (0 of 31, against 15 of 72 for the "Sustainable Energy Engineering" wording; p = 0.003).
--- The bare "sustainable energy" wording stays Orkuverkfraedi.
+-- "Sustainable Energy Science" (Iceland School of Energy) is interdisciplinary: science by
+-- default, engineering when its author applies for the engineer title (a human call). In the
+-- data none of its 31 HR authors with a known birth year is a licensed engineer (0 of 31,
+-- against 15 of 72 for the "Sustainable Energy Engineering" wording; p = 0.003), so all of
+-- them are science today; flag = 'interdisciplinary' (set below) marks them so the rule can
+-- be applied per thesis once the licence list is joined in. The bare "sustainable energy"
+-- wording stays Orkuverkfraedi.
 ('sustainable energy sciences',    'Sjálfbær orkuvísindi',              'science', 12),
 ('sustainable energy science',     'Sjálfbær orkuvísindi',              'science', 12),
 
@@ -343,6 +349,10 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('energy engineering',                     'Orkuverkfræði',      'engineering', 12),
 ('byggingaverkfræði',                      'Byggingarverkfræði', 'engineering', 10);
 
+-- Interdisciplinary programmes (see the comment on the Sustainable Energy Science rows above).
+update discipline_keyword set flag = 'interdisciplinary'
+where discipline = 'Sjálfbær orkuvísindi';
+
 -- One CANDIDATE discipline per thesis: the FIRST matching keyword in Skemman's own
 -- subject order wins. This is a cheap first guess, not a final answer -- see issue #5.
 -- Both schools usually list the namsgrein first and topical terms after, so sort_order
@@ -544,6 +554,30 @@ values
     50850, 'Efnaverkfræði', 'engineering',
     'ferrosilicon furnace silica fume (Elkem Iceland): chemical/process engineering; author '
     'licensed engineer; advisor suggestion (Orkuverkfraedi) followed a stray keyword. See issue #5.'
+),
+(
+    -- EDUCATED GUESS. Title page says only "Master of Science in Engineering" and the topic
+    -- ("sustainability at a wellness retreat centre in El Tanque, Tenerife") superficially looks
+    -- like tourism studies, but a human read the thesis and it is engineering. Keywords:
+    -- electricity, water pipelines, wastewater, sustainable development. The advisor (David
+    -- Finger) supervises the Sustainable Energy Engineering programme -- e.g. 50718, whose title
+    -- page says exactly that -- so Orkuverkfraedi. Umhverfisverkfraedi (water/wastewater) is
+    -- the alternative.
+    42324, 'Orkuverkfræði', 'engineering',
+    'educated guess: engineering per human reading; advisor supervises Sustainable Energy '
+    'Engineering; alternative Umhverfisverkfræði. See issue #5.'
+),
+(
+    -- EDUCATED GUESS. "Dimension reduction on company tax return data using autoencoders": a
+    -- machine-learning thesis, but not filed as Gagnavisindi -- the author is a licensed
+    -- verkfraedingur (2025), so it is an engineering degree, and Gagnavisindi would read as a
+    -- separate data-science programme. The advisor (Eyjolfur Ingi Asgeirsson) supervises
+    -- engineering-management theses, hence Rekstrarverkfraedi; Fjarmalaverkfraedi (company
+    -- financial data) is the alternative. Both roll up to Idnadarverkfraedi in discipline_group,
+    -- so cross-school comparisons are unaffected by the choice.
+    50907, 'Rekstrarverkfræði', 'engineering',
+    'educated guess: engineering (author licensed); advisor supervises engineering management; '
+    'alternative Fjármálaverkfræði (same umbrella). See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
@@ -602,7 +636,7 @@ on conflict (discipline) do update set umbrella = excluded.umbrella, note = excl
 -- is right. Because the title page wins on disagreement, the "first keyword wins" quirk
 -- in v_thesis_discipline_candidate (see issue #5: sort_order picks the wrong sibling
 -- keyword for a handful of theses) never reaches here -- it is a candidate-only problem.
-create or replace view v_thesis_discipline as
+create or replace view v_thesis_discipline_direct as
 with resolved as (
     select
         c.thesis_id,
@@ -645,7 +679,8 @@ select
     -- No override column for this -- an override always names a specific discipline
     -- and a human already looked at the thesis, so the flag's job (flagging something
     -- worth a second look) is already done for those rows.
-    flag = 'teacher_education'                                             as is_teacher_education
+    flag = 'teacher_education'                                             as is_teacher_education,
+    flag = 'interdisciplinary'                                             as is_interdisciplinary
 from resolved r
 left join discipline_group g
        on g.discipline = coalesce(r.o_discipline, r.tp_discipline, r.c_discipline);
@@ -657,12 +692,14 @@ left join discipline_group g
 -- override -- i.e. still `unclassified` above, or resolved only to a generic
 -- `(ótilgreind)` discipline (e.g. 23908) -- an advisor's own supervision
 -- history is a signal: what discipline do their *other* population theses
--- mostly sit in? This is a human-reviewed suggestion, not a
--- v_thesis_discipline tier: a thesis can have advisors from different
+-- mostly sit in? A thesis can have advisors from different
 -- departments, so it is a plurality vote across advisors, not a certain
--- answer. Read v_thesis_discipline_advisor_suggestion, look at `advisors`,
--- and either add a discipline_override row or a discipline_keyword entry --
--- whichever the review shows is right. See TODO.md and issue #5.
+-- answer. It is the last tier of v_thesis_discipline (defined after these
+-- views): it only applies where override, title page and keyword leave the
+-- thesis generic or unclassified, and discipline_source = 'advisor' marks
+-- the result. Read v_thesis_discipline_advisor_suggestion, look at `advisors`,
+-- and add a discipline_override row (or a discipline_keyword entry) where the
+-- review shows the advisor's field is wrong. See TODO.md and issue #5.
 --
 -- "Other theses" means other population master's theses this advisor
 -- supervised, already resolved by keyword/titlepage/override
@@ -680,7 +717,7 @@ select
     count(*) as thesis_count
 from thesis_people tp
 join people p on p.id = tp.person_id
-join v_thesis_discipline d on d.thesis_id = tp.thesis_id
+join v_thesis_discipline_direct d on d.thesis_id = tp.thesis_id
 where tp.role = 'advisor'
   and d.discipline is not null
   -- a generic discipline says nothing about the advisor's field
@@ -720,7 +757,7 @@ with thesis_advisors as (
     select tp.thesis_id, tp.person_id, p.name as advisor_name
     from thesis_people tp
     join people p on p.id = tp.person_id
-    join v_thesis_discipline u on u.thesis_id = tp.thesis_id
+    join v_thesis_discipline_direct u on u.thesis_id = tp.thesis_id
         and (u.unclassified or u.discipline like '%(ótilgreind)')
     where tp.role = 'advisor'
 ),
@@ -758,6 +795,36 @@ select
     n_candidates > 1 as advisors_disagree
 from ranked
 where rn = 1;
+
+-- THE discipline every other chapter, table and figure reads. Precedence, strongest first:
+-- override > title page > keyword (all three in v_thesis_discipline_direct) > the advisor's
+-- predominant field. A thesis that evidence leaves generic (`Verkfræði (ótilgreind)`) or
+-- unclassified takes its advisors' plurality discipline from the suggestion view above (a
+-- human call: "let the advisor's predominant field dictate"). discipline_source = 'advisor'
+-- marks these, so they stay easy to find and review; an override always wins over them.
+-- The advisor history is built from v_thesis_discipline_direct, not from this view, so the
+-- advisor tier cannot feed on itself.
+create or replace view v_thesis_discipline as
+select
+    d.thesis_id,
+    d.yr,
+    d.university,
+    coalesce(s.suggested_discipline, d.discipline)                          as discipline,
+    case when s.thesis_id is not null
+         then coalesce(g.umbrella, s.suggested_discipline)
+         else d.umbrella end                                                as umbrella,
+    coalesce(s.suggested_category, d.category)                              as category,
+    coalesce(s.suggested_category, d.category) = 'engineering'              as is_engineering,
+    coalesce(s.suggested_category, d.category) in ('engineering', 'professional')
+                                                                            as in_scope_broad,
+    d.unclassified and s.thesis_id is null                                  as unclassified,
+    case when s.thesis_id is not null then 'advisor' else d.discipline_source end
+                                                                            as discipline_source,
+    d.is_teacher_education,
+    d.is_interdisciplinary
+from v_thesis_discipline_direct d
+left join v_thesis_discipline_advisor_suggestion s on s.thesis_id = d.thesis_id
+left join discipline_group g on g.discipline = s.suggested_discipline;
 
 
 -- ---------------------------------------------------------------------------
@@ -798,7 +865,9 @@ insert into discipline_unit values
 ('Háskóli Íslands', 'Mekatróník',          'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Ákvarðanaverkfræði',  'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Reikniverkfræði',     'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
-('Háskóli Íslands', 'Gagnavísindi',        'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
+-- Gagnavísindi is the statistics sub-line under the mathematics department (human-confirmed),
+-- not IVT; still an engineering-scope discipline, so in_core.
+('Háskóli Íslands', 'Gagnavísindi',        'RAUN', 'Raunvísindadeild', true),
 ('Háskóli Íslands', 'Máltækni',            'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Byggingarverkfræði',  'UMBYGG', 'Umhverfis- og byggingarverkfræðideild', true),
 ('Háskóli Íslands', 'Umhverfisverkfræði',  'UMBYGG', 'Umhverfis- og byggingarverkfræðideild', true),
