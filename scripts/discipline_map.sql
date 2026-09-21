@@ -53,13 +53,13 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 -- Mechanical / mechatronics
 ('vélaverkfræði',                  'Vélaverkfræði',              'engineering', 10),
 ('mechanical engineering',         'Vélaverkfræði',              'engineering', 10),
-('mechatronics engineering',       'Vélaverkfræði',              'engineering', 10),
-('hátækniverkfræði',               'Vélaverkfræði',              'engineering', 10),
+('mechatronics engineering',       'Mekatróník',                 'engineering', 10),
+('hátækniverkfræði',               'Hátækniverkfræði',           'engineering', 10),
 
 -- Chemical / biochemical engineering
 ('efnaverkfræði',                  'Efnaverkfræði',              'engineering', 10),
 ('chemical engineering',           'Efnaverkfræði',              'engineering', 10),
-('lífefnaverkfræði',               'Efnaverkfræði',              'engineering', 15),
+('lífefnaverkfræði',               'Lífefnaverkfræði',           'engineering', 15),
 
 -- Civil / environmental / structural
 ('byggingarverkfræði',             'Byggingarverkfræði',         'engineering', 10),
@@ -75,7 +75,7 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('engineering management',         'Rekstrarverkfræði',          'engineering', 10),
 ('fjármálaverkfræði',              'Fjármálaverkfræði',          'engineering', 10),
 ('financial engineering',          'Fjármálaverkfræði',          'engineering', 10),
-('ákvarðanaverkfræði',             'Iðnaðarverkfræði',           'engineering', 20),
+('ákvarðanaverkfræði',             'Ákvarðanaverkfræði',         'engineering', 20),
 
 -- Project management (HR's MPM -- a professional master's, see note below)
 ('verkefnastjórnun',               'Verkefnastjórnun',           'professional', 15),
@@ -88,8 +88,8 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('rafmagnsverkfræði',              'Rafmagnsverkfræði',          'engineering', 10),
 ('electrical engineering',         'Rafmagnsverkfræði',          'engineering', 10),
 ('rafmagns- og tölvuverkfræði',    'Rafmagnsverkfræði',          'engineering', 10),
-('raforkuverkfræði',               'Rafmagnsverkfræði',          'engineering', 10),
-('electric power engineering',     'Rafmagnsverkfræði',          'engineering', 10),
+('raforkuverkfræði',               'Raforkuverkfræði',           'engineering', 10),
+('electric power engineering',     'Raforkuverkfræði',           'engineering', 10),
 -- Tolvuverkfraedi is a discipline in its own right; both it and
 -- Rafmagnsverkfraedi belong to Rafmagns- og tolvuverkfraedideild (RT). The
 -- combined keyword names the deild rather than the discipline, so it stays on
@@ -114,8 +114,12 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('orkuvísindi',                    'Orkuverkfræði',              'engineering', 12),
 ('sustainable energy',             'Orkuverkfræði',              'engineering', 12),
 ('energy systems',                 'Orkuverkfræði',              'engineering', 12),
-('sustainable energy sciences',    'Orkuverkfræði',              'engineering', 12),
-('sustainable energy science',     'Orkuverkfræði',              'engineering', 12),
+-- "Sustainable Energy Science" (Iceland School of Energy) is a science programme, not the
+-- engineering one: none of its 31 HR authors with a known birth year is a licensed engineer
+-- (0 of 31, against 15 of 72 for the "Sustainable Energy Engineering" wording; p = 0.003).
+-- The bare "sustainable energy" wording stays Orkuverkfraedi.
+('sustainable energy sciences',    'Sjálfbær orkuvísindi',              'science', 12),
+('sustainable energy science',     'Sjálfbær orkuvísindi',              'science', 12),
 
 -- Biomedical / bioengineering
 ('heilbrigðisverkfræði',           'Heilbrigðisverkfræði',       'engineering', 10),
@@ -134,14 +138,16 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('gervigreind og máltækni',        'Máltækni',                   'engineering', 12),
 ('language technology',            'Máltækni',                   'engineering', 10),
 
--- Construction management -- a professional master's like MPM, not a
--- verkfraedi degree, so it sits in the same category.
-('framkvæmdastjórnun',             'Framkvæmdastjórnun',         'professional', 15),
-('construction management',        'Framkvæmdastjórnun',         'professional', 15),
+-- Construction management -- an engineering MSc (human-confirmed via 10906: an 85-page MSc
+-- thesis, the engineering counterpart of the professional programmes; industrial-engineering
+-- related or closely adjacent), NOT a professional master's like MPM. Same category as the
+-- other verkfraedi disciplines; HI already files it under UmBygg in discipline_unit.
+('framkvæmdastjórnun',             'Framkvæmdastjórnun',         'engineering', 15),
+('construction management',        'Framkvæmdastjórnun',         'engineering', 15),
 
 -- Energy, additional spellings
-('sjálfbær orkuvísindi - reyst',   'Orkuverkfræði',              'engineering', 12),
-('sjálfbær orkuvísindi',           'Orkuverkfræði',              'engineering', 12),
+('sjálfbær orkuvísindi - reyst',   'Sjálfbær orkuvísindi',              'science', 12),
+('sjálfbær orkuvísindi',           'Sjálfbær orkuvísindi',              'science', 12),
 ('sjálfbær orka',                  'Orkuverkfræði',              'engineering', 12),
 ('sjálfbær orka og verkfræði',     'Orkuverkfræði',              'engineering', 12),
 
@@ -219,7 +225,7 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('líftækni',                       'Líftækni',                   'science', 10),
 ('sameindalíffræði',               'Líffræði',                   'science', 15),
 ('landafræði',                     'Landfræði',                  'science', 10),
-('verkfræðileg eðlisfræði',        'Eðlisfræði',                 'science', 12),
+('verkfræðileg eðlisfræði',        'Verkfræðileg eðlisfræði',                 'engineering', 12),
 ('stjarneðlisfræði',               'Eðlisfræði',                 'science', 15),
 ('lífeðlisfræði',                  'Eðlisfræði',                 'science', 15),
 ('hljóðeðlisfræði',                'Eðlisfræði',                 'science', 15),
@@ -267,7 +273,7 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('organic chemistry',                  'Efnafræði',                    'science', 12),
 ('inorganic chemistry',                'Efnafræði',                    'science', 12),
 ('physics',                            'Eðlisfræði',                   'science', 10),
-('engineering physics',                'Eðlisfræði',                   'science', 12),
+('engineering physics',                'Verkfræðileg eðlisfræði',                   'engineering', 12),
 ('theoretical physics',                'Eðlisfræði',                   'science', 15),
 ('astrophysics',                       'Eðlisfræði',                   'science', 15),
 ('mathematics',                        'Stærðfræði',                   'science', 10),
@@ -315,8 +321,8 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('electrical and computer engineering at the','Rafmagnsverkfræði', 'engineering', 15),
 ('computational en-',                      'Reikniverkfræði',    'engineering', 20),
 ('bioengineering',                         'Heilbrigðisverkfræði', 'engineering', 20),
-('decision engineering',                   'Iðnaðarverkfræði',   'engineering', 20),
-('renewable energy sciences',              'Orkuverkfræði',      'engineering', 12),
+('decision engineering',                   'Ákvarðanaverkfræði', 'engineering', 20),
+('renewable energy sciences',              'Sjálfbær orkuvísindi',      'science', 12),
 ('energy engineering -',                   'Orkuverkfræði',      'engineering', 12),
 ('sustainable energy engineering - ise',   'Orkuverkfræði',      'engineering', 12),
 ('skipulagsfræði og samgöngum',            'Skipulagsfræði og samgöngur', 'engineering', 15),
@@ -324,7 +330,18 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 -- Spelling variants of what is already mapped above -- no new judgment, just a
 -- typo the title page carries that the keyword list does not.
 ('verkefnastjórnum',                       'Verkefnastjórnun',   'professional', 15),
-('rekstarverkfræði',                       'Rekstrarverkfræði',  'engineering', 10);
+('rekstarverkfræði',                       'Rekstrarverkfræði',  'engineering', 10),
+
+-- Title-page subjects that turned up once the parser learned Reykjavik University's newer
+-- template (skemman-harvester, icelandic-thesis-comparison#5). Each names a programme the
+-- title page states outright; the niche label is kept, grouping is discipline_group's job.
+('mechatronic engineering',                'Mekatróník',         'engineering', 10),
+('mechatronics',                           'Mekatróník',         'engineering', 12),
+('electrical power engineering',           'Raforkuverkfræði',   'engineering', 10),
+('electrical energy engineering',          'Raforkuverkfræði',   'engineering', 12),
+('management engineering',                 'Rekstrarverkfræði',  'engineering', 12),
+('energy engineering',                     'Orkuverkfræði',      'engineering', 12),
+('byggingaverkfræði',                      'Byggingarverkfræði', 'engineering', 10);
 
 -- One CANDIDATE discipline per thesis: the FIRST matching keyword in Skemman's own
 -- subject order wins. This is a cheap first guess, not a final answer -- see issue #5.
@@ -332,7 +349,9 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 -- carries real signal, but Skemman does not always follow that convention, and this view
 -- has no way to notice when it does not. That is fine: it only has to be good enough to
 -- decide what is worth reading a title page for, not to be the last word on any one
--- thesis. `priority` only breaks ties within one sort_order position. The earlier rule
+-- thesis. A generic `(ótilgreind)` match (bare "verkfræði") ranks after every specific
+-- one regardless of position (53775 lists Verkfræði before Rekstrarverkfræði).
+-- `priority` only breaks ties within one sort_order position. The earlier rule
 -- ordered by priority and fell back to alphabetical, which was arbitrary --
 -- "Idnadarverkfraedi; Fjarmalaverkfraedi; ..." was filed under Fjarmalaverkfraedi purely
 -- because F sorts before I.
@@ -345,7 +364,7 @@ with matches as (
         d.flag,
         row_number() over (
             partition by tk.thesis_id
-            order by tk.sort_order, d.priority, d.discipline
+            order by (d.discipline like '%(ótilgreind)'), tk.sort_order, d.priority, d.discipline
         ) as rn
     from thesis_keywords tk
     join keywords k on k.id = tk.keyword_id
@@ -374,17 +393,32 @@ left join matches x on x.thesis_id = m.thesis_id and x.rn = 1;
 -- ranked list, so there is no tie-break to make: at most one discipline_keyword
 -- row can match a given normalized subject, because keyword_norm is unique.
 create or replace view v_thesis_discipline_titlepage as
-select
-    m.thesis_id,
-    m.yr,
-    m.university,
-    d.discipline,
-    d.category,
-    d.flag
-from v_thesis_msc m
-join thesis_titlepage p on p.thesis_id = m.thesis_id
-join discipline_keyword d on d.keyword_norm = lower(trim(p.subject))
-where p.subject is not null;
+-- A title-page subject matches a keyword exactly, or begins with it at a word boundary:
+-- "civil engineering with specialization in structural design" is Byggingarverkfræði,
+-- "sustainable energy iceland school of energy" is Orkuverkfræði. The longest keyword
+-- wins, so "engineering management ..." is not read as the generic "engineering".
+with matched as (
+    select
+        m.thesis_id,
+        m.yr,
+        m.university,
+        d.discipline,
+        d.category,
+        d.flag,
+        row_number() over (
+            partition by m.thesis_id
+            order by length(d.keyword_norm) desc, d.priority, d.discipline
+        ) as rn
+    from v_thesis_msc m
+    join thesis_titlepage p on p.thesis_id = m.thesis_id
+    join discipline_keyword d
+      on lower(trim(p.subject)) = d.keyword_norm
+      or starts_with(lower(trim(p.subject)), d.keyword_norm || ' ')
+    where p.subject is not null
+)
+select thesis_id, yr, university, discipline, category, flag
+from matched
+where rn = 1;
 
 -- Where both signals exist, how often they agree -- and where they do not, what
 -- each one said. 990/1,031 agree; the appendix table in vidauki-titilsida.R reads
@@ -450,9 +484,103 @@ values
     4446, 'Fjármálaverkfræði', 'engineering',
     'closed/restricted PDF, no title page ever fetchable; keywords (Fjármál, Stjórnun, '
     'Bestun) are all topical, none name the study line. Human-confirmed. See issue #5.'
+),
+(
+    -- Title page generic ("MS in engineering") and the only keywords are the bare
+    -- "verkfræði" plus "klæðningar vega" (road pavements). Resolved from the advisor
+    -- suggestion: both advisors' own plurality is Byggingarverkfræði (Sigurdur
+    -- Erlingsson 25 of 27 theses, Thorsteinn Thorsteinsson 7 of 12).
+    23908, 'Byggingarverkfræði', 'engineering',
+    'generic title page, no specific keyword; advisor suggestion (both advisors '
+    'plurality Byggingarverkfræði) plus topic (road pavements). See issue #5.'
+),
+(
+    -- Keywords list Verkefnastjornun (position 2) before Rekstrarverkfraedi (3) and
+    -- Engineering management (6), so the keyword pass files it as professional. The
+    -- degree is an MSc in engineering management, i.e. Rekstrarverkfraedi: the thesis
+    -- topic (project prioritisation) is project-management-flavoured, but the programme is
+    -- engineering. Human-confirmed; 92 of 135 HR authors with an engineering-management /
+    -- Rekstrarverkfraedi keyword are on the government verkfraedingur list. The author has
+    -- not applied yet (thesis accepted 2026-06-12), so no licence to check.
+    53766, 'Rekstrarverkfræði', 'engineering',
+    'MSc in engineering management; keyword order made Verkefnastjórnun win. '
+    'Human-confirmed engineering degree. See issue #5.'
+),
+(
+    -- Title page reads "MSc thesis in Biomedical Engineering" (Heilbrigdisverkfraedi), but
+    -- titlepage_load left `subject` empty (it read junk into `deild`), and the only
+    -- keyword is the bare "verkfraedi". Human-confirmed from the title page.
+    50796, 'Heilbrigðisverkfræði', 'engineering',
+    'title page: MSc in Biomedical Engineering; title-page parser left subject NULL. '
+    'Human-confirmed. See issue #5.'
+),
+(
+    -- Title page says only "Master of Science in Engineering" (subject "Engineering", so
+    -- the generic discipline), and no Skemman keyword names the study line, but the topic
+    -- keywords (venture capital, econometric models of finance) are clearly financial
+    -- engineering. Human-confirmed; advisor Sverrir Olafsson agrees.
+    44748, 'Fjármálaverkfræði', 'engineering',
+    'generic title page; topic keywords are clearly financial engineering. '
+    'Human-confirmed. See issue #5.'
+),
+(
+    -- The PDF's font is garbled, so the parser cannot read the title page; a human read it:
+    -- "30 ECTS submitted to the Department of Engineering at Reykjavik University for the degree
+    -- of Master of Science in Electric Power Management". "Management", not "Engineering", and
+    -- the advisor (Hlynur Stefansson) supervises engineering-management theses, so
+    -- Rekstrarverkfraedi; Raforkuverkfraedi is the alternative if that title is read as an
+    -- electric-power programme. Topic: net-metering utility valuation in the Arctic.
+    50986, 'Rekstrarverkfræði', 'engineering',
+    'garbled PDF font; title page read by a human: MSc in Electric Power Management, Department '
+    'of Engineering. Advisor supervises engineering management. See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
+
+-- Niche label first, umbrella second. `discipline` reports what the title page (or, failing
+-- that, the keywords) says -- Mekatróník, Fjármálaverkfræði, Raforkuverkfræði -- and this table
+-- says which broader discipline each rolls up into, for comparing HI and HR (which name and
+-- split their programmes differently). A discipline with no row is its own umbrella.
+-- Judgment calls, revisit freely: Framkvæmdastjórnun is "industrial-engineering related or
+-- closely adjacent". At HI the Rafmagns- og tölvuverkfræði deild has three tracks
+-- (læknisfræðileg verkfræði = HR's Heilbrigðisverkfræði, rafmagnsverkfræði, tölvuverkfræði)
+-- and its MS lists renewable energy as a main track, hence both roll up to Rafmagnsverkfræði.
+--
+-- HI's MS programmes (all 120 ECTS), for reference when deciding umbrellas:
+--   Hugbúnaðarverkfræði: Almenn hugbúnaðarverkfræði | Nýsköpun og viðskiptaþróun | Netöryggi
+--   Iðnaðarverkfræði
+--   Reikniverkfræði
+--   Tölvunarfræði: Almenn tölvunarfræði | Máltækni | Netöryggi
+--   Vélaverkfræði: Vélaverkfræði | Endurnýjanleg orka - jarðhitaverkfræði
+--   Rafmagns- og tölvuverkfræði: incl. Endurnýjanleg orka - vistvæn orkuverkfræði as a main track
+--   Byggingarverkfræði: Mannvirkja- og jarðskjálftaverkfræði | Jarðtækni og samgönguverkfræði |
+--                       Endurnýjanleg orka - orkuverkfræði
+--   Umhverfisverkfræði: Umhverfisgæði | Vatnaverkfræði | Sjálfbær byggð og öruggar samgöngur |
+--                       Endurnýjanleg orka - orkuverkfræði
+-- (full list in config/hi_ms_programmes.yaml.) Renewable energy therefore has a track in four
+-- MS programmes across three engineering deilds (IVT, RT, UmBygg); Orkuverkfræði is a
+-- cross-cutting field, left as its own discipline (its 6 HI theses sit in IVT), not grouped.
+create table if not exists discipline_group
+(
+    discipline varchar,
+    umbrella   varchar,
+    note       varchar
+);
+
+create unique index if not exists discipline_group_pk on discipline_group (discipline);
+
+insert into discipline_group (discipline, umbrella, note) values
+('Fjármálaverkfræði',   'Iðnaðarverkfræði', 'a study line inside the industrial engineering department'),
+('Rekstrarverkfræði',   'Iðnaðarverkfræði', 'engineering management'),
+('Ákvarðanaverkfræði',  'Iðnaðarverkfræði', 'decision engineering'),
+('Framkvæmdastjórnun',  'Iðnaðarverkfræði', 'construction management; industrial-engineering related or adjacent'),
+('Mekatróník',          'Vélaverkfræði',    'mechatronics'),
+('Hátækniverkfræði',    'Vélaverkfræði',    'HR high-tech engineering'),
+('Raforkuverkfræði',    'Rafmagnsverkfræði', 'electric power engineering; HI: a track of Rafmagns- og tölvuverkfræði'),
+('Heilbrigðisverkfræði','Rafmagnsverkfræði', 'HI: læknisfræðileg verkfræði is a track of the single Rafmagns- og tölvuverkfræði deild'),
+('Máltækni',           'Tölvunarfræði',    'HI: Máltækni is a track of the Tölvunarfræði MS (with Almenn tölvunarfræði, Netöryggi)'),
+('Lífefnaverkfræði',    'Efnaverkfræði',    'biochemical engineering')
+on conflict (discipline) do update set umbrella = excluded.umbrella, note = excluded.note;
 
 -- The OFFICIAL discipline: what every other chapter, table and figure should read.
 -- Precedence is override > title page > keyword candidate -- the title page is the
@@ -464,29 +592,161 @@ on conflict (thesis_id) do update set
 -- in v_thesis_discipline_candidate (see issue #5: sort_order picks the wrong sibling
 -- keyword for a handful of theses) never reaches here -- it is a candidate-only problem.
 create or replace view v_thesis_discipline as
+with resolved as (
+    select
+        c.thesis_id,
+        c.yr,
+        c.university,
+        o.discipline as o_discipline, o.category as o_category,
+        -- A generic title page ("... degree of master of science in engineering", no study
+        -- line named) says less than a specific keyword (e.g. 5597: title page generic,
+        -- keywords Fjarmalaverkfraedi; Idnadarverkfraedi), so it yields to the keyword.
+        case when tp.discipline like '%(ótilgreind)' and c.discipline is not null
+                  and c.discipline not like '%(ótilgreind)'
+             then null else tp.discipline end as tp_discipline,
+        case when tp.discipline like '%(ótilgreind)' and c.discipline is not null
+                  and c.discipline not like '%(ótilgreind)'
+             then null else tp.category end   as tp_category,
+        c.discipline as c_discipline, c.category as c_category,
+        coalesce(tp.flag, c.flag) as flag
+    from v_thesis_discipline_candidate c
+    left join v_thesis_discipline_titlepage tp on tp.thesis_id = c.thesis_id
+    left join discipline_override o on o.thesis_id = c.thesis_id
+)
 select
-    c.thesis_id,
-    c.yr,
-    c.university,
-    coalesce(o.discipline, tp.discipline, c.discipline)                    as discipline,
-    coalesce(o.category, tp.category, c.category)                         as category,
-    coalesce(o.category, tp.category, c.category) = 'engineering'         as is_engineering,
-    coalesce(o.category, tp.category, c.category) in ('engineering', 'professional')
+    thesis_id,
+    yr,
+    university,
+    coalesce(o_discipline, tp_discipline, c_discipline)                    as discipline,
+    coalesce(g.umbrella, coalesce(o_discipline, tp_discipline, c_discipline))
+                                                                            as umbrella,
+    coalesce(o_category, tp_category, c_category)                          as category,
+    coalesce(o_category, tp_category, c_category) = 'engineering'          as is_engineering,
+    coalesce(o_category, tp_category, c_category) in ('engineering', 'professional')
                                                                             as in_scope_broad,
-    coalesce(o.discipline, tp.discipline, c.discipline) is null           as unclassified,
+    coalesce(o_discipline, tp_discipline, c_discipline) is null            as unclassified,
     case
-        when o.discipline is not null  then 'override'
-        when tp.discipline is not null then 'titlepage'
-        when c.discipline is not null  then 'keyword'
+        when o_discipline is not null  then 'override'
+        when tp_discipline is not null then 'titlepage'
+        when c_discipline is not null  then 'keyword'
         else null
     end                                                                    as discipline_source,
     -- No override column for this -- an override always names a specific discipline
     -- and a human already looked at the thesis, so the flag's job (flagging something
     -- worth a second look) is already done for those rows.
-    coalesce(tp.flag, c.flag) = 'teacher_education'                       as is_teacher_education
-from v_thesis_discipline_candidate c
-left join v_thesis_discipline_titlepage tp on tp.thesis_id = c.thesis_id
-left join discipline_override o on o.thesis_id = c.thesis_id;
+    flag = 'teacher_education'                                             as is_teacher_education
+from resolved r
+left join discipline_group g
+       on g.discipline = coalesce(r.o_discipline, r.tp_discipline, r.c_discipline);
+
+-- ---------------------------------------------------------------------------
+-- Advisor-based discipline suggestion (TODO.md idea)
+--
+-- For a thesis with no keyword match, no fetchable title page, and no
+-- override -- i.e. still `unclassified` above, or resolved only to a generic
+-- `(ótilgreind)` discipline (e.g. 23908) -- an advisor's own supervision
+-- history is a signal: what discipline do their *other* population theses
+-- mostly sit in? This is a human-reviewed suggestion, not a
+-- v_thesis_discipline tier: a thesis can have advisors from different
+-- departments, so it is a plurality vote across advisors, not a certain
+-- answer. Read v_thesis_discipline_advisor_suggestion, look at `advisors`,
+-- and either add a discipline_override row or a discipline_keyword entry --
+-- whichever the review shows is right. See TODO.md and issue #5.
+--
+-- "Other theses" means other population master's theses this advisor
+-- supervised, already resolved by keyword/titlepage/override
+-- (v_thesis_discipline) -- not bachelor's theses or years outside the
+-- analysis window, neither of which get a discipline row to count here.
+
+-- Per advisor, how many of their already-resolved population theses fall
+-- into each discipline.
+create or replace view v_advisor_discipline_history as
+select
+    tp.person_id,
+    p.name as advisor_name,
+    d.discipline,
+    d.category,
+    count(*) as thesis_count
+from thesis_people tp
+join people p on p.id = tp.person_id
+join v_thesis_discipline d on d.thesis_id = tp.thesis_id
+where tp.role = 'advisor'
+  and d.discipline is not null
+  -- a generic discipline says nothing about the advisor's field
+  and d.discipline not like '%(ótilgreind)'
+group by tp.person_id, p.name, d.discipline, d.category;
+
+-- Each advisor's own plurality discipline: the top by thesis_count. Ties are
+-- broken alphabetically -- arbitrary, so `advisor_tied` flags it for a human
+-- reviewing a suggestion, rather than silently picking one.
+create or replace view v_advisor_discipline_plurality as
+with ranked as (
+    select
+        *,
+        sum(thesis_count) over (partition by person_id) as advisor_total,
+        max(thesis_count) over (partition by person_id) as max_count,
+        row_number() over (
+            partition by person_id order by thesis_count desc, discipline
+        ) as rn
+    from v_advisor_discipline_history
+)
+select
+    person_id,
+    advisor_name,
+    discipline,
+    category,
+    thesis_count,
+    advisor_total,
+    (count(*) filter (where thesis_count = max_count)
+        over (partition by person_id)) > 1                as advisor_tied
+from ranked
+where rn = 1;
+
+-- One suggested discipline per still-unclassified thesis, from a plurality
+-- vote across its advisors' own top disciplines.
+create or replace view v_thesis_discipline_advisor_suggestion as
+with thesis_advisors as (
+    select tp.thesis_id, tp.person_id, p.name as advisor_name
+    from thesis_people tp
+    join people p on p.id = tp.person_id
+    join v_thesis_discipline u on u.thesis_id = tp.thesis_id
+        and (u.unclassified or u.discipline like '%(ótilgreind)')
+    where tp.role = 'advisor'
+),
+candidates as (
+    select
+        ta.thesis_id,
+        ap.discipline,
+        ap.category,
+        count(distinct ta.person_id)        as advisor_votes,
+        sum(ap.thesis_count)                as supporting_theses,
+        array_agg(distinct ta.advisor_name) as advisors,
+        bool_or(ap.advisor_tied)            as any_advisor_tied
+    from thesis_advisors ta
+    join v_advisor_discipline_plurality ap on ap.person_id = ta.person_id
+    group by ta.thesis_id, ap.discipline, ap.category
+),
+ranked as (
+    select
+        *,
+        row_number() over (
+            partition by thesis_id
+            order by advisor_votes desc, supporting_theses desc, discipline
+        ) as rn,
+        count(*) over (partition by thesis_id) as n_candidates
+    from candidates
+)
+select
+    thesis_id,
+    discipline as suggested_discipline,
+    category   as suggested_category,
+    advisor_votes,
+    supporting_theses,
+    advisors,
+    any_advisor_tied,
+    n_candidates > 1 as advisors_disagree
+from ranked
+where rn = 1;
 
 
 -- ---------------------------------------------------------------------------
@@ -524,6 +784,8 @@ insert into discipline_unit values
 ('Háskóli Íslands', 'Tölvunarfræði',       'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Hugbúnaðarverkfræði', 'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Fjármálaverkfræði',   'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
+('Háskóli Íslands', 'Mekatróník',          'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
+('Háskóli Íslands', 'Ákvarðanaverkfræði',  'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Reikniverkfræði',     'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Gagnavísindi',        'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
 ('Háskóli Íslands', 'Máltækni',            'IVT', 'Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild', true),
@@ -532,10 +794,14 @@ insert into discipline_unit values
 ('Háskóli Íslands', 'Framkvæmdastjórnun',  'UMBYGG', 'Umhverfis- og byggingarverkfræðideild', true),
 ('Háskóli Íslands', 'Skipulagsfræði og samgöngur', 'UMBYGG', 'Umhverfis- og byggingarverkfræðideild', true),
 ('Háskóli Íslands', 'Rafmagnsverkfræði',   'RT', 'Rafmagns- og tölvuverkfræðideild', true),
+('Háskóli Íslands', 'Raforkuverkfræði',    'RT', 'Rafmagns- og tölvuverkfræðideild', true),
 ('Háskóli Íslands', 'Heilbrigðisverkfræði','RT', 'Rafmagns- og tölvuverkfræðideild', true),
 ('Háskóli Íslands', 'Tölvuverkfræði',      'RT', 'Rafmagns- og tölvuverkfræðideild', true),
 ('Háskóli Íslands', 'Stærðfræði',          'RAUN', 'Raunvísindadeild', false),
 ('Háskóli Íslands', 'Eðlisfræði',          'RAUN', 'Raunvísindadeild', false),
+-- Engineering Physics: an engineering degree (its graduates get the verkfraedingur title, e.g.
+-- 27933) hosted by the physical-sciences department: engineering scope, but not an engineering deild.
+('Háskóli Íslands', 'Verkfræðileg eðlisfræði', 'RAUN', 'Raunvísindadeild', true),
 ('Háskóli Íslands', 'Efnafræði',           'RAUN', 'Raunvísindadeild', false),
 ('Háskóli Íslands', 'Tölfræði',            'RAUN', 'Raunvísindadeild', false),
 ('Háskóli Íslands', 'Jarðfræði',           'JARD', 'Jarðvísindadeild', false),
@@ -543,6 +809,9 @@ insert into discipline_unit values
 ('Háskóli Íslands', 'Jarðvísindi',         'JARD', 'Jarðvísindadeild', false),
 ('Háskóli Íslands', 'Jarðefnafræði',       'JARD', 'Jarðvísindadeild', false),
 ('Háskóli Íslands', 'Líffræði',            'LIF', 'Líf- og umhverfisvísindadeild', false),
+-- 18738 and six more: Faculty of Life and Environmental Sciences (human-confirmed; the advisor,
+-- tourism studies, is in the same faculty).
+('Háskóli Íslands', 'Landupplýsinga- og umhverfisfræði', 'LIF', 'Líf- og umhverfisvísindadeild', false),
 ('Háskóli Íslands', 'Lífefnafræði',        'LIF', 'Líf- og umhverfisvísindadeild', false),
 ('Háskóli Íslands', 'Lífupplýsingafræði',  'LIF', 'Líf- og umhverfisvísindadeild', false),
 ('Háskóli Íslands', 'Líftækni',            'LIF', 'Líf- og umhverfisvísindadeild', false),
@@ -607,15 +876,18 @@ select
                 when d.discipline = 'Íþróttavísindi'                  then 'Íþróttafræði'
                 when m.study_category like '%Tölvunarfræðideild%'     then 'Tölvunarfræðideild'
                 when d.category = 'engineering'                       then 'Verkfræðideild'
+                -- run by HR's Department of Engineering (per its title pages), though science
+                when d.discipline = 'Sjálfbær orkuvísindi'            then 'Verkfræðideild'
                 else 'Annað'
             end
         else coalesce(u.unit_label, '(óflokkað)')
     end as unit_label,
     case
         when d.university = 'Háskólinn í Reykjavík'
-            then m.study_category not like 'Dip %'
+            then coalesce(m.study_category, '') not like 'Dip %'  -- NULL for old theses
                  and coalesce(d.discipline, '') not in ('Verkefnastjórnun', 'Íþróttavísindi')
-                 and (d.category = 'engineering' or m.study_category like '%Tölvunarfræðideild%')
+                 and (d.category = 'engineering'
+                      or coalesce(m.study_category, '') like '%Tölvunarfræðideild%')
         else coalesce(u.in_core, false)
     end as in_core
 from v_thesis_discipline d

@@ -1,0 +1,92 @@
+# HÍ's MS programmes and their tracks (kjörsvið / leiðir), as supplied by a human domain
+# expert from the university's programme catalogue. Reference for deciding discipline
+# umbrellas (scripts/discipline_map.sql, discipline_group) and department crosswalks
+# (discipline_unit); nothing reads this file yet.
+#
+# VoN (Verkfræði- og náttúruvísindasvið) has six deildir: Jarðvísindadeild; Iðnaðarverkfræði-,
+# vélaverkfræði- og tölvunarfræðideild; Líf- og umhverfisvísindadeild; Rafmagns- og
+# tölvuverkfræðideild; Raunvísindadeild; Umhverfis- og byggingarverkfræðideild. The lists below are
+# today's; a programme may have sat in another deild in earlier years.
+#
+# All are MS, 120 ECTS. `deild` is filled only where the expert stated it or the crosswalk
+# already records it; null means "not stated" -- do not guess.
+programmes:
+  - name: Hugbúnaðarverkfræði
+    deild: Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild
+    tracks: [Almenn hugbúnaðarverkfræði, Nýsköpun og viðskiptaþróun, Netöryggi]
+  - name: Iðnaðarverkfræði
+    deild: Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild
+    tracks: []
+  - name: Reikniverkfræði
+    deild: Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild
+    tracks: []
+  - name: Tölvunarfræði
+    deild: Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild
+    tracks: [Almenn tölvunarfræði, Máltækni, Netöryggi]
+  - name: Vélaverkfræði
+    deild: Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild
+    tracks: [Vélaverkfræði, Endurnýjanleg orka - jarðhitaverkfræði]
+  - name: Rafmagns- og tölvuverkfræði
+    deild: Rafmagns- og tölvuverkfræðideild
+    # One deild. The BS has three tracks (Læknisfræðileg verkfræði = HR's Heilbrigðisverkfræði,
+    # Rafmagnsverkfræði, Tölvuverkfræði); the MS lists renewable energy as a main track.
+    tracks: [Endurnýjanleg orka - vistvæn orkuverkfræði, Læknisfræðileg verkfræði, Rafmagnsverkfræði, Tölvuverkfræði]
+  - name: Byggingarverkfræði
+    deild: Umhverfis- og byggingarverkfræðideild
+    tracks: [Mannvirkja- og jarðskjálftaverkfræði, Jarðtækni og samgönguverkfræði, Endurnýjanleg orka - orkuverkfræði]
+  - name: Umhverfisverkfræði
+    deild: Umhverfis- og byggingarverkfræðideild
+    tracks: [Umhverfisgæði, Vatnaverkfræði, Sjálfbær byggð og öruggar samgöngur, Endurnýjanleg orka - orkuverkfræði]
+  - name: Ferðamálafræði
+    deild: Líf- og umhverfisvísindadeild   # advisor's home (tourism studies), stated by the expert
+    tracks: [Ferðamálafræði, Ferðamál norðurslóða, Viðskipti]
+  - name: Landfræði
+    deild: Líf- og umhverfisvísindadeild   # 18738's Landupplýsinga- og umhverfisfræði, per the expert
+    tracks: [Landfræði, Náttúruvá, Eyjar og sjálfbærni]
+  - name: Líffræði
+    deild: Líf- og umhverfisvísindadeild
+    tracks: [Líffræði, Sjávar- og vatnalíffræði]
+  - name: Jarðeðlisfræði
+    deild: Jarðvísindadeild
+    tracks: [Jarðeðlisfræði, Endurnýjanleg orka - jarðeðlisfræði]
+  - name: Jarðfræði
+    deild: Jarðvísindadeild
+    tracks: [Jarðfræði, Jarðefnafræði - bergfræði, Jöklajarðfræði, Eldfjallafræði, Endurnýjanleg orka - jarðefnafræði]
+  - name: Jarðvísindi
+    deild: Jarðvísindadeild
+    tracks: []
+  - name: Eðlisfræði
+    deild: Raunvísindadeild
+    tracks: [Almenn eðlisfræði, Kennileg eðlisfræði]
+  - name: Efnafræði
+    deild: Raunvísindadeild
+    tracks: []
+  - name: Gagnagreining (viðbótarpróf á meistarastigi, 60 ECTS)
+    deild: Raunvísindadeild
+    tracks: []
+  - name: Gagnavísindi
+    deild: Raunvísindadeild
+    tracks: []
+  - name: Stærðfræði
+    deild: Raunvísindadeild
+    tracks: [Algebra, Stærðfræðigreining, Líkindafræði, Stærðfræðileg eðlisfræði]
+  - name: Tölfræði
+    deild: Raunvísindadeild
+    tracks: []
+  - name: Verkfræðileg eðlisfræði
+    deild: Raunvísindadeild   # an engineering degree hosted here (see discipline_unit)
+    tracks: []
+  - name: Lífefna- og sameindalíffræði
+    deild: Líf- og umhverfisvísindadeild   # grouped there in the expert's list
+    tracks: []
+  - name: Lífupplýsingafræði
+    deild: Líf- og umhverfisvísindadeild   # grouped there in the expert's list
+    tracks: []
+  - name: Sjálfbær framleiðsla í lagareldi (SPA)
+    deild: Líf- og umhverfisvísindadeild   # grouped there in the expert's list
+    tracks: []
+
+# Observation for the umbrella layer: renewable energy is a track in four engineering MS
+# programmes (Véla-, Rafmagns- og tölvu-, Bygginga-, Umhverfisverkfræði -- three deildir: IVT, RT,
+# UmBygg) and in two Jarðvísindadeild ones (jarðeðlisfræði, jarðefnafræði), so `Orkuverkfræði` is
+# a cross-cutting field, not a home -- left ungrouped in discipline_group.

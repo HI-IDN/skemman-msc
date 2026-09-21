@@ -31,6 +31,10 @@ select
 -- degree_level = 'master' is the classification metadata-load and files-load
 -- settle between them: OAI's dc:type, and xoai's dc.type.degree where OAI said
 -- nothing. Records neither source names are not in the population.
+--
+-- type = 'Thesis' leaves out what is filed as a research project, a report or
+-- a staff article, even where Skemman also labels it Master's: the collection
+-- is the curator's decision, dc:type the submitter's.
 create or replace view v_thesis_msc as
 select
     t.id                   as thesis_id,
@@ -55,4 +59,5 @@ from thesis t
 join thesis_metadata m on m.thesis_id = t.id
 cross join analysis_period p
 where m.degree_level = 'master'
+  and m.type = 'Thesis'
   and year(t.date_accepted) between p.year_start and p.year_end;

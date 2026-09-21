@@ -17,7 +17,12 @@ create table if not exists thesis_metadata
     abstract_is       varchar,
     abstract_en       varchar,
     degree_level      varchar,
-    thesis_type       varchar,
+    -- 'Thesis', 'Report' or 'Article', from the collection the item is filed
+    -- in (the `collections:` block of config/collections.yaml). The level of a
+    -- thesis is degree_level.
+    type              varchar,
+    -- The collections the item is filed in, as handles: '1946/2070'.
+    collection        varchar,
     sponsor           varchar,
     note              varchar,
     related_url       varchar,
@@ -28,7 +33,6 @@ create table if not exists thesis_metadata
     university        varchar,
     faculty           varchar,
     study_category    varchar,
-    thesis_type_label varchar,
     -- dc.type.degree as xoai states it: "Master's",
     -- "Undergraduate diploma", "Doctoral". degree_level is the
     -- normalized form; this keeps the two diplomas apart.

@@ -51,3 +51,13 @@ where f.role = 'primary'
   and f.access is not null
   and f.access <> 'Opinn'
 order by opens nulls last, f.thesis_id;
+
+
+select degree_level, count(*) from thesis_metadata group by degree_level;
+select type, degree_level, count(*) from thesis_metadata group by all order by all;
+
+-- Theses with no level: neither dc:type nor the collection names one.
+select thesis_id, collection, title_is, title_en
+from thesis_metadata
+where type = 'Thesis' and degree_level is null
+order by collection, thesis_id;

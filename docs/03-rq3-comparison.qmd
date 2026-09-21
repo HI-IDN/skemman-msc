@@ -14,9 +14,9 @@ Undirspurningar:
 - Er munur á rannsóknarviðfangsefnum?
 
 ::: {.callout-note title="Að hluta svarað"}
-Fyrsta undirspurningin er svöruð í [RQ1](01-rq1-volume.qmd). Hinar tvær bíða
-greinaflokkunar ([RQ2](02-rq2-disciplines.qmd)) og efnisgreiningar
-([RQ6](06-rq6-themes.qmd)).
+Fyrsta undirspurningin er svöruð í [RQ1](01-rq1-volume.qmd) og önnur í
+[RQ2](02-rq2-disciplines.qmd), nú þegar greinaflokkun er lokið. Sú þriðja —
+rannsóknarviðfangsefni — bíður enn efnisgreiningar ([RQ6](06-rq6-themes.qmd)).
 :::
 
 ## Munur á fjölda
@@ -30,15 +30,26 @@ greinaflokkunar ([RQ2](02-rq2-disciplines.qmd)) og efnisgreiningar
 #| file: ../R/plots/rq3-share.R
 ```
 
+## Munur á dreifingu fræðigreina
+
+Greinaflokkunin úr [RQ2](02-rq2-disciplines.qmd) gerir skólana samanburðarhæfa:
+
+```{r rq3-flokkar}
+#| file: ../R/tables/rq2-flokkar.R
+```
+
+```{r rq3-throun}
+#| fig-cap: Fjöldi verkfræðiritgerða á ári, HÍ og HR.
+#| file: ../R/plots/rq2-throun.R
+```
+
+HR er stærri framleiðandi verkfræðiritgerða en HÍ nánast allt tímabilið, og munurinn
+hefur breikkað. Athugið að skólarnir eru samt ekki fyllilega sambærilegir innbyrðis: HR
+telur tæknifræði og tölvunarfræði með í `Verkfræði`-flokknum, en hjá HÍ blandast
+náttúruvísindi inn í heildarsafnið sem `category` skilur frá — sjá deildaskiptinguna í
+RQ2 fyrir smáatriðin.
+
 ## Það sem vantar
 
-Til að svara undirspurningum tvö og þrjú þarf:
-
-- **Greinaflokkun** svo dreifing fræðigreina sé samanburðarhæf milli skóla. Sjá
-  [RQ2](02-rq2-disciplines.qmd).
-- **Efnisgreiningu útdrátta** svo bera megi saman rannsóknarviðfangsefni. Sjá
-  [RQ6](06-rq6-themes.qmd).
-
-Athugið að skólarnir eru ekki fyllilega sambærilegir: HR telur tæknifræði og
-tölvunarfræði með, en hjá HÍ blandast náttúruvísindi inn í tölurnar. Samanburður án
-greinaflokkunar mælir því að hluta til mismunandi þýði.
+Til að svara þriðju undirspurningunni þarf **efnisgreiningu útdrátta** svo bera megi
+saman rannsóknarviðfangsefni. Sjá [RQ6](06-rq6-themes.qmd).

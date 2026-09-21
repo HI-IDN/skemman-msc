@@ -51,7 +51,8 @@ ekki HTML-söfnun. Hún er gagnleg þegar þáttarinn batnar og sömu XML-skrár
 - `dc:title` fyrir `title_is` eða `title_en`
 - `dc:description` fyrir `abstract_is`, `abstract_en` eða `note`
 - `dc:subject` fyrir `raw_keywords`, `keywords` og `thesis_keywords`
-- `dc:type` fyrir `degree_level` og `thesis_type`
+- `dc:type` fyrir `degree_level`
+- `setSpec` í haus færslunnar fyrir `collection`, og með því `type`
 - `dc:contributor` fyrir `institution` og `university`
 - `dc:relation` fyrir `related_url`
 
@@ -86,7 +87,8 @@ erDiagram
         VARCHAR abstract_is
         VARCHAR abstract_en
         VARCHAR degree_level
-        VARCHAR thesis_type
+        VARCHAR type
+        VARCHAR collection
         VARCHAR sponsor
         VARCHAR note
         VARCHAR related_url
@@ -97,7 +99,6 @@ erDiagram
         VARCHAR university
         VARCHAR faculty
         VARCHAR study_category
-        VARCHAR thesis_type_label
     }
     people {
         BIGINT id PK
@@ -149,15 +150,16 @@ erDiagram
 | --- | --- | --- |
 | `title_is`, `title_en` | `dc:title` | Íslenska og enska eru greindar að með þumalfingursreglu. |
 | `abstract_is`, `abstract_en` | `dc:description` | Íslenska útdrætti má stundum draga út úr forskeyttum lýsingum. |
-| `degree_level` | `dc:type` | Staðlað í `bachelor`, `master` eða `phd`. |
-| `thesis_type` | `dc:type` | Meistararaðir eru hreinsaðar af diplómasuði þar sem hægt er. |
+| `degree_level` | `dc:type`, annars safnið | Staðlað í `bachelor`, `master`, `phd` eða `diploma`. Þar sem `dc:type` nefnir enga gráðu fyllir safnið í: doktorssöfnin skrá sumar ritgerðir sem „Book“. |
+| `type` | safnið | `Thesis`, `Report` eða `Article`. Rannsóknarverkefni og Skýrslur eru `Report`, Rit starfsmanna `Article`, allt annað `Thesis`. Skilgreint í `collections:` í `config/collections.yaml`, því `dc:type` Skemmunnar blandar saman tegund verks og gráðu. |
+| `collection` | `setSpec` | Safnið sem færslan er skráð í, sem handfang (`1946/2070`). Sé hún í fleiri en einu eru þau aðskilin með `; `. |
 | `sponsor` | ekki fyllt úr OAI-PMH | Frátekið ef sú uppspretta verður sótt síðar. |
 | `note` | valin `dc:description` gildi | Endurtekinn texti er fjarlægður. |
 | `related_url` | `dc:relation` | Geymt sem texti. |
 | `raw_keywords` | `dc:subject` | Upprunalegur samsettur texti eftir skiptingu og afritahreinsun. |
 | `pdf_url` | ekki fyllt úr OAI-PMH | Slóðir á PDF-skjöl koma úr `thesis_file`. |
 | `university`, `institution` | `dc:contributor` | Oft heiti háskóla eða stofnunar. |
-| `school`, `study_category`, `thesis_type_label` | ekki fyllt úr OAI-PMH | Skemman birtir þetta á item-síðum, en það er ekki lengur sótt sem hrátt HTML. |
+| `school`, `study_category` | ekki fyllt úr OAI-PMH | Skemman birtir þetta á item-síðum, en það er ekki lengur sótt sem hrátt HTML. |
 | `faculty` | ekki fyllt út | Frátekið fyrir seinni leiðslu, líklega úr PDF-texta eða leitarorðum á borð við `*deild` eða `*department`. |
 
 Fyrir grunn sem var byggður fyrir þessa breytingu þarf að hreinsa gömlu afrituðu gildin einu sinni:
@@ -252,7 +254,7 @@ Raðirnar tvær sýna fjóra annmarka sem hafa bein áhrif á rannsóknarspurnin
    bitnar á talningu endurtekinna samstarfstengsla í
    [RQ7](07-rq7-knowledge-transfer.qmd).
 
-`faculty` og `thesis_type_label` eru tóm í báðum, eins og í grunninum öllum. Á móti sést
+`faculty` er tómt í báðum, eins og í grunninum öllum. Á móti sést
 sameiningin virka: `person_id` 56 er sami leiðbeinandinn í báðum ritgerðum, fimmtán árum
 á milli, með eina röð í `people`.
 :::

@@ -25,6 +25,19 @@ handles:
   HI: "1946/2064"
   HR: "1946/6870"
 
+# What each collection holds, where Skemman's dc:type does not say it. Every
+# record filed in a collection listed with a `type` is that type; every other
+# record is a Thesis, and its level is degree_level. `degree` fills
+# degree_level where dc:type names none: the doctoral collections file some
+# theses as "Book". Keys are collection handles, the number in its URL.
+collections:
+  "1946/2178": {type: Report}    # Rannsóknarverkefni - Verkfræði- og náttúruvísindasvið
+  "1946/9907": {type: Report}    # Skýrslur - Verkfræði- og náttúruvísindasvið
+  "1946/7633": {type: Article}   # Rit starfsmanna - Verkfræði- og náttúruvísindasvið
+  "1946/2105": {degree: phd}     # Doktorsritgerðir - Verkfræði- og náttúruvísindasvið
+  "1946/12147": {degree: phd}    # PhD (-2016) - HR Tæknisvið
+  "1946/4444": {degree: phd}     # Doktorsritgerðir - Auðlindadeild, LbhÍ
+
 # What the analysis counts. The harvest takes every year Skemman has; these
 # choose which of them the population covers -- v_thesis_msc, built by
 # scripts/population.sql in the postprocessing step -- and with it every figure

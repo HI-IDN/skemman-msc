@@ -90,6 +90,17 @@ field_colors <- c(
   "Náttúruvísindi" = "#2DD2C0"
 )
 
+# All five discipline categories (flokkaheiti below), for breakdowns that mix
+# more than engineering-vs-science -- HR's tree, where MPM, íþróttafræði and
+# iðnfræði share the svið with engineering.
+flokkur_colors <- c(
+  "Verkfræði"      = "#10099F",
+  "Fagnám"         = "#FAC55B",
+  "Iðnfræði"       = "#FFA05F",
+  "Náttúruvísindi" = "#2DD2C0",
+  "Utan sviðs"     = "#FC8484"
+)
+
 theme_set(
   theme_minimal(base_size = 13) +
     theme(
@@ -169,39 +180,6 @@ masters_by_year <- function() {
 #' Newest thesis in the population, which dates the "final year is incomplete"
 #' caveat.
 latest_thesis <- q("select max(date_accepted) as d from v_thesis_msc", quiet = TRUE)$d[1]
-
-#' Study lines the keywords give for one school, as a table.
-#'
-#' Used by both appendix tables, HÍ and HR, so it lives here rather than in
-#' either script.
-namsleidir <- function(uni, caption, raða = c("fjölda", "námsleið", "flokk")) {
-  raða <- match.arg(raða)
-  require_table("v_thesis_unit_named")
-
-  tafla <- q(sprintf("
-    select discipline as namsleid,
-           category   as flokkur,
-           count(*)   as fjoldi
-    from v_thesis_unit_named
-    where discipline is not null
-      and university_short = '%s'
-    group by 1, 2
-  ", uni), quiet = TRUE) |>
-    mutate(
-      flokkur = coalesce(unname(flokkaheiti[flokkur]), flokkur),
-      flokkur = factor(flokkur, levels = unname(flokkaheiti))
-    )
-
-  tafla <- switch(raða,
-    "fjölda"   = arrange(tafla, desc(fjoldi)),
-    "námsleið" = arrange(tafla, namsleid),
-    "flokk"    = arrange(tafla, flokkur, desc(fjoldi))
-  )
-
-  tafla |>
-    rename(Námsleið = namsleid, Flokkur = flokkur, Fjöldi = fjoldi) |>
-    knitr::kable(caption = caption)
-}
 
 #' Run every script in R/plots, R/tables and R/text in turn.
 #'

@@ -5,33 +5,25 @@
 source("../R/global.R")
 ```
 
-Áður en skólarnir eru bornir saman þarf að svara því hvað telst verkfræði og hvað er
-sambærilegt milli þeirra. Þessi viðauki gerir það.
+Þessi bók ber saman meistaranám í verkfræði og skyldum greinum milli tveggja skóla —
+**Háskóla Íslands (HÍ)** og **Háskólans í Reykjavík (HR)**, skammstafanirnar sem kóðinn og
+töflurnar nota upp frá þessu. En hvorugur skólinn skilar hreinu verkfræðisafni úr
+Skemmunni: söfnin sem sótt eru blandast öðrum greinum, í ólíkum mæli og af ólíkum ástæðum
+hjá hvorum skóla. Áður en tölur af tveimur skólum eru bornar saman þarf því að svara
+tveimur spurningum í röð: hvernig eru gögnin sótt til að byrja með, og hvað af því sem
+sækist telst yfirhöfuð til verkfræði og skyldra greina? Þessi viðauki svarar hvoru tveggja.
 
-## Bæði söfnin eru blönduð
+**Í stuttu máli:** gögnin eru sótt af Skemmu með `skemman-harvester`, keyrslan er
+`scripts/rebuild.sh`, og flokkunarrökin sem afmarka þýðið eru í
+`scripts/discipline_map.sql`. Kóðinn er heimildin — þessi viðauki útskýrir rökin á bak við
+ákvarðanirnar sem hann tekur.
 
-Skemman geymir hvorki deild né námsleið sem sjálfstætt gagn — `faculty` er tómt í öllum
-færslum — og hvorugur skólinn skilar hreinu verkfræðisafni. Söfnin blanda saman
-námsleiðum, bara í ólíkum mæli:
+## Hvernig gögnin eru sótt
 
-- **HÍ** setur allt meistarastigið í einn flokk,
-  `Meistaraprófsritgerðir - Verkfræði- og náttúruvísindasvið`, þar sem náttúruvísindin eru
-  á stærð við verkfræðina.
-- **HR** merkir deildina í `study_category`, en stærsta safnið er
-  `MEd/MPM/MSc Verkfræðideild ... og íþróttafræðideild -2019` — íþróttafræðin er hluti af
-  sama safni og þarf að skerast frá, ásamt orkuvísindum og verkefnastjórnun.
-
-Hvorugt safnið er því hægt að taka óbreytt. Það þarf skipulagða flokkun á námsleiðum áður
-en hægt er að draga fram þær ritgerðir sem eiga við, og hún er í
-`scripts/discipline_map.sql`: `discipline_keyword` varpar leitarorðum á greinar,
-`discipline_unit` varpar greinum HÍ á deildir, og `v_thesis_unit` sameinar hvort tveggja
-við reglur HR.
-
-## Hvaðan gögnin koma
-
-Skemman er stigskipt: háskóli, svið, og loks safn á borð við deild eða námsleið. Leitin er
-gerð á **sviðsstiginu**, eitt handfang á skóla og eitt ár í senn, og hvert safn skilar sér
-í `study_category`.
+Skemman er stigskipt: háskóli, svið, og loks safn á borð við deild eða námsleið. Hvorugur
+skólinn skráir deild eða námsleið sem sjálfstætt gagn á færslustigi — `faculty` er tómt í
+öllum færslum í Skemmunni — svo leitin verður að fara fram á **sviðsstiginu**, eitt
+handfang á skóla og eitt ár í senn:
 
 | Stig | HÍ | HR |
 | --- | --- | --- |
@@ -40,19 +32,42 @@ gerð á **sviðsstiginu**, eitt handfang á skóla og eitt ár í senn, og hver
 | safn | `study_category` | `study_category` |
 
 Handföngin eru í `config/collections.yaml`, ásamt `request_delay_seconds` sem heldur
-söfnuninni innan velsæmis. `skemman oai-pmh` úr `skemman-harvester/` er keyrt fyrir hvort
-handfang, frá upphafi Skemmunnar til yfirstandandi árs, og `skemman metadata-load` sækir
-svo hverja færslu fyrir sig. Fyrstu meistararitgerðirnar í þessum söfnum eru frá
-2007–2008; byggingin nær til júní 2026.
+söfnuninni innan velsæmis. Fyrstu meistararitgerðirnar í þessum söfnum eru frá 2007–2008;
+byggingin nær til júní 2026.
 
-Engin árasía er lögð á tölurnar í þessum viðauka — hann lýsir safninu eins og það er.
-Tímaafmörkun kemur síðar, þegar sían sjálf liggur fyrir.
+Sóknin sjálf gerist í fjórum áföngum, hver keyranlegur stakur:
 
-Það er á sviðsstiginu sem munurinn á skólunum kemur fram, en hann er stigsmunur en ekki
-eðlismunur. Tæknisvið HR er að miklu leyti innan þýðisins en ekki öllu — íþróttafræði,
-orkuvísindi og verkefnastjórnun fylgja með. Verkfræði- og náttúruvísindasvið HÍ er miklu
-blandaðra, þar sem náttúruvísindin eru á stærð við verkfræðina. Hvort tveggja verður að
-skerast frá eftir á.
+```bash
+scripts/rebuild.sh --preprocessing    # sækir af Skemmu: færslur, skráalistar, titilsíður
+scripts/rebuild.sh --dataprocessing   # les úr skyndiminni sem þegar er á diski, ekkert net
+scripts/rebuild.sh --postprocessing   # þýðið og flokkunin (discipline_map.sql)
+scripts/rebuild.sh --visualise        # hver mynd í R/plots/, sem PNG og eina PDF-skrá
+```
+
+Undir hettunni er þetta verkfærið `skemman-harvester`: `oai-pmh` les hvert handfang í gegnum
+Skemmunnar eigin OAI-PMH viðmót (þar verður til hvaða ritgerð er yfirhöfuð til),
+`metadata-load` endurspilar skyndiminnið í töflurnar án nets, `files-load` sækir
+skráalistann og hvort PDF-skjal er opið eða lokað, og `titlepage-load` les fyrstu síður
+hverrar opinnar PDF-skrár og les gráðuna beint af titilsíðunni — óháð leitarorðunum, sem
+kemur við sögu síðar í þessum viðauka. Hvert skref er endurkeyranlegt og sækir aðeins það
+sem vantar — sjá [skemman-harvester/README.md](https://github.com/HI-IDN/skemman-harvester)
+fyrir smáatriðin.
+
+Engin árasía er lögð á tölurnar í þessum kafla — hann lýsir söfnunum eins og þau eru sótt.
+Tímaafmörkun kemur í næsta kafla, þegar sían sjálf liggur fyrir.
+
+## Söfnin blandast öðrum greinum
+
+Hvorugt safnið er hreint verkfræðisafn, bara á ólíkan hátt:
+
+- **HÍ** setur allt meistarastigið á sviðinu í einn flokk,
+  `Meistaraprófsritgerðir - Verkfræði- og náttúruvísindasvið`. Náttúruvísindin —
+  jarðvísindi, líffræði, eðlisfræði, stærðfræði og fleiri — eru þar á stærð við
+  verkfræðina sjálfa, ekki jaðarhópur.
+- **HR** merkir deildina í `study_category`, en stærsta safnið er
+  `MEd/MPM/MSc Verkfræðideild ... og íþróttafræðideild -2019`: íþróttafræði er hluti af
+  sama safni sögulega og þarf að skerast frá, ásamt verkefnastjórnun (MPM) og
+  orkuvísindum sem ekki eru verkfræðigráður.
 
 ```{r vidauki-sofn}
 #| file: ../R/tables/vidauki-sofn.R
@@ -64,7 +79,8 @@ Tölvunarfræðideild**. Þau geyma meistarastigið. BSc- og Dip-söfnin eru só
 utan þýðisins, og PhD-safnið endar 2016 (sjá athugasemd að ofan).
 
 Hjá HÍ svarar **Meistaraprófsritgerðir - Verkfræði- og náttúruvísindasvið** til beggja
-þessara safna í einu, sem er ástæðan fyrir því að deildin verður að leiðast af leitarorðum.
+þessara safna í einu, sem er ástæðan fyrir því að deildin verður að leiðast af
+leitarorðum frekar en lesin beint af safninu.
 
 Talningin getur vikið lítillega frá því sem Skemman sýnir í dag: byggingin er skyndimynd,
 og söfn taka við nýjum færslum eftir að hún var gerð.
@@ -76,50 +92,26 @@ Utan þess standa BSc- og Dip-söfnin, doktorsritgerðir, og hjá HÍ einnig `Ra
 (39, hvorugt lokaverkefni). Þau eru talin hér til að sýna hvað söfnin geyma, en koma hvergi
 við sögu í köflunum á eftir.
 
-## Hvaða námsleiðir eru til staðar
+## Hvað telst verkfræði og skyldar greinar
 
-Innan safnanna liggur námsleiðin aðeins í leitarorðunum. Báðir skólar setja námsgreinina
-fremst og efnisorð á eftir — `Iðnaðarverkfræði; Fjármálaverkfræði; Vanskil; Útlánaáhætta` —
-svo **fyrsta leitarorðið sem svarar til námsleiðar ræður**. Forgangur skilur aðeins úr þegar
-tvær varpanir eiga sama sæti.
+Þýðið sem þessi bók fjallar um er ekki "allt sem er í söfnunum" — það er **verkfræði og
+tæknigreinar sem liggja henni nærri, tölvunarfræði þar á meðal**. Náttúruvísindi
+(jarðfræði, líffræði, eðlisfræði, stærðfræði, ...), íþróttavísindi og önnur fagnám sem
+hvorugt safnið heldur aðskildu frá verkfræðinni eru sían sem gerir skólana
+samanburðarhæfa, ekki hluti af sjálfum samanburðinum.
 
-Skólarnir eru taldir hvor í sínu lagi. Þeir nota ekki sömu heiti og söfnin eru ólík að
-gerð, svo sameiginleg tafla myndi láta þá líta út fyrir að vera sambærilegri en þeir eru.
+Innan safnanna liggur námsleiðin aðeins í leitarorðunum, og báðir skólar setja
+námsgreinina fremst og efnisorð á eftir — `Iðnaðarverkfræði; Fjármálaverkfræði; Vanskil;
+Útlánaáhætta`. **Fyrsta leitarorðið sem svarar til námsleiðar** gefur eina candidate-
+flokkun (`v_thesis_discipline_candidate`) — vísbending, ekki lokasvar: hún ákveður hvað er
+þess virði að lesa titilsíðu fyrir, og stendur ein og sér þar sem titilsíðan er ekki til;
+annars staðar tekur titilsíðan við (sjá „Staðfesting gegn titilsíðunni" hér að neðan). Sama
+leitarorðavörpun gefur líka `category`, sem er rökræna sían sem ákveður hvað telst til
+samanburðarhæfa kjarnans hér að neðan.
 
-::: {.sortable}
-```{r vidauki-namsleidir-hi}
-#| file: ../R/tables/vidauki-namsleidir-hi.R
-```
-:::
-
-::: {.sortable}
-```{r vidauki-namsleidir-hr}
-#| file: ../R/tables/vidauki-namsleidir-hr.R
-```
-:::
-
-Töflurnar eru sían sjálf: `Flokkur` ræður hvað telst verkfræði. Þær sýna líka hvers vegna
-greinaheiti duga ekki ein og sér. Iðnaðarverkfræði er nánast eingöngu HÍ-megin (123 á móti
-9) og Rekstrarverkfræði eingöngu HR-megin (129), en greinarnar fjalla um það sama. Sama á
-við um orkugreinarnar, sem eru sérstakar námsleiðir hjá HR en dreifast á aðrar deildir hjá
-HÍ.
-
-Nafnvenjurnar eru því næsta verk: áður en skólarnir eru bornir saman þarf að varpa
-sambærilegum greinum á samræmt heiti, svo `Rekstrarverkfræði` og `Iðnaðarverkfræði` teljist
-saman þegar það á við.
-
-```{r vidauki-fjolflokkun}
-#| file: ../R/tables/vidauki-fjolflokkun.R
-```
-
-Tæp 7% bera fleiri en eina námsleið, og reglan um fyrsta orðið breytir úthlutun aðeins 2,5%
-ritgerða miðað við eldri forgangsreglu. Skiptingin er því ekki viðkvæm fyrir valinu — en hún
-er skjalfest hér svo það sé ljóst hvað var valið og hverju það breytir.
-
-## HÍ: Verkfræði- og náttúruvísindasvið eftir deild
-
-Sviðið greinist í deildir og deildirnar í námsleiðir, svo tréð segir söguna betur en
-tafla. Tölurnar eru meistararitgerðir.
+Skólarnir eru taldir hvor í sínu lagi til að sjá hvað sían skilur frá. Þeir nota ekki sömu
+heiti og söfnin eru ólík að gerð, svo sameiginleg mynd myndi láta þá líta út fyrir að vera
+sambærilegri en þeir eru.
 
 ```{r vidauki-hi-tre}
 #| fig-cap: >
@@ -132,51 +124,28 @@ tafla. Tölurnar eru meistararitgerðir.
 Verkfræðideildirnar þrjár — IVT, UmBygg og RT — eru innan við helmingur sviðsins.
 Náttúruvísindin verða því að skerast frá áður en talað er um verkfræði hjá HÍ.
 
-Matvæla- og næringarfræðideild sker sig úr: hún heyrir undir Heilbrigðisvísindasvið en
-sex ritgerðir eru krosstengdar inn í VoN-safnið, svo þær koma fram hér þótt deildin
-standi utan sviðsins.
+Matvæla- og næringarfræðideild sker sig úr: hún heyrir undir Heilbrigðisvísindasvið en sex
+ritgerðir eru krosstengdar inn í VoN-safnið, svo þær koma fram hér þótt deildin standi
+utan sviðsins.
 
-## HR: tæknisvið eftir námsleið
+```{r vidauki-hr-tre}
+#| fig-cap: >
+#|   Meistararitgerðir HR eftir deild og námsleið. Hæð hvers reits er í hlutfalli við
+#|   fjölda námsleiða í deildinni, svo deildirnar séu samanburðarhæfar.
+#| fig-height: 7
+#| file: ../R/plots/vidauki-hr-tre.R
+```
+
+Myndirnar eru sían sjálf: liturinn ræður hvað telst verkfræði og skyldar greinar.
 
 ```{r vidauki-hr}
 #| file: ../R/tables/vidauki-hr.R
 ```
 
 MPM er atvinnutengt meistaranám í verkefnastjórnun, vistað hjá verkfræðideild og vottað af
-APM/IPMA, en það er ekki verkfræðigráða. Iðnfræðin — `Dip Tæknifræðideild` — er atvinnutengt
-diplómanám og að langmestu leyti á BS-stigi. Hvort tveggja er talið og skýrt hér, en stendur
-utan kjarnans.
-
-## Óflokkaðar ritgerðir
-
-Ekki lengur til: allar 2.484 ritgerðir þýðisins flokkast núna, síðasta gatið lokað með
-titilsíðunni og handvirkum leiðréttingum (`discipline_override`, issue #5). Leitarorðin
-einsömul ná ekki alveg svona langt — 11 ritgerðir bera engin leitarorð sem
-`discipline_keyword` þekkir, oftast því sjálft námsgreinaheitið er stakt tilvik
-(`Tölvuverkfræði`, `Skipulagsfræði` og fleiri eru gild heiti sem uppflettitöfluna vantaði
-þar til yfirferðin fann þau) eða ritgerðin ber engin leitarorð yfirhöfuð. Titilsíðan eða
-handvirk leiðrétting fyllir í hvert þessara 11 tilvika.
-
-## Kennaranám með kjörsviði
-
-Átta ritgerðir í þýðinu eru `Menntun framhaldsskólakennara` — meistaranám á
-Menntavísindasviði (School of Education), ekki Verkfræði- og náttúruvísindasviði (SENS).
-Nemandinn velur kjörsvið (t.d. tölvunarfræði, líffræði, eðlisfræði) og lokaverkefnið er
-oft leiðbeint og krosstengt inn í kjörsviðsdeildina, en náms­brautin — gráðan sjálf — er
-alltaf Menntavísindasviðs. `discipline_keyword.flag = 'teacher_education'` merkir þetta
-sérstaklega, óháð flokki, og `v_thesis_discipline.is_teacher_education` ber það áfram á
-lokaniðurstöðuna.
-
-Tvö dæmi sýna hvers vegna þetta er sitt eigið merki, ekki bara enn ein grein: ritgerð
-38678 er vefsíða til að kenna forritun — `deild` hennar er Iðnaðarverkfræði-,
-vélaverkfræði- og tölvunarfræðideild (IVT), en gráðan er kennaranám. Ritgerð 18157 er
-rannsókn á frumuvefjum úr blöðruhálskirtli — fyrsta leitarorðið er `Líffræði`, því
-`Líffræðikennsla` (annað leitarorðið) er ekki í uppflettitöflunni, en titilsíðan segir
-skýrt `Menntun framhaldsskólakennara`. Bæði flokkast réttilega sem `Menntavísindadeild`, en af
-ólíkum ástæðum — annað af leitarorði, annað af titilsíðu — og merkið gerir þá ástæðu
-sýnilega í stað þess að hún sé aðeins tilviljunarkennd afleiðing af röð leitarorðanna.
-
-## Samanburðarhæfi kjarninn
+APM/IPMA, en það er ekki verkfræðigráða. Iðnfræðin — `Dip Tæknifræðideild` — er
+atvinnutengt diplómanám og að langmestu leyti á BS-stigi. Hvort tveggja er talið og skýrt
+hér, en stendur utan kjarnans, alveg eins og íþróttafræði og náttúruvísindin.
 
 ```{r vidauki-kjarni}
 #| file: ../R/tables/vidauki-kjarni.R
@@ -185,28 +154,91 @@ sýnilega í stað þess að hún sé aðeins tilviljunarkennd afleiðing af rö
 Báðir skólar missa um helming, af gjörólíkum ástæðum: HÍ vegna náttúruvísinda, HR vegna
 MPM, íþróttafræði og iðnfræði. Það er forsenda alls samanburðar í köflunum á eftir.
 
-## Greinar undir ólíkum nöfnum
+## Sömu greinar, ólík nöfn
 
-Greinaheiti eru ekki samanburðarhæf milli skólanna. Taflan mælir kósínuslíkindi á
-efnisorðavigrum greinanna, að frádregnum greinaheitunum sjálfum, svo samsvörunin byggir á
-viðfangsefnum en ekki nöfnum.
+Myndirnar hér að ofan sýna líka hvers vegna greinaheiti duga ekki ein og sér til að bera
+skólana saman. Iðnaðarverkfræði er eingöngu HÍ-megin (115 á móti 0) og
+Rekstrarverkfræði eingöngu HR-megin (138) — engin skörun — en þegar leitarorðin sem fylgja
+hvorri grein eru skoðuð fjalla þær um sama efnið: vörustjórnun, ákvarðanatöku,
+bjartsýnisreikninga, fjármál rekstrar. Sama á við orkugreinarnar: Orkuverkfræði er sérstök
+námsleið hjá HR (171 ritgerð á móti 6 hjá HÍ) en dreifist inn í Vélaverkfræði og fleiri
+deildir hjá HÍ, þar sem endurnýjanleg orka er kjörsvið í fjórum námsleiðum í þremur verkfræðideildum.
+
+Til að staðfesta þetta kerfisbundið, ekki bara með handahófskenndri lestrarskoðun, mælir
+taflan hér að neðan
+[kósínuslíkindi](https://en.wikipedia.org/wiki/Cosine_similarity) á
+efnisorðavigrum greinanna — hornið milli tveggja greina sem vigrar af því hversu oft
+hvert efnisorð kemur fyrir í þeim, óháð lengd vigursins sjálfs — að frádregnum
+greinaheitunum sjálfum, svo samsvörunin byggir á viðfangsefnum en ekki nöfnum.
 
 ```{r vidauki-samsvorun}
 #| file: ../R/tables/vidauki-samsvorun.R
 ```
 
-Tvö pör skera sig úr, og dreifingin staðfestir þau: **Iðnaðarverkfræði** er 118 ritgerðir hjá
-HÍ en 9 hjá HR, sem kallar sömu grein **Rekstrarverkfræði** (135). **Orkuverkfræði** er 100
-hjá HR en 1 hjá HÍ, sem vistar orkuvinnuna inni í **Vélaverkfræði** (123). Greinarnar eru
-gagnkvæmt útilokandi — sama efni, sitt hvort nafnið.
+Tvö pör skera sig úr, og dreifingin staðfestir þau: **Iðnaðarverkfræði** er 115 ritgerðir
+hjá HÍ en engin hjá HR, sem kallar sömu grein **Rekstrarverkfræði** (138). **Orkuverkfræði**
+er 171 hjá HR en 6 hjá HÍ, sem vistar orkuvinnuna inni í **Vélaverkfræði** (120). Greinarnar
+eru gagnkvæmt útilokandi — sama efni, sitt hvort nafnið hjá hvorum skóla.
+
+Nafnvenjurnar breyta samt engu um flokkunina sjálfa: `discipline` heldur því heiti sem
+titilsíðan (eða leitarorðið) segir, líka sértæku á borð við `Fjármálaverkfræði`, `Mekatróník`
+og `Raforkuverkfræði`, og `Iðnaðarverkfræði` og `Rekstrarverkfræði` teljast áfram sitt í
+hvoru lagi. Samsvörunin hér að ofan er ekki felld inn sjálfkrafa. Þar sem samanburður milli
+skólanna þarf grófari einingar er hún hins vegar skráð í sérstaka, handvirka uppflettitöflu,
+`discipline_group`, og lesin úr dálkinum `umbrella` í `v_thesis_discipline`. Yfirgreinin er
+ákvörðun manneskju um hvað telst sama námsgrein — Fjármálaverkfræði, Rekstrarverkfræði og
+Ákvarðanaverkfræði undir Iðnaðarverkfræði; Mekatróník undir Vélaverkfræði; Raforkuverkfræði og
+Heilbrigðisverkfræði undir Rafmagnsverkfræði (eins og hjá HÍ, þar sem þær eru kjörsvið innan
+einnar deildar) — og kósínuslíkindin hér að ofan eru rökin sem hún byggir á. Sértæka heitið er
+alltaf til staðar til að sannreyna hana, og `Orkuverkfræði` er látin standa ein, því
+endurnýjanleg orka er kjörsvið í fjórum námsleiðum í þremur verkfræðideildum HÍ.
+
+```{r vidauki-fjolflokkun}
+#| file: ../R/tables/vidauki-fjolflokkun.R
+```
+
+Tæp 7% ritgerða bera fleiri en eina námsleið meðal leitarorðanna. Fyrsta-orðið reglan er
+ekki eina hugsanlega reglan — eldri útgáfa raðaði eftir `priority` og lét stafrófsröð
+skera úr þar sem hann dugði ekki, sem var handahófskennt (`Iðnaðarverkfræði;
+Fjármálaverkfræði` lenti á Fjármálaverkfræði einfaldlega því F kemur á undan I). Sú regla
+hefði aðeins breytt úthlutun 2,5% ritgerða, svo skiptingin er ekki viðkvæm fyrir vali á
+milli reglnanna tveggja — en hún er skjalfest hér svo ljóst sé hvað var valið og hverju
+það breytir.
+
+## Hvernig ritgerðir eru flokkaðar
+
+Flokkunin er þrepaskipt, öll í `scripts/discipline_map.sql`: fyrst leitarorðin (sjá að
+ofan), svo titilsíðan þar sem hún er til, og loks handvirk leiðrétting
+(`discipline_override`) fyrir stök tilvik sem hvorugt hitt leysir — sjá
+[issue #5](https://github.com/HI-IDN/skemman-msc/issues/5) fyrir alla yfirferðina.
+
+Öll 2.484 ritgerðir þýðisins flokkast núna: titilsíðan ræður 1.719 þeirra, leitarorðin
+ein 757 og handvirk leiðrétting (`discipline_override`) átta. Leitarorðin ein og sér ná ekki
+alveg svona langt — 11 ritgerðir báru annaðhvort ekkert þekkt leitarorð eða ekkert
+leitarorð yfirhöfuð — og titilsíðan eða handvirk leiðrétting fyllti upp í hvert þeirra. 12
+HR-ritgerðir bera enn aðeins `Verkfræði (ótilgreind)`, því hvorki leitarorð né titilsíða nefnir
+námsleið þeirra.
+
+## Kennaranám með kjörsviði
+
+Ellefu ritgerðir í þýðinu eru `Menntun framhaldsskólakennara` — meistaranám á
+Menntavísindasviði (School of Education), ekki Verkfræði- og náttúruvísindasviði (SENS).
+Nemandinn velur kjörsvið (t.d. tölvunarfræði, líffræði, eðlisfræði) og lokaverkefnið er
+oft leiðbeint og krosstengt inn í kjörsviðsdeildina, en náms­brautin — gráðan sjálf — er
+alltaf Menntavísindasviðs. `discipline_keyword.flag = 'teacher_education'` merkir þetta
+sérstaklega, óháð flokki, og `v_thesis_discipline.is_teacher_education` ber það áfram á
+lokaniðurstöðuna.
 
 ## Staðfesting gegn titilsíðunni
 
-Ofangreind flokkun byggir eingöngu á leitarorðum Skemmunnar — vali sem einhver gerði þegar
-færslan var skráð. Titilsíða hverrar ritgerðar segir hins vegar sjálf hvað gráðan er í, án
-milligöngu leitarorða: `skemman-harvester` les þetta nú þegar af PDF-skjölunum (sjá
-[issue #5](https://github.com/HI-IDN/skemman-msc/issues/5)) og geymir í
-`thesis_titlepage.subject`, oftast á ensku og óháð `thesis_keywords`.
+Flokkunin hér að ofan byggir eingöngu á leitarorðum Skemmunnar — vali sem einhver gerði
+þegar færslan var skráð. Titilsíða hverrar ritgerðar segir hins vegar sjálf hvað gráðan
+er í, án milligöngu leitarorða: `skemman-harvester` les þetta nú þegar af PDF-skjölunum
+(sjá [issue #5](https://github.com/HI-IDN/skemman-msc/issues/5)) og geymir í
+`thesis_titlepage.subject`, oftast á ensku og óháð `thesis_keywords`. Þáttarinn les nú líka
+nýrra snið HR (*Master of Science (M.Sc.) in X*, *MSc thesis in X*) og íslenska orðalagið
+*M.S. ritgerð í X*; við það fengu um 420 titilsíður efni sem þær höfðu ekki áður, án þess að
+nokkur missti það sem hún hafði.
 
 Þar sem hvort tveggja er til fyrir sömu ritgerð má bera saman:
 
@@ -214,31 +246,35 @@ milligöngu leitarorða: `skemman-harvester` les þetta nú þegar af PDF-skjöl
 #| file: ../R/tables/vidauki-titilsida.R
 ```
 
-95,8% samræmi (1.121/1.170) er sterk staðfesting á leitarorðaflokkuninni — en þekjan er
-ófullkomin: titilsíðan er þátta fyrir um helming ritgerða þýðisins, svo hún kemur ekki í
-stað leitarorðanna, aðeins til viðbótar þar sem hún er til. Ósamræmið sjálft er líka
+91,5% samræmi (1.577/1.723) er sterk staðfesting á leitarorðaflokkuninni — en þekjan er
+ófullkomin: titilsíðan gefur grein fyrir tvo þriðju ritgerða þýðisins (1.723 af 2.484), svo
+hún kemur ekki í stað leitarorðanna, aðeins til viðbótar þar sem hún er til. Samræmið er lægra
+en áður (var 95,8% af 1.170) af því titilsíðurnar eru nú fleiri og sértækari. Ósamræmið sjálft er líka
 upplýsandi:
 
-- **Flest ósamræmi haldast innan sama flokks** — Jarðfræði/Jarðvísindi,
-  Tölvunarfræði/Hugbúnaðarverkfræði, Byggingarverkfræði/Skipulagsfræði og samgöngur — greinar
-  sem liggja svo nærri hvor annarri að skiptingin er að hluta til smekksatriði, ekki merki um
-  ranga flokkun.
-- **Átta tilvik skipta um flokk, öll sama mynstrið.** Fjögur MPM/framkvæmdastjórnunarverkefni
-  hjá HR bera leitarorðið `Byggingarverkfræði` en titilsíðan segir `Construction Management`
-  — fagnám (`professional`), ekki verkfræði. Tvö HÍ-verkefni með leitarorðið `Jarðfræði`
-  heita orkutengdum nöfnum á titilsíðunni (`Sustainable Energy Engineering`/`Sustainable
-  Energy`). Tvö kennaranámsverkefni (sjá næsta kafla) bera fyrst leitarorð úr kjörsviðinu
-  (`Eðlisfræði`, `Stærðfræði`) þar sem `Menntun framhaldsskólakennara` er líka meðal
-  leitarorðanna, bara ekki fremst. Í öllum átta er leitarorðið sem
-  `v_thesis_discipline_candidate` velur ekki rangt flokkað í Skemman, það stendur bara ekki
-  fremst í röðinni sem sú vörpun fer eftir.
+- **Flest ósamræmi haldast innan sama flokks** (90 af 146) — Jarðfræði/Jarðvísindi,
+  Tölvunarfræði/Hugbúnaðarverkfræði, Byggingarverkfræði/Skipulagsfræði og samgöngur, og
+  Hátækniverkfræði (leitarorð) á móti Mekatróník (titilsíða) — greinar sem liggja svo nærri
+  hvor annarri að skiptingin er að hluta til smekksatriði, ekki merki um ranga flokkun.
+  Í 23 tilvikum heyra greinarnar undir sömu yfirgrein (`discipline_group`).
+- **56 tilvik skipta um flokk, og flest eru sama mynstrið.** Í 40 þeirra segja leitarorðin
+  `Orkuverkfræði` (verkfræði) en titilsíðan `Sustainable Energy Science` — náttúruvísindi,
+  ekki verkfræði (`Sjálfbær orkuvísindi`; enginn höfundur þeirra er á lista yfir löggilta
+  verkfræðinga, 0 af 31). Leitarorðin sjálf, `Sustainable Energy`/`Sjálfbær orka`, greina
+  ekki þarna á milli, en titilsíðan gerir það. Önnur dæmi eru tvö HÍ-verkefni með leitarorðið
+  `Eðlisfræði` sem titilsíðan kallar `Engineering Physics` (verkfræði, hýst í
+  Raunvísindadeild), og kennaranámsverkefni sem bera fyrst leitarorð úr kjörsviðinu þar sem
+  `Menntun framhaldsskólakennara` er líka meðal leitarorðanna, bara ekki fremst. Í öllum
+  þessum tilvikum er leitarorðið sem `v_thesis_discipline_candidate` velur ekki rangt flokkað
+  í Skemman, það stendur bara ekki fremst í röðinni sem sú vörpun fer eftir, eða greinir ekki
+  á milli tveggja námsleiða sem titilsíðan skilur að.
 - **Eitt tilvik er þáttunarvilla, ekki ósamræmi í gögnunum.** Ritgerð 36353 ber fjögur
   samhljóða MPM-leitarorð, en titilsíðan þáttaðist sem `computer science` — úr æviágripi
   viðmælanda langt inni í skjalinu, ekki af titilsíðunni sjálfri. Handvirk leiðrétting í
   `discipline_override`.
 
-Sjálfgefna reglan er: **titilsíðan vinnur þar sem hún er til**, `discipline_override` vinnur
-yfir báðum þar sem manneskja hefur skoðað stakt tilvik (eins og 36353). Þess vegna heitir
-leitarorðaflokkunin `v_thesis_discipline_candidate` — fyrsta, ódýra ágiskun sem ákvarðar hvað
-er þess virði að lesa titilsíðu fyrir, ekki lokasvarið — og `v_thesis_discipline` er sameinaða
-niðurstaðan sem hver annar kafli, tafla og mynd les.
+Sjálfgefna reglan er: **titilsíðan vinnur þar sem hún er til**, `discipline_override`
+vinnur yfir báðum þar sem manneskja hefur skoðað stakt tilvik (eins og 36353). Þess vegna
+heitir leitarorðaflokkunin `v_thesis_discipline_candidate` — fyrsta, ódýra ágiskun sem
+ákvarðar hvað er þess virði að lesa titilsíðu fyrir, ekki lokasvarið — og
+`v_thesis_discipline` er sameinaða niðurstaðan sem hver annar kafli, tafla og mynd les.

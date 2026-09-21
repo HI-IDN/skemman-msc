@@ -13,13 +13,17 @@ Undirspurningar:
 - Hvaða greinar hafa dregist saman?
 - Hafa ný rannsóknarsvið komið fram?
 
-::: {.callout-important title="Bíður greinaflokkunar"}
-Þessari spurningu verður ekki svarað eins og gagnagrunnurinn stendur. `faculty` er tómt og
-skólarnir kóða greinar með gjörólíkum hætti. Fyrsta skrefið er **uppflettitafla sem varpar
-leitarorðum og `study_category` á samræmdan greinalista**.
+::: {.callout-note title="Svarað"}
+`faculty` er enn tómt og skólarnir kóða greinar með gjörólíkum hætti, en
+`scripts/discipline_map.sql` leysir það með uppflettitöflu sem varpar leitarorðum,
+titilsíðuefni og handvirkum leiðréttingum á samræmdan greinalista
+(`v_thesis_discipline`). Allar 2.484 ritgerðir þýðisins hafa fengið grein, og titilsíðan
+ræður úrslitum fyrir 1.719 þeirra — sjá
+[issue #5](https://github.com/HI-IDN/skemman-msc/issues/5) fyrir alla rannsóknarslóðina
+og [`docs/vidauki-adferd.qmd`](vidauki-adferd.qmd) fyrir aðferðina sjálfa.
 :::
 
-## Hvers vegna þetta virkar ekki enn
+## Af hverju `study_category` dugði ekki eitt og sér
 
 ```{r rq2-study-category}
 #| file: ../R/tables/rq2-study-category.R
@@ -46,9 +50,82 @@ Taflan sýnir líka hvers vegna ekki má telja leitarorð beint. *MPM* er skamms
 Bein samlagning tvítelur því ritgerðirnar meira en tvöfalt. Vörpunin leysir þetta með því
 að senda öll þrjú orðin á `Verkefnastjórnun`.
 
-## Næstu skref
+## Greinaflokkun þýðisins
 
-1. Búa til `config/disciplines.yaml` sem varpar leitarorðum á samræmdan greinalista.
-2. Sía burt safnheiti sem bera enga efnislega merkingu.
-3. Ákveða meðhöndlun ritgerða sem falla á fleiri en eina grein.
-4. Endurmeta þýðið — sama vörpun afmarkar verkfræðina frá náttúruvísindum hjá HÍ.
+```{r rq2-flokkar}
+#| file: ../R/tables/rq2-flokkar.R
+```
+
+Verkfræði er stærsti flokkurinn hjá báðum skólum, en hlutföllin eru ólík: hjá HR er
+`Fagnám` (MPM) næststærsti flokkurinn og náttúruvísindi eru aðeins 69 ritgerðir (þar af 42
+í sjálfbærum orkuvísindum, sjá að neðan), en hjá HÍ eru náttúruvísindi stærri en verkfræði
+(639 á móti 559) — því HÍ-safnið í Skemmunni nær yfir allt Verkfræði- og
+náttúruvísindasvið, ekki verkfræðina eina. `Utan sviðs` er tólf ritgerðir sem
+greinaflokkunin skilur meðvitað frá náttúruvísindum: ellefu úr Menntavísindadeild og eitt
+rangskráð tilvik (sjá `TODO.md`).
+
+```{r rq2-deildir}
+#| file: ../R/tables/rq2-deildir.R
+```
+
+Niður á deild: hjá HÍ dreifist verkfræðin á þrjár deildir (IVT, UmBygg, RT), auk fjögurra
+ritgerða í verkfræðilegri eðlisfræði sem Raunvísindadeild hýsir, og náttúruvísindin á fjórar. Hjá HR er `study_category` sjálft deildin — tæknifræði og
+tölvunarfræði teljast með verkfræðinni, íþróttavísindi og MPM standa utan hennar.
+
+Deildarmerkingin er nú heil, með tveimur ásettum undantekningum. Hjá HR lendir ein ritgerð
+(hið eina Markaðsfræði-tilvik) í safnflokknum `Annað`, og hjá HÍ eru 11 ritgerðir
+`(óflokkað)` af ásettu ráði, því Menntavísindadeild er ekki VoN-deild. Framkvæmdastjórnun er
+talin verkfræði og lendir í `Verkfræðideild` hjá HR (UmBygg hjá HÍ), og
+`Landupplýsinga- og umhverfisfræði` er í Líf- og umhverfisvísindadeild. VoN-deildirnar eru sex
+(Jarðvísinda-, Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræði-, Líf- og umhverfisvísinda-,
+Rafmagns- og tölvuverkfræði-, Raunvísinda- og Umhverfis- og byggingarverkfræðideild); yfirlit
+yfir meistaranámsleiðir þeirra er í `config/hi_ms_programmes.yaml`.
+
+## Þróun eftir ári
+
+```{r rq2-throun}
+#| fig-cap: Fjöldi verkfræðiritgerða á ári, HÍ og HR.
+#| file: ../R/plots/rq2-throun.R
+```
+
+HR hefur verið stærri framleiðandi verkfræðiritgerða en HÍ nánast allt tímabilið, og bilið
+hefur breikkað frekar en mjókkað.
+
+## Hvaða greinar hafa vaxið, hvaða greinar hafa dregist saman
+
+Til að jafna út árssveiflur í litlum greinum er tímabilinu skipt í tvennt og fjöldinn
+borinn saman milli hlutanna. Taflan er talin á yfirgreinum (`discipline_group`, dálkurinn
+`umbrella`), ekki á sértæku heitunum sem titilsíðan nefnir: HÍ og HR skipta og nefna
+námsleiðir sínar ólíkt, svo undirgreinar á borð við Fjármálaverkfræði, Mekatróník og
+Raforkuverkfræði eru taldar með þeirri yfirgrein sem þær heyra undir og nefndar í öðrum
+dálki:
+
+```{r rq2-greinar}
+#| file: ../R/tables/rq2-greinar.R
+```
+
+Tölvunarfræði (+54), Rafmagnsverkfræði (+42), Vélaverkfræði (+37) og Orkuverkfræði (+34)
+hafa vaxið mest í fjölda talið. Byggingarverkfræði (−53) hefur dregist mest saman, þá
+Iðnaðarverkfræði (−16), og Skipulagsfræði og samgöngur er horfin úr síðari hlutanum. Ný
+svið hafa líka birst: Gagnavísindi eiga engar ritgerðir í fyrri hlutanum en átta í þeim
+síðari, og Máltækni (sem heyrir undir Tölvunarfræði) engar á móti þrettán.
+
+Iðnaðarverkfræði sem yfirgrein felur í sér Fjármálaverkfræði, sem vex (17 á móti 35), svo
+hinar undirgreinarnar samanlagt dragast saman um 34 — meira en talan −16 sýnir.
+Fjármálaverkfræði er ekki jafnt vaxandi námsleið heldur bundin við HR: HÍ hætti að skila
+neinni eftir 2014, en hjá HR heldur hún áfram með 1–8 ritgerðir á ári, þar af 7 árið 2024 og
+8 árið 2025. Hún er því horfin hjá HÍ en lifir hjá HR.
+
+Sjálfbær orkuvísindi (Iceland School of Energy, 42 HR-ritgerðir) eru flokkuð sem
+náttúruvísindi, ekki verkfræði, og því ekki með í töflunni: enginn höfundur þeirra hefur
+fengið verkfræðingsleyfi (0 af 31 þar sem fæðingarár er þekkt), á móti 15 af 72 hjá þeim
+sem titilsíðan nefnir *Sustainable Energy Engineering*.
+
+## Það sem stendur eftir
+
+- **12 HR-ritgerðir án námsleiðar á titilsíðu** — þær bera enn aðeins `Verkfræði
+  (ótilgreind)`: titilsíðan segir bara *Master of Science* eða *Engineering*, eða er ekki
+  til í skyndiminninu. Leiðbeinendaályktun (`v_thesis_discipline_advisor_suggestion`) gefur
+  tillögu fyrir hverja; þær bíða yfirferðar í `TODO.md`.
+- **Yfirgreinar** eru handvirk ákvörðun (`discipline_group`) og geta breyst; sjá
+  athugasemdirnar í `scripts/discipline_map.sql` fyrir rökin á bak við hverja.

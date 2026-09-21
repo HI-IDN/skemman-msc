@@ -5,25 +5,113 @@ lookup-table entry. Move an item to "Resolved" with the decision once it's settl
 delete it once it's also reflected wherever it needs to be (a commit, a GitHub issue
 comment, this file's own history in git is the record).
 
-## Open
+## Open -- needs your verification
 
-None currently. All 2,484 theses in the population have a discipline (see issue #5).
+1. **12 HR theses whose title page names no programme** (only a bare "Master of Science", or
+   "Engineering", or no title page in the cache). Nothing more can be parsed; the advisor's
+   own history suggests a discipline. Accept, change, or leave generic (`Verkfræði
+   (ótilgreind)`, still `engineering` and in the right deild either way):
+   - Orkuverkfræði: 42324 (D. Finger), 50803 (X. Guardia Muguruza), 50850, 50913 (G. A.
+     Sævarsdóttir), 50875 (Á. Gylfason), 51060 (J. A. Newson)
+   - Rekstrarverkfræði: 46301 (P. Jensson), 50794 (P. K. Pálsson), 50907 (E. I.
+     Ásgeirsson), 50928, 50984 (H. Stefánsson)
+   - Vélaverkfræði: 50871 (I. S. Ríkharðsson)
+   (50850, 50871, 50913, 50984, 51060, 46301, 50794 have no cached title page. 50986, font-garbled,
+   was read by hand: "Electric Power Management" -> Rekstrarverkfræði override, Raforkuverkfræði
+   the alternative.)
+2. **"Sustainable Energy Science" (about 28 theses): engineering or science?** Iceland School
+   of Energy programmes; the keyword map files all `sustainable energy ...` variants under
+   Orkuverkfræði/engineering. If "Science" is a distinct, non-engineering programme it should
+   be split out. Your call.
+3. **Two optional umbrellas** (each a row of `discipline_group`): Skipulagsfræði og samgöngur
+   (11 HR theses) -> Umhverfisverkfræði (HÍ has a track "Sjálfbær byggð og öruggar
+   samgöngur")? and where the 6 HÍ Orkuverkfræði theses (ISE era, filed under IVT) belong,
+   given renewable energy is a track in four MS programmes across three engineering deilds. Low
+   stakes.
+4. **Crosswalk vs today's HÍ catalogue** (`config/hi_ms_programmes.yaml`, VoN has six deildir).
+   Everything matches except two things that may just be history -- confirm or ignore:
+   `Gagnavísindi` is filed under IVT but the catalogue puts the MS under Raunvísindadeild
+   (no HÍ theses carry it today, so moot until one appears); and `Matvæla- og
+   næringarfræðideild` (Matvælafræði, Næringarfræði, a handful of theses) is in the crosswalk but is
+   not one of the six.
 
-## Ideas, not yet built
+## In progress / ideas (no action needed from you yet)
 
-- **Advisor-based discipline inference for closed/unclassifiable theses.** An advisor's
-  most common discipline across their *other* supervised theses could suggest one for a
-  thesis with no keyword match and no fetchable title page. Needs care: a thesis can have
-  advisors from different departments, so this is a plurality/majority signal, not a
-  certain one -- likely a human-reviewed suggestion, not another automated tier in
-  `v_thesis_discipline`. Not needed for any case seen so far -- the closed theses found
-  (4446) were resolved by other means -- but worth building if more turn up.
-- **Follow-up research question: how often do advisors supervise within vs. across
-  their own faculty?** Falls out of the idea above almost for free once advisor identity
-  and home department are both resolved. Worth its own issue if pursued -- not scoped as
-  part of #5.
+- **Parser fix + niche disciplines + umbrella group: built, rebuilt (`--dataprocessing
+  --postprocessing`, data/processed/thesis.db; backup `thesis.db.before-niche-umbrella.*`) and
+  committed.** Harvester (`skemman-harvester`, 81 tests): 420 of 2,665 cached title pages gain a
+  subject, none lose one. Main repo: `discipline_group` + `umbrella` column on
+  `v_thesis_discipline`; niche disciplines Mekatróník, Hátækniverkfræði, Raforkuverkfræði,
+  Lífefnaverkfræði, Ákvarðanaverkfræði; new science discipline Sjálfbær orkuvísindi (42 HR
+  theses); title-page subjects match keywords by longest word-boundary prefix; `rq2-greinar.R`
+  groups by umbrella. Title pages now decide 1,719 theses (was about 45%), 8 overrides, (óflokkað)
+  HÍ down from 26 to 11. The harvester commit is local: push it and update the submodule pointer
+  when you are ready.
+- **Advisor home department from staff pages.** `scripts/scrape_hi_staff.py` (retry run
+  finished or finishing) and `scripts/scrape_hr_staff.py` (done: 99 of 430 matched; directory
+  lists current staff only) write `data/processed/hi_staff_units.csv` / `hr_staff_units.csv`.
+  Next: strip HÍ's ", kennsla" suffix, join into an `advisor_unit` view, redo the per-faculty
+  advisor profile. HÍ former-staff page not yet checked.
+- **Licensed-engineer analysis.** `scripts/fetch_engineer_licences.py` ->
+  `data/processed/engineer_licences.csv` (gitignored; name, birth year, licence date only --
+  never the kennitala). Preliminary (engineering authors, verkfræðingur list): 49% matched
+  (HÍ 60%, HR 41%, a lower bound), median 4.2 months from thesis to licence. Caveats: recent
+  cohorts censored, 2026 snapshot, name + birth year matching, and a licence proves *an*
+  engineering degree exists, not that this thesis was it (39936: earlier Milan MSc; 12943: MPM
+  by an existing engineer). To do: proper script/view, table for the RQ chapter, the
+  tæknifræðingar list for applied theses. Engineers who did not come through an engineering deild:
+  under 1% of ~613 matches, but our population holds only in-scope theses.
+- **HÍ programme catalogue** is in `config/hi_ms_programmes.yaml` (supplied by a domain
+  expert); nothing reads it yet -- use it to decide umbrellas and fill `discipline_unit`.
+- **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved
+
+- **Human confirmations (this round)** -- 39936 stays Tölfræði/science (author's licence rests
+  on an earlier Politecnico di Milano MSc, unrelated to the MAS: MAS does not lead to the
+  title); 49125 is Umhverfisverkfræði/engineering (title page: "M.S. ritgerð í
+  Umhverfisverkfræði", Umhverfis- og byggingarverkfræðideild -- unambiguous, only flagged
+  because the keyword pass disagreed; parser fix reads it); 44748, 50728, 50737, 50739
+  Fjármálaverkfræði (clear keywords); 50796 Heilbrigðisverkfræði; 50798 Mechatronic
+  Engineering; 50792 Electric Power Engineering (niche, merge under an umbrella later);
+  18738 and the 6 other Landupplýsinga- og umhverfisfræði theses: department is
+  Líf- og umhverfisvísindadeild (Faculty of Life and Environmental Sciences), same faculty
+  as the advisor's tourism studies.
+
+- **12943 (HR 2012, MPM)** -- stays `Verkefnastjórnun`/professional: title page says "Ritgerð til
+  meistaraprófs (MPM)", a pure Master of Project Management. Note: the author (b. 1978) *is*
+  on the verkfræðingur list (licence 20.09.12, same year as the thesis), contrary to a first
+  check by hand -- most likely licensed on an earlier engineering education, so the licence
+  does not make this thesis an engineering degree. Same pattern as the 9 other MPM authors
+  whose licence predates the thesis; confirms that "licensed" alone must not promote a
+  thesis (the 0-3-years-after rule would wrongly catch this one).
+
+- **Engineering Physics (Verkfræðileg eðlisfræði), 4 HÍ theses: 27933, 24952, 42878, 29517**
+  -- an engineering degree hosted by Raunvísindadeild (27933's author is a licensed
+  verkfræðingur, licence 06.07.18). New discipline `Verkfræðileg eðlisfræði`, category
+  `engineering`, unit Raunvísindadeild, `in_core`; was `Eðlisfræði`/science. Keywords
+  `verkfræðileg eðlisfræði` and `engineering physics` remapped.
+
+- **Advisor-suggestion views verified against real data** (scratch copy loaded from
+  `data/db/*.parquet`; local `thesis.db` still has empty people tables). They now also
+  target theses with only a generic discipline. 
+
+- **Framkvæmdastjórnun (HR, 15 theses)** — engineering, not professional (human call, from
+  10906: an 85-page MSc thesis, the engineering counterpart of the professional
+  programmes, industrial-engineering related or closely adjacent). Category changed in
+  `discipline_keyword`; they now land in HR's `Verkfræðideild` (was `Annað`), `in_core`.
+  HÍ's `discipline_unit` already had it under UmBygg. Also made `v_thesis_unit.in_core`
+  null-safe for theses with no HR `study_category`. `Annað` now holds only 31238.
+  Doc prose still says 16 in `Annað` (`docs/02-rq2-disciplines.qmd`) and describes
+  `Construction Management` as `professional` (`docs/vidauki-adferd.qmd`) -- update when
+  rebuilding the docs.
+- **53766** — override to Rekstrarverkfræði/engineering: MSc in engineering management,
+  keyword order let Verkefnastjórnun win. Not yet on the licence list (accepted 2026-06-12).
+- **23908** — override to Byggingarverkfræði/engineering via the advisor suggestion.
+- **5597, 7548, 8904, 8914, 13221, 13257, 18530, 39991 and 21 more HR theses** — the generic
+  title page ("MSc in engineering") now yields to a specific keyword, and generic keywords
+  rank last (`v_thesis_discipline`, `v_thesis_discipline_candidate`). 13257 confirmed
+  Umhverfisverkfræði against the licence list. 50888 stays Máltækni (engineering).
 
 - **31238** — new `out_of_scope` category (alongside engineering/professional/applied/
   science): title page (MSc in Marketing) matches its keywords, but per human review the

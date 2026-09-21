@@ -12,6 +12,8 @@
 # from the cache without a single request. Single steps still work:
 #
 #   scripts/rebuild.sh --only access      one step
+#   scripts/rebuild.sh --only metadata,population,disciplines
+#                                         several, in pipeline order
 #   scripts/rebuild.sh --from population  this step and everything after it
 #   scripts/rebuild.sh --dry-run          print the commands, run nothing
 #   scripts/rebuild.sh --limit 10         a trial run
@@ -95,7 +97,7 @@ while [[ $# -gt 0 ]]; do
         --dry-run)        DRY_RUN=1; shift ;;
         --fresh)          FRESH=1; shift ;;
         --from)           FROM="$2"; shift 2 ;;
-        --only)           ONLY="$2"; shift 2 ;;
+        --only)           ONLY="${ONLY:+$ONLY,}$2"; shift 2 ;;
         --limit)          LIMIT="$2"; shift 2 ;;
         --degree-level)   DEGREE_LEVEL="$2"; shift 2 ;;
         -h|--help)        usage 0 ;;
@@ -271,7 +273,15 @@ contains() {
 
 wanted=()
 if [[ -n "$ONLY" ]]; then
-    wanted=("$ONLY")
+    # A comma list, or --only given more than once. The steps run in pipeline
+    # order whatever order they were named in.
+    IFS=',' read -r -a named <<< "$ONLY"
+    for s in "${named[@]}"; do
+        if ! contains "$s" "${ALL_STEPS[@]}"; then echo "unknown step: $s" >&2; exit 1; fi
+    done
+    for s in "${ALL_STEPS[@]}"; do
+        if contains "$s" "${named[@]}"; then wanted+=("$s"); fi
+    done
 elif [[ -n "$FROM" ]]; then
     seen=0
     for s in "${ALL_STEPS[@]}"; do
