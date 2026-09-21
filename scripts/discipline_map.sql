@@ -1057,3 +1057,103 @@ select
 from v_thesis_unit t
 left join org_short_name un
        on un.kind = 'unit' and un.name = t.unit_label;
+
+-- ---------------------------------------------------------------------------
+-- HI's own programme catalogue (config/hi_ms_programmes.yaml, supplied by a domain expert)
+--
+-- hi_programme is loaded from the YAML by scripts/load_hi_programmes.py (rebuild step
+-- `disciplines` runs it first); the empty table below only lets this script run on its own.
+-- hi_programme_map says which catalogue programme, and which track of it, each discipline is:
+-- a discipline can be a programme (Vélaverkfræði), a track of one (Heilbrigðisverkfræði is the
+-- Læknisfræðileg verkfræði track of Rafmagns- og tölvuverkfræði) or neither (older or
+-- cross-cutting lines the catalogue no longer lists). The catalogue's deild for the programme
+-- is then set beside the crosswalk's (discipline_unit) so a disagreement shows up.
+create table if not exists hi_programme
+(
+    programme varchar,
+    deild     varchar,
+    track     varchar,
+    track_no  integer
+);
+
+drop table if exists hi_programme_map;
+create table hi_programme_map
+(
+    discipline varchar,
+    programme  varchar,
+    track      varchar,
+    note       varchar
+);
+
+insert into hi_programme_map (discipline, programme, track, note) values
+-- Iðnaðarverkfræði-, vélaverkfræði- og tölvunarfræðideild
+('Vélaverkfræði',         'Vélaverkfræði',       'Vélaverkfræði', null),
+('Mekatróník',            'Vélaverkfræði',       null, null),
+('Hátækniverkfræði',      'Vélaverkfræði',       null, 'HR line, no HI theses'),
+('Iðnaðarverkfræði',      'Iðnaðarverkfræði',    null, null),
+('Fjármálaverkfræði',     'Iðnaðarverkfræði',    null, 'a study line inside the industrial engineering deild'),
+('Rekstrarverkfræði',     'Iðnaðarverkfræði',    null, 'HR name for the same ground'),
+('Ákvarðanaverkfræði',    'Iðnaðarverkfræði',    null, null),
+('Hugbúnaðarverkfræði',   'Hugbúnaðarverkfræði', null, null),
+('Reikniverkfræði',       'Reikniverkfræði',     null, null),
+('Tölvunarfræði',         'Tölvunarfræði',       'Almenn tölvunarfræði', null),
+('Máltækni',              'Tölvunarfræði',       'Máltækni', null),
+-- Rafmagns- og tölvuverkfræðideild: one deild, several tracks of one programme
+('Rafmagnsverkfræði',     'Rafmagns- og tölvuverkfræði', 'Rafmagnsverkfræði', null),
+('Heilbrigðisverkfræði',  'Rafmagns- og tölvuverkfræði', 'Læknisfræðileg verkfræði', 'HR''s Heilbrigðisverkfræði'),
+('Tölvuverkfræði',        'Rafmagns- og tölvuverkfræði', 'Tölvuverkfræði', null),
+('Raforkuverkfræði',      'Rafmagns- og tölvuverkfræði', 'Endurnýjanleg orka - vistvæn orkuverkfræði', null),
+-- Umhverfis- og byggingarverkfræðideild
+('Byggingarverkfræði',    'Byggingarverkfræði',  null, null),
+('Framkvæmdastjórnun',    'Byggingarverkfræði',  null, 'construction management'),
+('Umhverfisverkfræði',    'Umhverfisverkfræði',  null, null),
+('Skipulagsfræði og samgöngur', 'Umhverfisverkfræði', 'Sjálfbær byggð og öruggar samgöngur', null),
+-- Raunvísindadeild
+('Eðlisfræði',            'Eðlisfræði',          null, null),
+('Efnafræði',             'Efnafræði',           null, null),
+('Stærðfræði',            'Stærðfræði',          null, null),
+('Tölfræði',              'Tölfræði',            null, null),
+('Gagnavísindi',          'Gagnavísindi',        null, null),
+('Verkfræðileg eðlisfræði', 'Verkfræðileg eðlisfræði', null, null),
+-- Jarðvísindadeild
+('Jarðfræði',             'Jarðfræði',           'Jarðfræði', null),
+('Jarðefnafræði',         'Jarðfræði',           'Jarðefnafræði - bergfræði', null),
+('Jarðeðlisfræði',        'Jarðeðlisfræði',      'Jarðeðlisfræði', null),
+('Jarðvísindi',           'Jarðvísindi',         null, null),
+-- Líf- og umhverfisvísindadeild
+('Líffræði',              'Líffræði',            'Líffræði', null),
+('Landfræði',             'Landfræði',           'Landfræði', null),
+('Ferðamálafræði',        'Ferðamálafræði',      'Ferðamálafræði', null),
+('Lífupplýsingafræði',    'Lífupplýsingafræði',  null, null),
+('Lífefnafræði',          'Lífefna- og sameindalíffræði', null, 'the catalogue names the programme Lífefna- og sameindalíffræði');
+-- Not mapped, on purpose: Orkuverkfræði (renewable energy is a track in four MS programmes across
+-- three deilds, so it belongs to none), Umhverfis- og auðlindafræði, Líftækni, Landupplýsinga- og
+-- umhverfisfræði (lines the catalogue does not list today), Matvælafræði (out of scope),
+-- Menntavísindadeild (out of scope).
+
+-- Each HI thesis against the catalogue: which programme and track it is, the catalogue's deild
+-- for the programme, and whether that agrees with the crosswalk's.
+create or replace view v_thesis_hi_programme as
+select
+    u.thesis_id,
+    u.yr,
+    u.discipline,
+    u.category,
+    m.programme,
+    m.track,
+    p.deild                                        as catalogue_deild,
+    u.unit_label                                   as crosswalk_deild,
+    m.programme is not null                        as in_catalogue,
+    p.deild is not distinct from u.unit_label      as deild_agrees
+from v_thesis_unit u
+left join hi_programme_map m on m.discipline = u.discipline
+left join (select programme, deild from hi_programme where track is null) p
+       on p.programme = m.programme
+where u.university_short = 'HÍ';
+
+-- A discipline whose crosswalk deild is not the deild its catalogue programme sits in.
+create or replace view v_hi_programme_disagreement as
+select discipline, programme, catalogue_deild, crosswalk_deild, count(*) as theses
+from v_thesis_hi_programme
+where in_catalogue and catalogue_deild is not null and not deild_agrees
+group by all;

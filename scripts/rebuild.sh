@@ -253,6 +253,8 @@ print(a["year_start"], a["year_end"], a["stable_start"], a["stable_end"])
 
 step_disciplines() {
     echo "[disciplines] Apply this study's keyword-to-discipline mapping over the population."
+    # HI's programme catalogue is YAML, which SQL cannot read; load it into hi_programme first.
+    run python scripts/load_hi_programmes.py --db "$DB"
     run_sql scripts/discipline_map.sql
     # With no advisors on file the advisor tier of v_thesis_discipline finds nothing, and the
     # theses it would have settled fall back to the generic discipline without any error.

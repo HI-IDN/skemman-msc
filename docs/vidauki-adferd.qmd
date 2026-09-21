@@ -115,18 +115,31 @@ sambærilegri en þeir eru.
 
 ```{r vidauki-hi-tre}
 #| fig-cap: >
-#|   Meistararitgerðir HÍ eftir deild og námsleið. Hæð hvers reits er í hlutfalli við
-#|   fjölda námsleiða í deildinni, svo deildirnar séu samanburðarhæfar.
-#| fig-height: 8
+#|   Meistararitgerðir HÍ eftir deild og námsleið, sett upp eins og námsskrá HÍ
+#|   (`config/hi_ms_programmes.yaml`). Hæð hvers reits er í hlutfalli við fjölda námsleiða í
+#|   deildinni. Námsleið án ritgerða er sýnd með 0; lína sem er ekki í núverandi námsskrá er
+#|   merkt með stjörnu og ljósari.
+#| fig-height: 10
 #| file: ../R/plots/vidauki-hi-tre.R
 ```
 
 Verkfræðideildirnar þrjár — IVT, UmBygg og RT — eru innan við helmingur sviðsins.
 Náttúruvísindin verða því að skerast frá áður en talað er um verkfræði hjá HÍ.
 
-Matvæla- og næringarfræðideild sker sig úr: hún heyrir undir Heilbrigðisvísindasvið en sex
-ritgerðir eru krosstengdar inn í VoN-safnið, svo þær koma fram hér þótt deildin standi
-utan sviðsins.
+Myndin fylgir námsskrá HÍ. Námsleið er sú sem skráin nefnir; grein sem er kjörsvið innan
+námsleiðar er talin með henni og nefnd í merkimiðanum, til dæmis er Heilbrigðisverkfræði
+kjörsviðið *Læknisfræðileg verkfræði* innan Rafmagns- og tölvuverkfræði (38 ritgerðir, þar af 26
+í rafmagnsverkfræði og 12 í læknisfræðilegri verkfræði). Iðnaðarverkfræði telur Fjármálaverkfræði
+með, því hún var námsleið innan iðnaðarverkfræðinnar en ekki sérstök deild. Deildarmerking
+greinanna (`discipline_unit`) og námsskráin stemma nákvæmlega: engin af 1.138 ritgerðum sem falla
+undir námsleið skrárinnar er í annarri deild en skráin segir (`v_hi_programme_disagreement`).
+Sex greinar (71 ritgerð) eru ekki í skránni í dag — Umhverfis- og auðlindafræði, Líftækni,
+Landupplýsinga- og umhverfisfræði, Orkuverkfræði, Matvælafræði og Menntavísindadeild — og eru
+sýndar merktar með stjörnu.
+
+Matvæla- og næringarfræðideild heyrir undir Heilbrigðisvísindasvið, ekki VoN, svo tvær ritgerðir
+hennar sem eru krosstengdar inn í VoN-safnið teljast rangskráðar og utan sviðs; þær koma fram hér
+til að sýna hvað er skorið frá.
 
 ```{r vidauki-hr-tre}
 #| fig-cap: >

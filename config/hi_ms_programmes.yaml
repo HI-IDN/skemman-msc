@@ -1,7 +1,9 @@
 # HÍ's MS programmes and their tracks (kjörsvið / leiðir), as supplied by a human domain
 # expert from the university's programme catalogue. Reference for deciding discipline
 # umbrellas (scripts/discipline_map.sql, discipline_group) and department crosswalks
-# (discipline_unit); nothing reads this file yet.
+# (discipline_unit). Loaded into hi_programme by scripts/load_hi_programmes.py (rebuild step
+# `disciplines`); scripts/discipline_map.sql maps disciplines onto it (hi_programme_map), and
+# R/plots/vidauki-hi-tre.R draws HI's tree from it.
 #
 # VoN (Verkfræði- og náttúruvísindasvið) has six deildir: Jarðvísindadeild; Iðnaðarverkfræði-,
 # vélaverkfræði- og tölvunarfræðideild; Líf- og umhverfisvísindadeild; Rafmagns- og

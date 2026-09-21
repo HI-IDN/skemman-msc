@@ -33,8 +33,13 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
   by an existing engineer). To do: proper script/view, table for the RQ chapter, the
   tæknifræðingar list for applied theses. Engineers who did not come through an engineering deild:
   under 1% of ~613 matches, but our population holds only in-scope theses.
-- **HÍ programme catalogue** is in `config/hi_ms_programmes.yaml` (supplied by a domain
-  expert); nothing reads it yet -- use it to decide umbrellas and fill `discipline_unit`.
+- **HÍ programme catalogue -- in use.** `config/hi_ms_programmes.yaml` (from a domain expert) is
+  loaded into `hi_programme` by `scripts/load_hi_programmes.py` (rebuild step `disciplines`);
+  `hi_programme_map` in `scripts/discipline_map.sql` says which programme and track each discipline
+  is, and `v_thesis_hi_programme` / `v_hi_programme_disagreement` compare the catalogue's deild with
+  the crosswalk's: **no disagreement** across the 1,138 HÍ theses that map to a programme, so
+  `discipline_unit` stands. `R/plots/vidauki-hi-tre.R` now draws the tree in the catalogue's terms.
+  Six lines (71 theses) are not in today's catalogue and are marked in the plot.
 - **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved
