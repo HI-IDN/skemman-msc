@@ -602,6 +602,15 @@ values
     -- tier said Rekstrarverkfraedi (advisor Pall Jensson) and a human agreed.
     46301, 'Rekstrarverkfræði', 'engineering',
     'human-confirmed engineering management (business plan). See issue #5.'
+),
+(
+    -- Business plan for corporate daycare centers in Iceland (early childhood development). No
+    -- title page in the cache; the advisor tier said Rekstrarverkfraedi (advisor Pall Kristjan
+    -- Palsson) and a human agreed it is engineering, "maybe" management. The author is a licensed
+    -- verkfraedingur (2025), so it is an engineering degree either way.
+    50794, 'Rekstrarverkfræði', 'engineering',
+    'engineering per human reading, probably management (business plan); author licensed. '
+    'See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
