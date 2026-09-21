@@ -582,6 +582,14 @@ values
     50907, 'Rekstrarverkfræði', 'engineering',
     'educated guess: engineering (author licensed); advisor supervises engineering management; '
     'alternative Fjármálaverkfræði (same umbrella). See issue #5.'
+),
+(
+    -- Numerical modelling of supersonic ejectors combining high- and low-pressure steam for
+    -- geothermal applications. No title-page subject (a bare "Master of Science"); the advisor
+    -- tier already said Orkuverkfraedi and a human confirmed it -- recorded here so it does not
+    -- depend on the advisor tables being loaded.
+    50803, 'Orkuverkfræði', 'engineering',
+    'human-confirmed energy engineering (supersonic ejectors, geothermal steam). See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
