@@ -199,6 +199,14 @@ Fyrir grunn sem var lesinn fyrir þessa hreinsun:
 skemman clean-people --db data/processed/thesis.db
 ```
 
+Straumurinn í `scripts/rebuild.sh` býr þessar raðir ekki til: `metadata-load` les ritgerðir og
+leitarorð, og `clean-people` hreinsar aðeins fólk sem er þegar til. Þess vegna er sérstakt þrep,
+`people` (`scripts/load_people.sql`), sem fyllir `people` og `thesis_people` úr Parquet-afritinu í
+`data/db/` á meðan töflurnar eru tómar, og endurtekning bætir engu við. Ritgerðir nýrri en síðasta
+útflutningur (`scripts/export_db.sql`) hafa ekkert fólk fyrr en afritið er flutt út aftur.
+Leiðbeinendastig `v_thesis_discipline` þarf þessar töflur; `disciplines`-þrepið varar við ef
+engir leiðbeinendur eru skráðir.
+
 ## Leitarorð
 
 Leitarorð eru klofin á semíkommum og kommum, sameinuð án tillits til hástafa, sett í

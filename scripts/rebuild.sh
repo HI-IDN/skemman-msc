@@ -37,14 +37,14 @@ CONFIG="config/collections.yaml"
 
 # Every step, in the order they have to run. A phase is a selection from this
 # list, so combining phases never reorders anything.
-ALL_STEPS=(init oai xoai metadata files titlepage access parse population disciplines figures)
+ALL_STEPS=(init oai xoai metadata people files titlepage access parse population disciplines figures)
 
 # Fetching from Skemman. `files` is here as well as in dataprocessing: the
 # title-page download needs the PDF URLs that files-load writes, so fetching
 # cannot finish without it. It reads the xoai pages already on disk.
 PRE=(init oai xoai files titlepage access)
 # Deriving from data/raw alone. Nothing here makes a request.
-DATA=(init metadata files parse)
+DATA=(init metadata people files parse)
 # Defining the population and the study's views over it.
 POST=(population disciplines)
 # Running the R.
@@ -172,6 +172,17 @@ step_metadata() {
     run "$SKEMMAN" clean-people --db "$DB"
 }
 
+step_people() {
+    echo "[people] Authors and advisors from the committed snapshot, while the tables are empty. No network."
+    # Nothing else in the pipeline creates these rows (see scripts/load_people.sql), and the
+    # advisor tier of the discipline mapping reads them.
+    if [[ ! -f data/db/people.parquet || ! -f data/db/thesis_people.parquet ]]; then
+        echo "warning: data/db/people.parquet or thesis_people.parquet is missing -- skipping;"              "authors and advisors stay empty" >&2
+        return 0
+    fi
+    run_sql scripts/load_people.sql
+}
+
 step_files() {
     echo "[files] Read the cached xoai pages into thesis_file, and the degree. No network."
     run "$SKEMMAN" files-load --db "$DB"
@@ -237,6 +248,19 @@ print(a["year_start"], a["year_end"], a["stable_start"], a["stable_end"])
 step_disciplines() {
     echo "[disciplines] Apply this study's keyword-to-discipline mapping over the population."
     run_sql scripts/discipline_map.sql
+    # With no advisors on file the advisor tier of v_thesis_discipline finds nothing, and the
+    # theses it would have settled fall back to the generic discipline without any error.
+    if [[ $DRY_RUN -eq 0 ]]; then
+        local advisors
+        advisors="$(duckdb "$DB" -noheader -list             -c "select count(*) from thesis_people where role = 'advisor'" 2>/dev/null || echo 0)"
+        if [[ "$advisors" == "0" ]]; then
+            echo "warning: thesis_people holds no advisors, so the advisor tier found nothing."                  "Run scripts/rebuild.sh --only people first." >&2
+        else
+            local n
+            n="$(duckdb "$DB" -noheader -list                 -c "select count(*) from v_thesis_discipline where discipline_source = 'advisor'"                 2>/dev/null || echo '?')"
+            echo "  advisor tier: $n thesis(es) take their advisor's field"
+        fi
+    fi
 }
 
 step_figures() {

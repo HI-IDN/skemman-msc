@@ -13,23 +13,6 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
 
 ## In progress / ideas (no action needed from you yet)
 
-- **`people`/`thesis_people` are empty after `rebuild.sh --dataprocessing`** (the metadata step
-  loads theses and keywords but not people; `clean-people` reports 0). The advisor tier and the
-  advisor views need them, so I loaded them into `thesis.db` from `data/db/people.parquet` and
-  `thesis_people.parquet` (the `restore_db.sql` statements). A fresh rebuild will lose them again
-  until people are loaded by the pipeline, and then `v_thesis_discipline` silently loses the 9
-  `advisor` rows (they fall back to `Verkfræði (ótilgreind)`). Worth a proper loader step.
-
-- **Parser fix + niche disciplines + umbrella group: built, rebuilt (`--dataprocessing
-  --postprocessing`, data/processed/thesis.db; backup `thesis.db.before-niche-umbrella.*`) and
-  committed.** Harvester (`skemman-harvester`, 81 tests): 420 of 2,665 cached title pages gain a
-  subject, none lose one. Main repo: `discipline_group` + `umbrella` column on
-  `v_thesis_discipline`; niche disciplines Mekatróník, Hátækniverkfræði, Raforkuverkfræði,
-  Lífefnaverkfræði, Ákvarðanaverkfræði; new science discipline Sjálfbær orkuvísindi (42 HR
-  theses); title-page subjects match keywords by longest word-boundary prefix; `rq2-greinar.R`
-  groups by umbrella. Title pages now decide 1,719 theses (was about 45%), 8 overrides, (óflokkað)
-  HÍ down from 26 to 11. The harvester commit is local: push it and update the submodule pointer
-  when you are ready.
 - **Advisor home department from staff pages.** `scripts/scrape_hi_staff.py` (retry run
   finished or finishing) and `scripts/scrape_hr_staff.py` (done: 99 of 430 matched; directory
   lists current staff only) write `data/processed/hi_staff_units.csv` / `hr_staff_units.csv`.
@@ -49,6 +32,14 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
 - **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved
+
+- **`people`/`thesis_people` were empty after a rebuild** -- nothing in the pipeline creates them
+  (`metadata-load` does theses and keywords, `clean-people` only tidies). New `people` step
+  (`scripts/load_people.sql`, in the data phase after `metadata`) fills them from the committed
+  Parquet snapshot while empty, idempotently; the `disciplines` step warns if no advisors are on
+  file. Limit: theses newer than the last `scripts/export_db.sql` export have no people until the
+  snapshot is re-exported; a real loader from the xoai cache (`dc.description.advisor`,
+  `dc.contributor.author`) would remove that.
 
 - **The last generic HR theses** -- settled one by one with human input; see the comments in
   `scripts/discipline_map.sql` for each: 44748, 46301, 50794, 50803, 50871, 50875, 50907, 50928,
