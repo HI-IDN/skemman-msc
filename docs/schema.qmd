@@ -211,6 +211,16 @@ einni færslu. Ef xoai-síðurnar vantar er `scripts/load_people.sql` varaleið:
 nokkur skemmd nöfn (`lfar` fyrir Úlfar, `Gudni` fyrir Guðni). Leiðbeinendastig `v_thesis_discipline`
 þarf þessar töflur; `disciplines`-þrepið varar við ef engir leiðbeinendur eru skráðir.
 
+## Verkfræðileyfi
+
+Þrepið `licences` (á eftir `population`, á undan `disciplines`) les
+`data/processed/engineer_licences.csv`, sem `scripts/fetch_engineer_licences.py` býr til úr
+opinberu listunum, inn í `engineer_licence` (nafn, fæðingarár, leyfisár og leyfisdagur; kennitalan er
+hvergi vistuð). `scripts/licences.sql` tengir höfunda við listana eftir nafni og fæðingarári
+(`v_thesis_author_licence`) og dregur saman í eina línu á ritgerð (`v_thesis_licence`). Skráin er sótt
+með höndum og er ekki hluti af sjálfvirku þrepunum; vanti hana er tengingin tóm og engin ritgerð
+telst með leyfi. Sjá [Verkfræðileyfi](08-verkfraedingsleyfi.qmd).
+
 ## Leitarorð
 
 Leitarorð eru klofin á semíkommum og kommum, sameinuð án tillits til hástafa, sett í

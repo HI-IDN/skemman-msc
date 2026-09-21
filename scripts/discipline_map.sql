@@ -876,26 +876,41 @@ where rn = 1;
 -- The advisor history is built from v_thesis_discipline_direct, not from this view, so the
 -- advisor tier cannot feed on itself.
 create or replace view v_thesis_discipline as
-select
-    d.thesis_id,
-    d.yr,
-    d.university,
-    coalesce(s.suggested_discipline, d.discipline)                          as discipline,
-    case when s.thesis_id is not null
-         then coalesce(g.umbrella, s.suggested_discipline)
-         else d.umbrella end                                                as umbrella,
-    coalesce(s.suggested_category, d.category)                              as category,
-    coalesce(s.suggested_category, d.category) = 'engineering'              as is_engineering,
-    coalesce(s.suggested_category, d.category) in ('engineering', 'professional')
-                                                                            as in_scope_broad,
-    d.unclassified and s.thesis_id is null                                  as unclassified,
-    case when s.thesis_id is not null then 'advisor' else d.discipline_source end
+with base as (
+    select
+        d.thesis_id, d.yr, d.university,
+        coalesce(s.suggested_discipline, d.discipline)                      as discipline,
+        case when s.thesis_id is not null
+             then coalesce(g.umbrella, s.suggested_discipline)
+             else d.umbrella end                                            as umbrella,
+        coalesce(s.suggested_category, d.category)                          as category,
+        d.unclassified and s.thesis_id is null                              as unclassified,
+        case when s.thesis_id is not null then 'advisor' else d.discipline_source end
                                                                             as discipline_source,
-    d.is_teacher_education,
-    d.is_interdisciplinary
-from v_thesis_discipline_direct d
-left join v_thesis_discipline_advisor_suggestion s on s.thesis_id = d.thesis_id
-left join discipline_group g on g.discipline = s.suggested_discipline;
+        d.is_teacher_education,
+        d.is_interdisciplinary
+    from v_thesis_discipline_direct d
+    left join v_thesis_discipline_advisor_suggestion s on s.thesis_id = d.thesis_id
+    left join discipline_group g on g.discipline = s.suggested_discipline
+)
+-- An interdisciplinary science line (Sjálfbær orkuvísindi) is engineering when its author went on
+-- to apply for the engineer's title after the thesis (v_thesis_licence, scripts/licences.sql), and
+-- science otherwise. licence_promoted marks those theses; the discipline itself stays as it was.
+select
+    b.thesis_id, b.yr, b.university, b.discipline, b.umbrella,
+    case when p.promoted then 'engineering' else b.category end             as category,
+    (case when p.promoted then 'engineering' else b.category end) = 'engineering'
+                                                                            as is_engineering,
+    (case when p.promoted then 'engineering' else b.category end) in ('engineering', 'professional')
+                                                                            as in_scope_broad,
+    b.unclassified, b.discipline_source, b.is_teacher_education, b.is_interdisciplinary,
+    p.promoted                                                              as licence_promoted
+from base b
+cross join lateral (
+    select b.is_interdisciplinary and b.category = 'science'
+           and coalesce((select l.licensed_after from v_thesis_licence l where l.thesis_id = b.thesis_id), false)
+           as promoted
+) p;
 
 
 -- ---------------------------------------------------------------------------

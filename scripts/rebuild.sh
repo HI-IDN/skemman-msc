@@ -37,7 +37,7 @@ CONFIG="config/collections.yaml"
 
 # Every step, in the order they have to run. A phase is a selection from this
 # list, so combining phases never reorders anything.
-ALL_STEPS=(init oai xoai metadata people files titlepage access parse population disciplines advisors figures)
+ALL_STEPS=(init oai xoai metadata people files titlepage access parse population licences disciplines advisors figures)
 
 # Fetching from Skemman. `files` is here as well as in dataprocessing: the
 # title-page download needs the PDF URLs that files-load writes, so fetching
@@ -46,7 +46,7 @@ PRE=(init oai xoai files titlepage access)
 # Deriving from data/raw alone. Nothing here makes a request.
 DATA=(init metadata people files parse)
 # Defining the population and the study's views over it.
-POST=(population disciplines advisors)
+POST=(population licences disciplines advisors)
 # Running the R.
 VIS=(figures)
 
@@ -249,6 +249,18 @@ print(a["year_start"], a["year_end"], a["stable_start"], a["stable_end"])
     echo "  years $ANALYSIS_YEAR_START-$ANALYSIS_YEAR_END, whole years" \
          "$ANALYSIS_STABLE_START-$ANALYSIS_STABLE_END, from $CONFIG"
     run_sql scripts/population.sql
+}
+
+step_licences() {
+    echo "[licences] Which thesis authors hold a government engineer's licence, and when they got it."
+    # data/processed/engineer_licences.csv comes from scripts/fetch_engineer_licences.py, which needs
+    # the network and is run by hand. Without it the tables stay empty and no thesis counts as licensed.
+    if [[ -f data/processed/engineer_licences.csv ]]; then
+        run_sql scripts/load_licences.sql
+    else
+        echo "  skipped loading: data/processed/engineer_licences.csv is missing"              "(run scripts/fetch_engineer_licences.py)" >&2
+    fi
+    run_sql scripts/licences.sql
 }
 
 step_disciplines() {

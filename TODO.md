@@ -24,15 +24,16 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
   many departed / adjunct / foreign advisors (HÍ former-staff page, other sources); the
   within-versus-across-faculty question can now be asked properly. The staff scrapers resume by
   name now (person ids change when `people` is rebuilt).
-- **Licensed-engineer analysis.** `scripts/fetch_engineer_licences.py` ->
-  `data/processed/engineer_licences.csv` (gitignored; name, birth year, licence date only --
-  never the kennitala). Preliminary (engineering authors, verkfræðingur list): 49% matched
-  (HÍ 60%, HR 41%, a lower bound), median 4.2 months from thesis to licence. Caveats: recent
-  cohorts censored, 2026 snapshot, name + birth year matching, and a licence proves *an*
-  engineering degree exists, not that this thesis was it (39936: earlier Milan MSc; 12943: MPM
-  by an existing engineer). To do: proper script/view, table for the RQ chapter, the
-  tæknifræðingar list for applied theses. Engineers who did not come through an engineering deild:
-  under 1% of ~613 matches, but our population holds only in-scope theses.
+- **Licensed-engineer analysis -- built.** `scripts/load_licences.sql` (rebuild step `licences`,
+  before `disciplines`) loads `data/processed/engineer_licences.csv` (gitignored; name, birth year,
+  licence date only -- never the kennitala) into `engineer_licence`; `scripts/licences.sql` matches
+  authors by name + birth year (`v_thesis_author_licence`, `v_thesis_licence`; rel = before / after
+  within 6 years / late). `v_thesis_discipline.licence_promoted` promotes an interdisciplinary
+  science thesis to engineering when its author is licensed afterwards -- it fires on 0 of the 42
+  Sjálfbær orkuvísindi theses today. Chapter `docs/08-verkfraedingsleyfi.qmd`, `R/tables/rq8-leyfi.R`,
+  `R/plots/rq8-*.R`. Headline: 62% (HÍ) / 50% (HR) of engineering theses to 2020 end in a licence,
+  median ~0.5 years; 670 theses with a licence afterwards, 5 outside engineering. To do: the 2018 HR dip
+  (14 of 52) is unexplained; tæknifræðingar are matched but not analysed as a study population of their own.
 - **HÍ programme catalogue -- in use.** `config/hi_ms_programmes.yaml` (from a domain expert) is
   loaded into `hi_programme` by `scripts/load_hi_programmes.py` (rebuild step `disciplines`);
   `hi_programme_map` in `scripts/discipline_map.sql` says which programme and track each discipline

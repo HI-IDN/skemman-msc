@@ -1,0 +1,92 @@
+# Verkfræðileyfi
+
+```{r rq8-setup}
+#| include: false
+source("../R/global.R")
+```
+
+> Hversu margar meistararitgerðir enda í opinberu starfsleyfi verkfræðings eða tæknifræðings,
+> og hversu fljótt?
+
+Starfsheitið *verkfræðingur* er lögverndað. Stjórnarráðið birtir lista yfir þá sem hafa
+fengið leyfið ([verkfræðingar](https://www.stjornarradid.is/verkefni/idnadur-og-nyskopun/starfsleyfi-og-oryggi/verkfraedingar/),
+[tæknifræðingar](https://www.stjornarradid.is/verkefni/idnadur-og-nyskopun/starfsleyfi-og-oryggi/taeknifraedingar/)),
+með fæðingarári og leyfisdegi. Það gefur ytra mælitæki á það sem meistaranámið skilar, og
+líka sjálfstæða heimild um hvaða ritgerðir eru verkfræði.
+
+## Hvernig samsvörunin er gerð
+
+Höfundur ritgerðar er tengdur við listann eftir fullu nafni og fæðingarári
+(`scripts/licences.sql`); ef millinöfn eru rituð ólíkt í heimildunum dugar fyrsta og síðasta
+nafn með sama fæðingarári. Leyfi telst *koma í kjölfar* ritgerðarinnar ef það er veitt frá 60
+dögum fyrir til sex árum eftir að ritgerðinni var skilað. Kennitalan, sem birt er á listunum,
+er aðeins lesin til að ná í fæðingarárið og er hvergi vistuð; hér birtast eingöngu samtölur.
+
+Þrír fyrirvarar gilda um allar tölur í kaflanum:
+
+- **Leyfi sannar að til sé verkfræðigráða, ekki að þessi ritgerð hafi verið hún.** Höfundur
+  getur átt leyfi frá fyrra námi (sjá „áður en ritgerð var skilað“ hér að neðan).
+- **Engin samsvörun þýðir ekki að leyfi vanti; talan er neðri mörk.** Umsókn kostar og ekki allir sækja um.
+- **Nýjustu árgangarnir eru hægrahnitaðir.** Listarnir ná til mitts árs 2026; árgangur sem
+  lauk 2024 hefur haft tvö ár til að sækja um. Miðgildi og hlutföll eru því aðeins reiknuð
+  fyrir árganga til og með 2020, sem hafa haft öll sex árin.
+
+## Hversu margar ritgerðir enda í leyfi
+
+```{r rq8-tables}
+#| file: ../R/tables/rq8-leyfi.R
+```
+
+Af verkfræðiritgerðum til og með 2020 fá 62% höfunda hjá HÍ og 50% hjá HR leyfi í kjölfarið.
+Utan verkfræðiflokksins er leiðin nánast lokuð: aðeins fimm ritgerðir af öllu þýðinu (þrjár
+í verkefnastjórnun hjá HR, ein í tölfræði og ein í líffræði hjá HÍ) enda í leyfi. Það svarar
+því hversu margir komast í verkfræðingsleyfi eftir meistaranám utan verkfræðideildanna:
+mjög fáir.
+
+Munur á greinum er meiri en munur á skólum. Byggingarverkfræði endar í leyfi í 88% tilvika
+hjá báðum skólum, en Tölvunarfræði er með 0% hjá HÍ og HR (leyfi vantar hjá öllum 92) og
+Orkuverkfræði hjá HR með 22%. HR Umhverfisverkfræði (11 ritgerðir) fær ekkert leyfi; allar
+ritgerðirnar eru í línunni Skipulagsfræði og samgöngur sem flokkast undir Umhverfisverkfræði
+(sjá [umbrella-samsteypuna](vidauki-adferd.qmd)). Hvers vegna Tölvunarfræði endar aldrei í
+leyfi er ekki kannað hér.
+
+## Hversu fljótt
+
+Miðgildið milli ritgerðar og leyfis er um hálft ár í öllum stóru greinunum, og flest leyfi
+koma innan árs. Undantekningin er rafmagnsverkfræði hjá HÍ, þar sem fjórðungsmörkin ná til
+3,5 ára, en þar eru aðeins átta höfundar með leyfi, svo það má ekki lesa mikið úr því.
+
+```{r rq8-bid}
+#| file: ../R/plots/rq8-bid.R
+```
+
+Hlutfall þeirra sem fá leyfi er stöðugt í kringum 50–70% fram til 2020 og fellur svo. Fallið er
+að mestu leyti hægrahnitun, ekki breytt hegðun: miðgildið er hálft ár, en árgangur 2025 hefur
+ekki lokið því. Hjá HR er árgangur 2018 (14 af 52) áberandi lágur og þar er engin skýring
+í gögnunum.
+
+```{r rq8-hlutfall}
+#| file: ../R/plots/rq8-hlutfall.R
+```
+
+## Verkfræðingar og tæknifræðingar
+
+Af 670 ritgerðum þar sem leyfi kemur í kjölfarið eru 612 verkfræðingar einir, 57 bæði
+verkfræðingar og tæknifræðingar og ein aðeins tæknifræðingur. Að auki eru 102 ritgerðir
+eftir höfunda sem áttu leyfi *áður* en ritgerðinni var skilað (í 52 þeirra kemur ekkert leyfi í
+kjölfarið); í 30 tilvikum er það tæknifræðingsleyfi eitt og sér. Ritgerðin er þá ekki endilega
+ástæða leyfisins, sbr. fyrsta fyrirvarann.
+
+## Sjálfbær orkuvísindi
+
+Sjálfbær orkuvísindi eru þverfagleg lína sem telst til náttúruvísinda nema höfundur sæki síðar
+um verkfræðingsleyfi. Sú regla er í `v_thesis_discipline` (dálkurinn `licence_promoted`), en
+enginn af 42 ritgerðum línunnar á höfund með leyfi á listunum, svo hún breytir engu enn.
+Allar ritgerðirnar eru því flokkaðar sem náttúruvísindi. Reglan tekur gildi við næstu
+endurbyggingu eftir að nýtt leyfi birtist á listunum.
+
+## Takmarkanir
+
+- Höfundar án fæðingarárs (þrjár ritgerðir) geta ekki tengst listanum.
+- Nafnasamsvörun getur ruglað tveimur nafnnöfnum með sama fæðingarár; það er sjaldgæft en
+  ekki útilokað.
