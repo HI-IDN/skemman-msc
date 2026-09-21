@@ -40,6 +40,12 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
   the crosswalk's: **no disagreement** across the 1,138 HÍ theses that map to a programme, so
   `discipline_unit` stands. `R/plots/vidauki-hi-tre.R` now draws the tree in the catalogue's terms.
   Six lines (71 theses) are not in today's catalogue and are marked in the plot.
+- **Industry advisors / co-supervisors** (from a human note: e.g. Efla engineers as
+  co-supervisors). Some of the advisors without a staff page are industry people, not departed
+  academics: 416 of 2,022 advisors have no birth year (typical of external supervisors), and
+  `sponsor` is empty for every thesis. Classifying advisors as academic vs. industry, and by employer
+  (title-page advisor lines and acknowledgements name the company), is the missing piece for RQ5 and
+  RQ7 and would tighten the advisor-department coverage claim. Not started.
 - **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved

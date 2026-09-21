@@ -141,8 +141,11 @@ og millinöfn samrýmast (`advisor_identity`), svo nafnar með annað fæðingar
 90% hjá HÍ. Hjá HÍ koma 6,4% frá öðrum sviðum (matvælafræði, læknisfræði og viðskiptafræði mest) og
 3,6% úr raunvísindadeildunum. Fyrirvarinn er þekjan: starfsmannasíða er aðeins til fyrir þá sem starfa
 enn hjá skólanum (eða, hjá HÍ, störfuðu þar), svo heimadeild er þekkt fyrir 63% leiðbeininga hjá báðum
-skólum en aðeins um fjórðung leiðbeinenda; þeir sem hafa hætt, einkum stundakennarar og erlendir
-leiðbeinendur, vantar. Niðurstaðan segir því til um núverandi starfsfólk, ekki um alla sem hafa leiðbeint.
+skólum en aðeins um fjórðung leiðbeinenda. Þá sem vantar eru bæði þeir sem hafa hætt, stundakennarar
+og erlendir leiðbeinendur, og leiðbeinendur úr atvinnulífinu (verkfræðistofur og fyrirtæki koma oft að
+sem meðleiðbeinendur; rúmlega fimmtungur leiðbeinenda hefur ekkert skráð fæðingarár, sem er
+einkennandi fyrir utanaðkomandi leiðbeinendur). Niðurstaðan segir því til um akademíska leiðbeinendur
+með starfsmannasíðu, ekki um alla sem hafa leiðbeint.
 
 ## Það sem stendur eftir
 
