@@ -7,17 +7,9 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-1. **3 HR theses whose discipline now comes from the advisor** (`discipline_source =
-   'advisor'`; no title page, keyword or override names a programme, so the advisor's
-   predominant field decides, as you asked). Skim, and add a `discipline_override` where you
-   know better:
-   - Orkuverkfræði: 51060 (J. A. Newson),
-     50913 (G. A. Sævarsdóttir -- **check**: silicon/Al-Si alloy deposition, same advisor as 50850
-     which is Efnaverkfræði, and the author is a licensed engineer; likely Efnaverkfræði)
-   - Vélaverkfræði: 50871 (I. S. Ríkharðsson; ice-slurry sensors, refrigeration)
-   Already settled by hand: 50803 and 50875 (Orkuverkfræði, confirmed), 46301 (Rekstrarverkfræði, confirmed), 50794 (Rekstrarverkfræði, "maybe" management; author licensed), 50928 (Rekstrarverkfræði, programme unknown, advisor decides), 50984 (Rekstrarverkfræði; software/biomedical considered, rejected), 42324 (Orkuverkfræði, educated guess), 50850 (Efnaverkfræði), 50907
-   (Rekstrarverkfræði, educated guess; Fjármálaverkfræði the alternative, same umbrella), 50986
-   (Rekstrarverkfræði), 44748, 50796.
+Nothing is waiting on you right now. (Two HR theses, 50850 and 50913, take their advisor's field,
+Orkuverkfræði, by design: silicon/ferrosilicon materials-process work, but neither school has a
+chemical-engineering programme. Add a `discipline_override` if you ever learn their programme.)
 
 ## In progress / ideas (no action needed from you yet)
 
@@ -57,6 +49,12 @@ comment, this file's own history in git is the record).
 - **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved
+
+- **The last generic HR theses** -- settled one by one with human input; see the comments in
+  `scripts/discipline_map.sql` for each: 44748, 46301, 50794, 50803, 50871, 50875, 50907, 50928,
+  50984, 50986, 51060, 42324 and 50796 are overrides; 50850 and 50913 take the advisor's field.
+  Final tally: 1,718 by title page, 746 by keyword, 18 by override, 2 by advisor; none generic.
+  `discipline_override` is now cleared and refilled from the script on every run.
 
 - **Matvæla- og næringarfræðideild (2 HÍ theses: 20573, 33474)** -- belongs to Heilbrigðisvísindasvið,
   not VoN; treated as mis-filed and out of scope (`out_of_scope`, like Menntavísindadeild).

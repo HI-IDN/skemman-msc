@@ -465,6 +465,10 @@ create table if not exists discipline_override
 
 create unique index if not exists discipline_override_pk on discipline_override (thesis_id);
 
+-- This script is the only source of overrides, so the table is cleared first: a row removed
+-- from the list below must not survive in a database built earlier.
+delete from discipline_override;
+
 insert into discipline_override (thesis_id, discipline, category, reason)
 values
 (
@@ -548,17 +552,11 @@ values
     'garbled PDF font; title page read by a human: MSc in Electric Power Management, Department '
     'of Engineering. Advisor supervises engineering management. See issue #5.'
 ),
-(
-    -- No title page in the cache, and the keywords mislead ("Geothermal brines" looks like a
-    -- stray tag; the advisor suggestion, Orkuverkfraedi, follows it). The abstract is a study of
-    -- Elkem Iceland's ferrosilicon furnaces: physical and chemical attributes of silica fume
-    -- against raw-material selection -- a chemical/process-engineering thesis. The author is a
-    -- licensed verkfraedingur (licence 2025), so it is an engineering degree. Human's guess
-    -- (chemical engineering) matches the abstract.
-    50850, 'Efnaverkfræði', 'engineering',
-    'ferrosilicon furnace silica fume (Elkem Iceland): chemical/process engineering; author '
-    'licensed engineer; advisor suggestion (Orkuverkfraedi) followed a stray keyword. See issue #5.'
-),
+    -- 50850 and 50913 deliberately have no override: both are silicon / ferrosilicon
+    -- materials-process work (Elkem's silica fume; Al-Si alloy by electrolysis) whose licensed
+    -- authors were filed under RU's Department of Engineering, but neither school has a
+    -- chemical-engineering programme, so labelling them Efnaverkfraedi would invent one.
+    -- They take the advisor's predominant field (Orkuverkfraedi) through the advisor tier.
 (
     -- EDUCATED GUESS. Title page says only "Master of Science in Engineering" and the topic
     -- ("sustainability at a wellness retreat centre in El Tanque, Tenerife") superficially looks
@@ -637,6 +635,19 @@ values
     50984, 'Rekstrarverkfræði', 'engineering',
     'process planning for biosimilar development (Alvotech); advisor and similar HR pharma theses '
     'are Rekstrarverkfraedi, not software or biomedical. See issue #5.'
+),
+(
+    -- Geothermal waste / circular economy / power plant (no title in the database); advisor Juliet
+    -- Ann Newson (geothermal). The advisor tier said Orkuverkfraedi and a human confirmed it.
+    51060, 'Orkuverkfræði', 'engineering',
+    'human-confirmed energy engineering (geothermal waste, circular economy). See issue #5.'
+),
+(
+    -- Sensor-based measurements of ice concentration in ice/water slurry mixtures (keyword
+    -- Kaelitaekni, refrigeration); advisor Indridi Saevar Rikhardsson (mostly Velaverkfraedi). The
+    -- advisor tier said Velaverkfraedi and a human confirmed it.
+    50871, 'Vélaverkfræði', 'engineering',
+    'human-confirmed mechanical engineering (ice-slurry sensors, refrigeration). See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
