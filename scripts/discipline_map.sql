@@ -624,6 +624,19 @@ values
     50928, 'Rekstrarverkfræði', 'engineering',
     'programme unknown (Department of Engineering, RU); advisor Hlynur Stefansson predominantly '
     'supervises Rekstrarverkfraedi, per the human call to let the advisor decide. See issue #5.'
+),
+(
+    -- A requirement analysis of software tools for biosimilar development (Alvotech's
+    -- "Development Blueprint"). A human wondered about Hugbunadarverkfraedi (the title says
+    -- software tools) or Heilbrigdisverkfraedi. The abstract is about planning and scheduling a
+    -- development process, i.e. operations; the other Alvotech / generic-pharma theses at HR are
+    -- Rekstrarverkfraedi (production planning, launch portfolio, product scheduling); the advisor
+    -- (Hlynur Stefansson) supervises Rekstrarverkfraedi 40 times, Verkefnastjornun 19, and no
+    -- Hugbunadarverkfraedi and one Heilbrigdisverkfraedi thesis; HR's Heilbrigdisverkfraedi is
+    -- biomedical work under other advisors. Verkefnastjornun (professional) is the runner-up.
+    50984, 'Rekstrarverkfræði', 'engineering',
+    'process planning for biosimilar development (Alvotech); advisor and similar HR pharma theses '
+    'are Rekstrarverkfraedi, not software or biomedical. See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;

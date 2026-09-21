@@ -7,16 +7,15 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-1. **4 HR theses whose discipline now comes from the advisor** (`discipline_source =
+1. **3 HR theses whose discipline now comes from the advisor** (`discipline_source =
    'advisor'`; no title page, keyword or override names a programme, so the advisor's
    predominant field decides, as you asked). Skim, and add a `discipline_override` where you
    know better:
    - Orkuverkfræði: 51060 (J. A. Newson),
      50913 (G. A. Sævarsdóttir -- **check**: silicon/Al-Si alloy deposition, same advisor as 50850
      which is Efnaverkfræði, and the author is a licensed engineer; likely Efnaverkfræði)
-   - Rekstrarverkfræði: 50984 (H. Stefánsson)
    - Vélaverkfræði: 50871 (I. S. Ríkharðsson; ice-slurry sensors, refrigeration)
-   Already settled by hand: 50803 and 50875 (Orkuverkfræði, confirmed), 46301 (Rekstrarverkfræði, confirmed), 50794 (Rekstrarverkfræði, "maybe" management; author licensed), 50928 (Rekstrarverkfræði, programme unknown, advisor decides), 42324 (Orkuverkfræði, educated guess), 50850 (Efnaverkfræði), 50907
+   Already settled by hand: 50803 and 50875 (Orkuverkfræði, confirmed), 46301 (Rekstrarverkfræði, confirmed), 50794 (Rekstrarverkfræði, "maybe" management; author licensed), 50928 (Rekstrarverkfræði, programme unknown, advisor decides), 50984 (Rekstrarverkfræði; software/biomedical considered, rejected), 42324 (Orkuverkfræði, educated guess), 50850 (Efnaverkfræði), 50907
    (Rekstrarverkfræði, educated guess; Fjármálaverkfræði the alternative, same umbrella), 50986
    (Rekstrarverkfræði), 44748, 50796.
 
