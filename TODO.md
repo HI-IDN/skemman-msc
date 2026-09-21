@@ -19,16 +19,6 @@ comment, this file's own history in git is the record).
    Already settled by hand: 42324 (Orkuverkfræði, educated guess), 50850 (Efnaverkfræði), 50907
    (Rekstrarverkfræði, educated guess; Fjármálaverkfræði the alternative, same umbrella), 50986
    (Rekstrarverkfræði), 44748, 50796.
-2. **Two optional umbrellas** (each a row of `discipline_group`): Skipulagsfræði og samgöngur
-   (11 HR theses) -> Umhverfisverkfræði (HÍ has a track "Sjálfbær byggð og öruggar
-   samgöngur")? and where the 6 HÍ Orkuverkfræði theses (ISE era, filed under IVT) belong,
-   given renewable energy is a track in four MS programmes across three engineering deilds. Low
-   stakes.
-3. **Crosswalk vs today's HÍ catalogue** (`config/hi_ms_programmes.yaml`, VoN has six deildir).
-   Everything matches except one thing that may just be history -- confirm or ignore:
-   `Matvæla- og næringarfræðideild` (Matvælafræði, Næringarfræði, two HÍ theses) is in the
-   crosswalk but is not one of the six. (`Gagnavísindi` is now under Raunvísindadeild, the
-   statistics sub-line, as confirmed.)
 
 ## In progress / ideas (no action needed from you yet)
 
@@ -68,6 +58,12 @@ comment, this file's own history in git is the record).
 - **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved
+
+- **Matvæla- og næringarfræðideild (2 HÍ theses: 20573, 33474)** -- belongs to Heilbrigðisvísindasvið,
+  not VoN; treated as mis-filed and out of scope (`out_of_scope`, like Menntavísindadeild).
+  (Before HÍ's 2008 restructuring the deild may have been organised differently; irrelevant here.)
+- **Umbrellas** -- Skipulagsfræði og samgöngur -> Umhverfisverkfræði (HÍ track "Sjálfbær byggð og
+  öruggar samgöngur"). Orkuverkfræði stays ungrouped; its 6 HÍ theses stay in IVT.
 
 - **Sustainable Energy Science (42 HR theses)** -- interdisciplinary (human call): science by
   default, engineering when the author applies for the engineer title. Today 0 of 31 authors

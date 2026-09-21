@@ -236,8 +236,12 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('lífeðlisfræði',                  'Eðlisfræði',                 'science', 15),
 ('hljóðeðlisfræði',                'Eðlisfræði',                 'science', 15),
 ('menntun framhaldsskólakennara',  'Menntavísindadeild',         'out_of_scope', 10),
-('matvælafræði',                   'Matvælafræði',               'science', 10),
-('næringarfræði',                  'Næringarfræði',              'science', 10),
+-- Food science and nutrition (Matvæla- og næringarfræðideild) belongs to the School of Health
+-- Sciences (Heilbrigðisvísindasvið), not Verkfræði- og náttúruvísindasvið, so the two HÍ theses
+-- filed here are mis-filed: out of scope, like Menntavísindadeild (human call; the deild may
+-- have been organised differently before HÍ's 2008 restructuring, which does not matter here).
+('matvælafræði',                   'Matvælafræði',               'out_of_scope', 10),
+('næringarfræði',                  'Næringarfræði',              'out_of_scope', 10),
 ('heilsuþjálfun og kennsla',       'Íþróttavísindi',             'science', 12),
 -- Thesis 31238 (title page: MSc in Marketing) is genuinely out of scope, not a
 -- discipline this study should count at all -- see issue #5 and TODO.md. Mapped as
@@ -292,7 +296,7 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('biochemistry',                       'Lífefnafræði',                 'science', 10),
 ('bioinformatics',                     'Lífupplýsingafræði',           'science', 10),
 ('industrial biotechnology',           'Líftækni',                     'science', 15),
-('food science',                       'Matvælafræði',                 'science', 10),
+('food science',                       'Matvælafræði',                 'out_of_scope', 10),
 ('tourism studies',                    'Ferðamálafræði',               'science', 10),
 ('environment and natural resources',  'Umhverfis- og auðlindafræði',  'science', 10),
 ('environment and natural',            'Umhverfis- og auðlindafræði',  'science', 15),
@@ -624,7 +628,8 @@ insert into discipline_group (discipline, umbrella, note) values
 ('Raforkuverkfræði',    'Rafmagnsverkfræði', 'electric power engineering; HI: a track of Rafmagns- og tölvuverkfræði'),
 ('Heilbrigðisverkfræði','Rafmagnsverkfræði', 'HI: læknisfræðileg verkfræði is a track of the single Rafmagns- og tölvuverkfræði deild'),
 ('Máltækni',           'Tölvunarfræði',    'HI: Máltækni is a track of the Tölvunarfræði MS (with Almenn tölvunarfræði, Netöryggi)'),
-('Lífefnaverkfræði',    'Efnaverkfræði',    'biochemical engineering')
+('Lífefnaverkfræði',    'Efnaverkfræði',    'biochemical engineering'),
+('Skipulagsfræði og samgöngur', 'Umhverfisverkfræði', 'HI: Sjálfbær byggð og öruggar samgöngur is a track of the Umhverfisverkfræði MS')
 on conflict (discipline) do update set umbrella = excluded.umbrella, note = excluded.note;
 
 -- The OFFICIAL discipline: what every other chapter, table and figure should read.

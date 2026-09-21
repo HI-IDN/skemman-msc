@@ -59,17 +59,18 @@ að senda öll þrjú orðin á `Verkefnastjórnun`.
 Verkfræði er stærsti flokkurinn hjá báðum skólum, en hlutföllin eru ólík: hjá HR er
 `Fagnám` (MPM) næststærsti flokkurinn og náttúruvísindi eru aðeins 69 ritgerðir (þar af 42
 í sjálfbærum orkuvísindum, sjá að neðan), en hjá HÍ eru náttúruvísindi stærri en verkfræði
-(639 á móti 559) — því HÍ-safnið í Skemmunni nær yfir allt Verkfræði- og
-náttúruvísindasvið, ekki verkfræðina eina. `Utan sviðs` er tólf ritgerðir sem
-greinaflokkunin skilur meðvitað frá náttúruvísindum: ellefu úr Menntavísindadeild og eitt
-rangskráð tilvik (sjá `TODO.md`).
+(637 á móti 559) — því HÍ-safnið í Skemmunni nær yfir allt Verkfræði- og
+náttúruvísindasvið, ekki verkfræðina eina. `Utan sviðs` er fjórtán ritgerðir sem
+greinaflokkunin skilur meðvitað frá náttúruvísindum: ellefu úr Menntavísindadeild, tvær úr
+Matvæla- og næringarfræðideild (sem heyrir undir Heilbrigðisvísindasvið, ekki VoN, svo þær eru
+rangskráðar hér) og eitt rangskráð tilvik (sjá `TODO.md`).
 
 ```{r rq2-deildir}
 #| file: ../R/tables/rq2-deildir.R
 ```
 
 Niður á deild: hjá HÍ dreifist verkfræðin á þrjár deildir (IVT, UmBygg, RT), auk fjögurra
-ritgerða í verkfræðilegri eðlisfræði sem Raunvísindadeild hýsir, og náttúruvísindin á fjórar. Hjá HR er `study_category` sjálft deildin — tæknifræði og
+ritgerða í verkfræðilegri eðlisfræði sem Raunvísindadeild hýsir, og náttúruvísindin á þrjár. Hjá HR er `study_category` sjálft deildin — tæknifræði og
 tölvunarfræði teljast með verkfræðinni, íþróttavísindi og MPM standa utan hennar.
 
 Deildarmerkingin er nú heil, með tveimur ásettum undantekningum. Hjá HR lendir ein ritgerð
@@ -104,14 +105,15 @@ dálki:
 #| file: ../R/tables/rq2-greinar.R
 ```
 
-Tölvunarfræði (+54), Rafmagnsverkfræði (+42), Vélaverkfræði (+37) og Orkuverkfræði (+34)
+Tölvunarfræði (+54), Rafmagnsverkfræði (+42), Orkuverkfræði (+39) og Vélaverkfræði (+38)
 hafa vaxið mest í fjölda talið. Byggingarverkfræði (−53) hefur dregist mest saman, þá
-Iðnaðarverkfræði (−16), og Skipulagsfræði og samgöngur er horfin úr síðari hlutanum. Ný
+Umhverfisverkfræði (−17, þar sem Skipulagsfræði og samgöngur — 11 í fyrri hlutanum og engin í
+þeim síðari — er talin með) og Iðnaðarverkfræði (−10). Ný
 svið hafa líka birst: Gagnavísindi eiga engar ritgerðir í fyrri hlutanum en átta í þeim
 síðari, og Máltækni (sem heyrir undir Tölvunarfræði) engar á móti þrettán.
 
 Iðnaðarverkfræði sem yfirgrein felur í sér Fjármálaverkfræði, sem vex (17 á móti 35), svo
-hinar undirgreinarnar samanlagt dragast saman um 34 — meira en talan −16 sýnir.
+hinar undirgreinarnar samanlagt dragast saman um 28 — meira en talan −10 sýnir.
 Fjármálaverkfræði er ekki jafnt vaxandi námsleið heldur bundin við HR: HÍ hætti að skila
 neinni eftir 2014, en hjá HR heldur hún áfram með 1–8 ritgerðir á ári, þar af 7 árið 2024 og
 8 árið 2025. Hún er því horfin hjá HÍ en lifir hjá HR.
