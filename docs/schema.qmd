@@ -199,13 +199,17 @@ Fyrir grunn sem var lesinn fyrir þessa hreinsun:
 skemman clean-people --db data/processed/thesis.db
 ```
 
-Straumurinn í `scripts/rebuild.sh` býr þessar raðir ekki til: `metadata-load` les ritgerðir og
-leitarorð, og `clean-people` hreinsar aðeins fólk sem er þegar til. Þess vegna er sérstakt þrep,
-`people` (`scripts/load_people.sql`), sem fyllir `people` og `thesis_people` úr Parquet-afritinu í
-`data/db/` á meðan töflurnar eru tómar, og endurtekning bætir engu við. Ritgerðir nýrri en síðasta
-útflutningur (`scripts/export_db.sql`) hafa ekkert fólk fyrr en afritið er flutt út aftur.
-Leiðbeinendastig `v_thesis_discipline` þarf þessar töflur; `disciplines`-þrepið varar við ef
-engir leiðbeinendur eru skráðir.
+Straumurinn í `scripts/rebuild.sh` býr þessar raðir ekki til í `metadata`-þrepinu:
+`metadata-load` les ritgerðir og leitarorð, og `clean-people` hreinsar aðeins fólk sem er þegar
+til. Þess vegna er sérstakt þrep, `people`, sem keyrir `skemman people-load`. Það les
+`dc.contributor.author` og `dc.description.advisor` úr xoai-síðunum í `data/raw/oai`, klýfur hvert
+gildi í nafn og fæðingar- og dánarár eins og `clean-people`, sameinar fólk eftir `name` og
+`year_born` og geymir röð innan hlutverks í `sort_order`. Það fyllir töflurnar aðeins meðan þær
+eru tómar (`--replace` tæmir þær fyrst), skiptir tenglum ritgerðar út í heilu lagi og keyrir í
+einni færslu. Ef xoai-síðurnar vantar er `scripts/load_people.sql` varaleið: hún les Parquet-afritið
+í `data/db/`, sem er eldra (ritgerðir nýrri en síðasti útflutningur hafa þar ekkert fólk) og geymir
+nokkur skemmd nöfn (`lfar` fyrir Úlfar, `Gudni` fyrir Guðni). Leiðbeinendastig `v_thesis_discipline`
+þarf þessar töflur; `disciplines`-þrepið varar við ef engir leiðbeinendur eru skráðir.
 
 ## Leitarorð
 

@@ -1,14 +1,14 @@
 -- Authors and advisors: people and thesis_people, from the committed Parquet snapshot.
 --
--- Nothing in the current pipeline creates these rows -- `metadata-load` fills the theses and
--- keywords, and `clean-people` only tidies people that already exist -- so on a database that
--- was not restored from the snapshot they are empty. The advisor tier of v_thesis_discipline
--- (scripts/discipline_map.sql) and the advisor views need them: with them empty, a thesis that
--- no override, title page or keyword settles quietly falls back to the generic discipline.
+-- The FALLBACK of the `people` step in scripts/rebuild.sh. The primary source is
+-- `skemman people-load`, which reads `dc.contributor.author` and `dc.description.advisor` from
+-- the cached xoai pages (data/raw/oai) and so covers every thesis harvested. Use this only where
+-- those pages are not on disk. The snapshot is older -- theses newer than the last
+-- scripts/export_db.sql export have no people -- and carries a few mangled names (leading accented
+-- capitals dropped: `lfar` for Úlfar, `Gudni` for Guðni) that people-load gets right.
 --
--- Idempotent: each table is filled only while it is empty, so re-running never duplicates rows
--- and never overwrites people that a later loader may have written. The snapshot is re-exported
--- with scripts/export_db.sql; theses newer than the last export have no people until it is.
+-- Each table is filled only while it is empty, so re-running never duplicates rows and never
+-- overwrites people that people-load already wrote.
 --
 --   duckdb data/processed/thesis.db < scripts/load_people.sql
 

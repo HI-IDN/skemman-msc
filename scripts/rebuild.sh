@@ -173,14 +173,19 @@ step_metadata() {
 }
 
 step_people() {
-    echo "[people] Authors and advisors from the committed snapshot, while the tables are empty. No network."
-    # Nothing else in the pipeline creates these rows (see scripts/load_people.sql), and the
-    # advisor tier of the discipline mapping reads them.
-    if [[ ! -f data/db/people.parquet || ! -f data/db/thesis_people.parquet ]]; then
-        echo "warning: data/db/people.parquet or thesis_people.parquet is missing -- skipping;"              "authors and advisors stay empty" >&2
-        return 0
+    echo "[people] Authors and advisors from the cached xoai pages, while the tables are empty. No network."
+    # Nothing else in the pipeline creates these rows, and the advisor tier of the discipline
+    # mapping reads them. The xoai pages are the source; where they are not on disk, the
+    # committed Parquet snapshot fills in (older, and with some mangled names, but the same
+    # shape). Both leave a filled table alone.
+    if compgen -G "data/raw/oai/xoai_*.xml" > /dev/null; then
+        run "$SKEMMAN" people-load --db "$DB"
     fi
-    run_sql scripts/load_people.sql
+    if [[ -f data/db/people.parquet && -f data/db/thesis_people.parquet ]]; then
+        run_sql scripts/load_people.sql
+    elif ! compgen -G "data/raw/oai/xoai_*.xml" > /dev/null; then
+        echo "warning: no xoai pages in data/raw/oai and no snapshot in data/db -- authors and"              "advisors stay empty" >&2
+    fi
 }
 
 step_files() {

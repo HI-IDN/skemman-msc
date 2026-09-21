@@ -33,13 +33,16 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
 
 ## Resolved
 
-- **`people`/`thesis_people` were empty after a rebuild** -- nothing in the pipeline creates them
-  (`metadata-load` does theses and keywords, `clean-people` only tidies). New `people` step
-  (`scripts/load_people.sql`, in the data phase after `metadata`) fills them from the committed
-  Parquet snapshot while empty, idempotently; the `disciplines` step warns if no advisors are on
-  file. Limit: theses newer than the last `scripts/export_db.sql` export have no people until the
-  snapshot is re-exported; a real loader from the xoai cache (`dc.description.advisor`,
-  `dc.contributor.author`) would remove that.
+- **`people`/`thesis_people` were empty after a rebuild** -- nothing in the pipeline created them
+  (`metadata-load` does theses and keywords, `clean-people` only tidies). New `skemman people-load`
+  (harvester) reads `dc.contributor.author` / `dc.description.advisor` from the cached xoai pages
+  and is the `people` step of `rebuild.sh` (data phase, after `metadata`); it fills empty tables
+  only, idempotently, and covers every thesis harvested (9,472 people, 18,142 links). It agrees
+  with the old Parquet snapshot on 17,609 of 18,108 links, adds the 12 newer theses, finds birth
+  years the snapshot lacked, and fixes 46 mangled names in it (`lfar` for Úlfar, `Gudni`). The
+  snapshot loader (`scripts/load_people.sql`) stays as a fallback when the xoai pages are not on
+  disk. The `disciplines` step warns if no advisors are on file. Optional: re-export the snapshot
+  with `scripts/export_db.sql` so `data/db/` carries the corrected names.
 
 - **The last generic HR theses** -- settled one by one with human input; see the comments in
   `scripts/discipline_map.sql` for each: 44748, 46301, 50794, 50803, 50871, 50875, 50907, 50928,
