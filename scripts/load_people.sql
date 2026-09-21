@@ -1,4 +1,4 @@
--- Authors and advisors: people and thesis_people, from the committed Parquet snapshot.
+-- Authors and advisors: people and thesis_people, from the Parquet snapshot in data/db/.
 --
 -- The FALLBACK of the `people` step in scripts/rebuild.sh. The primary source is
 -- `skemman people-load`, which reads `dc.contributor.author` and `dc.description.advisor` from

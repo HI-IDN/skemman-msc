@@ -65,3 +65,6 @@ Thumbs.db
 # finishes, and left behind when one is interrupted.
 *.rmarkdown
 logs/
+
+# R writes this when a script draws outside a graphics device
+Rplots.pdf

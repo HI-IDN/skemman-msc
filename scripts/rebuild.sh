@@ -176,7 +176,8 @@ step_people() {
     echo "[people] Authors and advisors from the cached xoai pages, while the tables are empty. No network."
     # Nothing else in the pipeline creates these rows, and the advisor tier of the discipline
     # mapping reads them. The xoai pages are the source; where they are not on disk, the
-    # committed Parquet snapshot fills in (older, and with some mangled names, but the same
+    # Parquet snapshot in data/db/ fills in (a local export, gitignored; older, and with some
+    # mangled names, but the same
     # shape). Both leave a filled table alone.
     if compgen -G "data/raw/oai/xoai_*.xml" > /dev/null; then
         run "$SKEMMAN" people-load --db "$DB"
