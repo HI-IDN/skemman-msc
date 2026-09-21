@@ -126,7 +126,7 @@ Engineering*), svo þær eru flokkaðar sem náttúruvísindi og ekki með í t�
 
 ## Það sem stendur eftir
 
-- **5 HR-ritgerðir fá greinina frá leiðbeinanda** (`discipline_source = 'advisor'`) — titilsíðan
+- **4 HR-ritgerðir fá greinina frá leiðbeinanda** (`discipline_source = 'advisor'`) — titilsíðan
   segir bara *Master of Science* eða *Engineering*, eða er ekki til í skyndiminninu, og
   leitarorðin nefna enga námsleið. Þá ræður sú grein sem leiðbeinandinn hefur oftast
   (`v_thesis_discipline_advisor_suggestion`); þær bíða yfirferðar í `TODO.md`.

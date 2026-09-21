@@ -615,6 +615,15 @@ values
     50794, 'Rekstrarverkfræði', 'engineering',
     'engineering per human reading, probably management (business plan); author licensed 4 months '
     'after the thesis; MPM considered, rejected. See issue #5.'
+),
+(
+    -- EU taxonomy and minimum safeguards in Iceland: corporate alignment and the role of AI. The
+    -- title page says only "Department of Engineering, Reykjavik University" and a bare Master of
+    -- Science, so the programme is unknown (a human was unsure); by instruction the advisor's
+    -- predominant field decides. Advisor Hlynur Stefansson supervises Rekstrarverkfraedi.
+    50928, 'Rekstrarverkfræði', 'engineering',
+    'programme unknown (Department of Engineering, RU); advisor Hlynur Stefansson predominantly '
+    'supervises Rekstrarverkfraedi, per the human call to let the advisor decide. See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
