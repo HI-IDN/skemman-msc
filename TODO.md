@@ -87,9 +87,8 @@ chemical-engineering programme. Add a `discipline_override` if you ever learn th
   `engineering`, unit Raunvísindadeild, `in_core`; was `Eðlisfræði`/science. Keywords
   `verkfræðileg eðlisfræði` and `engineering physics` remapped.
 
-- **Advisor-suggestion views verified against real data** (scratch copy loaded from
-  `data/db/*.parquet`; local `thesis.db` still has empty people tables). They now also
-  target theses with only a generic discipline. 
+- **Advisor-suggestion views verified against real data.** They now also target theses with
+  only a generic discipline, and feed the advisor tier of `v_thesis_discipline`.
 
 - **Framkvæmdastjórnun (HR, 15 theses)** — engineering, not professional (human call, from
   10906: an 85-page MSc thesis, the engineering counterpart of the professional
