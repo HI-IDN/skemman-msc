@@ -214,9 +214,9 @@ námsleið ræður grein leiðbeinandans (`advisor`) — sjá
 [issue #5](https://github.com/HI-IDN/skemman-msc/issues/5) fyrir alla yfirferðina.
 
 Öll 2.484 ritgerðir þýðisins flokkast núna: titilsíðan ræður 1.718 þeirra, leitarorðin
-ein 746, handvirk leiðrétting (`discipline_override`) þrettán og leiðbeinandinn sjö. Leitarorðin ein og sér ná ekki
+ein 746, handvirk leiðrétting (`discipline_override`) fjórtán og leiðbeinandinn sex. Leitarorðin ein og sér ná ekki
 alveg svona langt — 11 ritgerðir báru annaðhvort ekkert þekkt leitarorð eða ekkert
-leitarorð yfirhöfuð — og titilsíðan eða handvirk leiðrétting fyllti upp í hvert þeirra. Sjö
+leitarorð yfirhöfuð — og titilsíðan eða handvirk leiðrétting fyllti upp í hvert þeirra. Sex
 HR-ritgerðir nefna hvorki leitarorð né titilsíða námsleið; þær fá þá greinina sem leiðbeinandinn
 hefur oftast (`discipline_source = 'advisor'`), og engin ritgerð ber lengur aðeins
 `Verkfræði (ótilgreind)`.

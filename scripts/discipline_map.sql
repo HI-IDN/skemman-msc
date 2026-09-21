@@ -596,6 +596,12 @@ values
     -- title-page subject; the advisor tier said Orkuverkfraedi and a human confirmed it.
     50875, 'Orkuverkfræði', 'engineering',
     'human-confirmed energy engineering (wind and heat pumps for heating). See issue #5.'
+),
+(
+    -- Business plan for opening a surf camp in Iceland. No title page in the cache; the advisor
+    -- tier said Rekstrarverkfraedi (advisor Pall Jensson) and a human agreed.
+    46301, 'Rekstrarverkfræði', 'engineering',
+    'human-confirmed engineering management (business plan). See issue #5.'
 )
 on conflict (thesis_id) do update set
     discipline = excluded.discipline, category = excluded.category, reason = excluded.reason;
