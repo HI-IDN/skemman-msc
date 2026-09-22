@@ -10,6 +10,8 @@ __pycache__/
 venv/
 ENV/
 .env/
+# API keys: personal and not to be shared (Skatturinn's terms, section 3)
+.env
 
 # Packaging/build
 build/
