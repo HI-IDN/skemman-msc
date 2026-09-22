@@ -1,5 +1,10 @@
 # Tengslanet leiðbeinenda
 
+```{r rq9-setup}
+#| include: false
+source("../R/global.R")
+```
+
 Þessi síða afmarkar sig við MS-ritgerðir í verkfræði. Leiðbeinendur eru tengdir þegar þeir
 eru skráðir á sömu ritgerð; tengingin er vegin eftir fjölda sameiginlegra ritgerða.
 
