@@ -171,10 +171,13 @@ dagsetningu ritgerðarinnar samkvæmt reglunni hér að neðan.
 
 
 Ef titilsíðan gefur aðeins ár er það ekki sjálfkrafa túlkað sem 1. janúar. Sé nákvæm dagsetning í
-metadata og hún er á sama ári er hún notuð; annars er titilsíðuárið notað, með mánuði ef hann
-fannst en annars fyrsta degi ársins.
+metadata og hún er á sama ári er hún notuð. Ef hún lendir rétt við áramót er titilsíðuárið
+samræmt að næsta mánaðamótum: til dæmis verður titilsíðuár 2012 og metadata-dagsetningin
+3. janúar 2013 metin sem 1. desember 2012, ekki 1. janúar 2012. Annars er titilsíðuárið notað,
+með mánuði ef hann fannst.
 
-Titilsíðuárið fannst í `r n_titlepage_year` af `r n_titlepage_total` ritgerðum (`r pct_titilsida_thekja`%).
+Titilsíðuárið fannst í `r n_titlepage_year` af `r n_titlepage_total` opnum ritgerðum í Skemmu
+(`r pct_titilsida_thekja`%).
 Af þeim var árið innan árs frá `date_accepted` í `r n_titilsida_within1y` tilvikum
 (`r pct_titilsida_within1y`%); ósamræmið er því yfirleitt í degi eða mánuði, ekki í árinu sjálfu.
 

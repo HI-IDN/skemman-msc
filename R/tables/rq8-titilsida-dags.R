@@ -21,8 +21,8 @@ d_rq8_titilsida_dags <- q("
                       and abs(year(m.date_accepted) - t.year_on_page) between 2 and 5) as gap_2_5y,
     count(*) filter (where t.year_on_page is not null
                       and abs(year(m.date_accepted) - t.year_on_page) > 5) as gap_over_5y
-  from v_thesis_msc m
-  left join thesis_titlepage t using (thesis_id)", quiet = TRUE)
+  from thesis_titlepage t
+  join v_thesis_msc m using (thesis_id)", quiet = TRUE)
 
 n_titlepage_total <- d_rq8_titilsida_dags$total
 n_titlepage_year <- d_rq8_titilsida_dags$with_titlepage_year

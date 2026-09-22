@@ -56,6 +56,14 @@ select m.thesis_id, m.university, m.yr,
        case
          when tp_date.year_on_page is null then m.date_accepted
          when year(m.date_accepted) = tp_date.year_on_page then m.date_accepted
+         when tp_date.month_on_page is null
+              and tp_date.year_on_page = year(m.date_accepted) - 1
+              and month(m.date_accepted) <= 2
+           then make_date(tp_date.year_on_page, 12, 1)
+         when tp_date.month_on_page is null
+              and tp_date.year_on_page = year(m.date_accepted) + 1
+              and month(m.date_accepted) >= 11
+           then make_date(tp_date.year_on_page, 1, 1)
          else make_date(tp_date.year_on_page, coalesce(tp_date.month_on_page, 1), 1)
        end                                                     as date_accepted,
        p.id as person_id, coalesce(o.name, p.name) as name, p.year_born,
