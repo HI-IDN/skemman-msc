@@ -3,6 +3,44 @@
 Þessi síða afmarkar sig við MS-ritgerðir í verkfræði. Leiðbeinendur eru tengdir þegar þeir
 eru skráðir á sömu ritgerð; tengingin er vegin eftir fjölda sameiginlegra ritgerða.
 
-Í næsta skrefi verður tengslanetið sýnt með `ggnetwork`. Hnútar verða litaðir eftir tengslum
+Tengslanetið hér að neðan sýnir leiðbeinendur sem hafa leiðbeint sömu verkfræðilegu MS-ritgerð.
+Myndin notar `ggnetwork` [@ggnetwork]. Hnútar verða litaðir eftir tengslum
 við HÍ, HR, báða skólana, aðra háskóla eða fyrirtæki og óvissu. Flokkunin verður miðuð við
 það ár sem hver ritgerð var unnin, svo ferill leiðbeinanda sem skiptir um háskóla birtist rétt.
+
+```{r rq9-leidbeinenda-net}
+#| file: ../R/plots/rq9-leidbeinenda-net.R
+#| fig-cap: "Tengslanet leiðbeinenda á verkfræðilegum MS-ritgerðum; lína merkir sameiginlega ritgerð og línubreidd sýnir fjölda þeirra."
+```
+
+## Hver er „Kevin Bacon verkfræðinnar“?
+
+Hugmyndin á sér tvær þekktar hliðstæður. **Erdős-tala** mælir stystu leið frá stærðfræðingi
+til Paul Erdős í gegnum sameiginlegar vísindagreinar; **Bacon-tala** mælir samsvarandi leið
+leikara til Kevin Bacon í gegnum sameiginlegar kvikmyndir [@grossman2005erdos; @bacon_number].
+Hér væri spurt sömu spurningar um leiðbeinendanet verkfræðilegra MS-ritgerða:
+
+> Hver er „Kevin Bacon verkfræðinnar“?
+
+### Bestunarlíkan (hugmynd)
+
+Leiðbeinendur eru hnútarnir og sameiginlegar ritgerðir mynda línur. Fyrir valinn miðjuleiðbeinanda
+`c` er fjarlægð `d(c, i)` stysta leiðin að öðrum leiðbeinanda `i`. Einfaldasta miðstöðvarlíkanið
+er:
+
+\[
+\min z
+\]
+
+með skilyrðum
+
+\[
+d(c,i) \le z \quad \text{fyrir alla leiðbeinendur } i.
+\]
+
+Tvístuðulinn `c` segir þá hver sé best tengdi miðjuleiðbeinandinn samkvæmt lágmarks-verstu
+fjarlægð. Gurobi getur leyst þetta sem 1-miðstöðvarlíkan; síðar mætti leyfa fleiri en eina
+miðstöð eða láta línuþyngd (fjölda sameiginlegra ritgerða) hafa áhrif á kostnað.
+
+Þetta er enn aðeins líkanaskissa. Gurobi-niðurstöður verða vistaðar sem frosin gögn í
+`_freeze/` og R notar þær síðan til að teikna niðurstöðuna í Quarto.
