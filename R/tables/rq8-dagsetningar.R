@@ -28,7 +28,7 @@ t_rq8_dagsetningar <- tibble::tibble(
     "Helga Ingimundardóttir: leyfi 27.12.12",
     "date_accepted / dc.date: 18.2.2010",
     "Samþykkt: 18.2.2010",
-    "Reykjavík, February 2008",
+    "Reykjavík, February 2010",
     "18.2.2010 → 27.12.2012 (34 mán.)"
   )
 ) |>
