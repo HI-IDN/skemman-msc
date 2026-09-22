@@ -181,7 +181,7 @@ Af þeim var árið innan árs frá `date_accepted` í `r n_titilsida_within1y` 
 
 ```{r rq8-titilsida-munur}
 #| file: ../R/plots/rq8-titilsida-munur.R
-#| fig-cap: "Mismunur milli dagsetningar á titilsíðu og `date_accepted` í Skemmu, mældur í mánuðum. Núll merkir sama mánuð; jákvæð gildi sýna að `date_accepted` er síðar."
+#| fig-cap: "Mismunur milli dagsetningar á titilsíðu og `date_accepted` í Skemmu, mældur í mánuðum þar sem titilsíðan gefur bæði ár og mánuð. Núll merkir sama mánuð; jákvæð gildi sýna að `date_accepted` er síðar."
 ```
 
 ### Nafnasamsvörun milli skráa

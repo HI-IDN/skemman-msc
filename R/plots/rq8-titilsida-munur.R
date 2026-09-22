@@ -1,4 +1,4 @@
-# RQ8 -- month difference between the title-page date and Skemman's date_accepted.
+# RQ8 -- month difference where both the title page and Skemman's metadata give a month.
 
 if (!exists(".root")) source("R/global.R")
 require_table("thesis_titlepage")
@@ -11,7 +11,8 @@ d_rq8_titilsida_munur <- q("
          ) as manada_bil
   from thesis_titlepage t
   join v_thesis_msc m using (thesis_id)
-  where t.year_on_page is not null", quiet = TRUE)
+  where t.year_on_page is not null
+    and t.month_on_page is not null", quiet = TRUE)
 
 p_rq8_titilsida_munur <- ggplot(d_rq8_titilsida_munur, aes(manada_bil)) +
   geom_histogram(binwidth = 1, boundary = 0, fill = "#10099F", colour = "white", alpha = 0.8) +
