@@ -37,8 +37,9 @@
 -- disagreement), and any bare year at all on a page that has a copyright or dated line (next
 -- to a real date line, a bare year is more often a citation in the abstract).
 --
--- Nothing here is per thesis. A thesis whose date a person has checked is settled by adding
--- evidence the rule reads, not by naming it.
+-- The rule names no thesis. A date a person has checked against the thesis itself goes in
+-- thesis_date_reviewed below, which comes before every step (status 'confirmed'); that is
+-- for an unresolved case the evidence here cannot reach, not for overruling the rule.
 --
 -- Needs v_thesis_msc (population.sql) and thesis_titlepage_date (titlepage-load).
 
@@ -49,6 +50,18 @@ create table if not exists thesis_access_date (
 create table if not exists thesis_fulltext_scan (
     thesis_id integer, n_pages integer, text_chars integer, n_dates integer, scanned_at timestamp
 );
+
+-- Human-reviewed thesis dates, with what the review found. Same pattern as
+-- thesis_author_name_override in licences.sql.
+create or replace table thesis_date_reviewed (
+    thesis_id integer not null,
+    year      integer not null,
+    month     integer,
+    source    varchar not null
+);
+
+insert into thesis_date_reviewed values
+    (4375, 2009, 9, 'human-confirmed: title page (September 2009) is right; deposited in Skemman late');
 
 -- Months between a (year, month) and a date. A year with no month is a span: 0 anywhere in
 -- it, otherwise the distance to its nearer end.
@@ -157,14 +170,17 @@ picked as (
     select p.thesis_id,
            -- When the references rule out every date the page states, date_accepted is
            -- the only date left standing.
-           coalesce(s1.year, s2.year, s3.year, g.year, year(a.date_accepted)) as year,
-           case when s1.thesis_id is not null then s1.month
+           coalesce(r.year, s1.year, s2.year, s3.year, g.year, year(a.date_accepted)) as year,
+           case when r.thesis_id  is not null then r.month
+                when s1.thesis_id is not null then s1.month
                 when s2.thesis_id is not null then s2.month
                 when s3.thesis_id is not null then s3.month
                 when g.thesis_id  is not null then g.month
                 else month(a.date_accepted) end                        as month,
-           coalesce(s1.kind, s2.kind, s3.kind, g.kind, 'date_accepted') as kind,
-           case when s1.thesis_id is not null then 'title_page'
+           coalesce(case when r.thesis_id is not null then 'reviewed' end,
+                    s1.kind, s2.kind, s3.kind, g.kind, 'date_accepted') as kind,
+           case when r.thesis_id  is not null then 'confirmed'
+                when s1.thesis_id is not null then 'title_page'
                 when s2.thesis_id is not null then 'other_date'
                 when s3.thesis_id is not null then 'access_date'
                 else 'unresolved' end                                  as status,
@@ -175,6 +191,7 @@ picked as (
     left join step2 s2 using (thesis_id)
     left join step3 s3 using (thesis_id)
     left join guess g  using (thesis_id)
+    left join thesis_date_reviewed r using (thesis_id)
     join v_thesis_msc a using (thesis_id)
     where p.kind = 'primary'
 )

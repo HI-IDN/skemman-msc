@@ -7,17 +7,17 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-- **33 thesis dates the rule could not settle** (`status = 'unresolved'` in
+- **32 thesis dates the rule could not settle** (`status = 'unresolved'` in
   `v_thesis_titlepage_date`, `scripts/titlepage_dates.sql`; snapshot 2026-09-22).
 
   No date on the title page is within 3 months of `date_accepted`, and the latest access date
   in the references either doesn't exist or doesn't point anywhere. The book uses the date in
   the **Used** column. For each: open the PDF and find the real date. If it is on the page in a
-  form the parser misses, fix the parser -- don't hardcode the thesis.
+  form the parser misses, fix the parser. If the evidence isn't in the PDF at all, add the
+  confirmed date to `thesis_date_reviewed` in `scripts/titlepage_dates.sql`.
 
   | Thesis | Title page | `date_accepted` | Latest ref. | Used | Note |
   | --- | --- | --- | --- | --- | --- |
-  | [4375](https://skemman.is/handle/1946/4375) | 2009-09 | 2010-01 | – | 2009-09 |  |
   | [5569](https://skemman.is/handle/1946/5569) | 2010-01 | 2010-06 | – | 2010-01 |  |
   | [9874](https://skemman.is/handle/1946/9874) | 2011-02 | 2011-08 | 2011-05 | 2011-08 |  |
   | [9878](https://skemman.is/handle/1946/9878) | 2010-12 | 2011-08 | – | 2010-12 |  |
@@ -217,6 +217,9 @@ programme. Add a `discipline_override` if you ever learn their programme.)
 
 ## Resolved
 
+- **4375: the title page's September 2009 is the thesis date** (human-confirmed). It was
+  deposited in Skemman late, hence `date_accepted` 2010-01. Recorded in `thesis_date_reviewed`
+  (`scripts/titlepage_dates.sql`); status `confirmed`.
 - **44740 (Verkefnastjórnun, HR) is not an MPM-to-licence case.** The author's licence is
   tæknifræðingur, and a tæknifræðingur licence needs its own tæknifræði degree: an MPM cannot
   be the qualifying degree. The match reflects earlier technologist training, unrelated to the
