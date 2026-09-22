@@ -23,6 +23,13 @@ t_rq8_dagsetningar <- tibble::tibble(
     "Óháð yfirferð á metadata",
     "Ræður þegar ár titilsíðu og metadata fara ekki saman",
     "Nákvæm metadata-dagsetning er notuð þegar hún er á sama ári; annars titilsíðuár"
+  ),
+  Sýnidæmi = c(
+    "Helga Ingimundardóttir: leyfi 27.12.12",
+    "date_accepted / dc.date: 18.2.2010",
+    "Samþykkt: 18.2.2010",
+    "Titilsíða: ár eða mánuður ef það finnst",
+    "18.2.2010 → 27.12.2012"
   )
 ) |>
   knitr::kable(caption = "Dagsetningarheimildir í samsvörun ritgerða og starfsleyfa.")

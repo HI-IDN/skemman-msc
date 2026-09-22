@@ -152,9 +152,7 @@ verkfræðingsleyfi og `r n_taekni_1992_93` tæknifræðingsleyfi, eftir `r n_ve
 ```
 
 Áður en höfundar eru tengdir við leyfislistana er dagsetning ritgerðarinnar samræmd. Leyfisdagur
-er tekinn beint af starfsleyfislistanum í Stjórnarráðsgögnum (`licensed_on`). Á færslu Helgu
-Ingimundardóttur sést til dæmis hráa dagsetningin `27.12.12`, sem er vistuð sem `2012-12-27`.
-Í Skemmu eru fleiri en ein
+er tekinn beint af starfsleyfislistanum í Stjórnarráðsgögnum (`licensed_on`). Í Skemmu eru fleiri en ein
 dagsetning: `date_accepted` í OAI-lýsigögnum (`dc.date`), dagsetningin „Samþykkt“ á færslusíðunni
 og það sem lesa má af titilsíðunni sjálfri. Titilsíðan getur gefið `Copyright`-ár eða stað og
 mánuð, til dæmis „Reykjavík, júní 2025“. Við skoðum fyrst samræmi þessara Skemmu-dagsetninga.
@@ -163,11 +161,9 @@ mánuð, til dæmis „Reykjavík, júní 2025“. Við skoðum fyrst samræmi �
 #| file: ../R/tables/rq8-dagsetningar.R
 ```
 
-Taflan aðgreinir heimildirnar áður en þær eru lagðar saman. `licensed_on` er dagsetningin sem
-Stjórnarráðið birtir fyrir veitingu starfsleyfis. `date_accepted` er OAI-gildið sem berst úr
-Skemmu; „Samþykkt“ á færslusíðunni og titilsíðan eru notuð til að kanna hvort sú dagsetning
-samræmist því sem stendur í frumgögnum. Útreikningurinn á biðtíma notar síðan eina samræmda
-dagsetningu ritgerðarinnar samkvæmt reglunni hér að neðan.
+Taflan aðgreinir heimildirnar áður en þær eru lagðar saman. Sýnidæmið með Helgu Ingimundardóttur
+sýnir hvernig leyfisdagurinn og dagsetningar ritgerðarinnar eru bornar saman. Útreikningurinn á
+biðtíma notar síðan eina samræmda dagsetningu ritgerðarinnar samkvæmt reglunni hér að neðan.
 
 
 Ef titilsíðan gefur aðeins ár er það ekki sjálfkrafa túlkað sem 1. janúar. Sé nákvæm dagsetning í
