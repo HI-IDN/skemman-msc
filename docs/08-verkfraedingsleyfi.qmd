@@ -236,22 +236,10 @@ leyfisdagsetningin í gögnunum er `r max_licence_date_label`; að frádregnum �
 þó ekki hvort ritgerðin sjálf leiddi til leyfisins. Í `r n_negative` tilvikum er leyfið skráð
 áður en ritgerðin er skráð sem samþykkt og þau eru því ekki talin sem leyfi sem ritgerðin leiddi
 til. Það getur einfaldlega þýtt að ritgerðin hafi verið send seint inn í Skemmu eða færslan
-uppfærð síðar. `date_accepted` kemur úr lýsigögnum Skemmu, er oft aðeins mánaðarlega nákvæmt og
-er skráð sem fyrsti dagur mánaðar í 97,7% tilvika; dagsetningarnar einar skera því ekki alltaf
-úr um rétta röðina. Í aðalflokkuninni eru mörkin samt sett við 0 daga: leyfi sem er skráð fyrr
+uppfærð síðar. Í aðalflokkuninni eru mörkin sett við 0 daga: leyfi sem er skráð fyrr
 telst ekki koma í kjölfar ritgerðarinnar. Öll slík tilvik eru sýnd saman á myndinni hér að neðan.
 Stutt neikvætt bil, til dæmis einn eða tveir mánuðir, getur verið röðunar- eða skráningarskekkja;
 mun lengra bil bendir frekar til fyrri verkfræðimenntunar eða síðari uppfærslu á Skemmu.
-
-Óháð staðfesting er þó möguleg: titilsíðan sjálf tilgreinir oft árið (t.d. „Copyright © 2025“ eða
-dagsett „Reykjavík, Júní 2025“), sótt beint af titilsíðunni sjálfri, ekki úr sömu lýsigögnum og
-`date_accepted`. Þetta ár er þekkt fyrir `r n_titlepage_year` af `r n_titlepage_total` ritgerðum
-(`r pct_titilsida_thekja`% þýðisins), og af þeim er það innan árs frá `date_accepted` í
-`r n_titilsida_within1y` tilvikum (`r pct_titilsida_within1y`%). Það bendir til að þótt daga- og
-mánaðarnákvæmni `date_accepted` sé oft ótraust, sé árið sjálft nær alltaf rétt -- aðeins
-`r n_titilsida_gap_over5y` af `r n_titlepage_year` ritgerðum (undir 1%) skera sig úr með meira en
-fimm ára mun, og þau eru líklegri til að endurspegla stakar villur í titilsíðulestrinum sjálfum
-en almenna skekkju í `date_accepted`.
 
 ```{r rq8-fyrri-leyfi}
 #| file: ../R/plots/rq8-fyrri-leyfi.R
