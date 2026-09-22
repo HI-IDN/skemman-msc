@@ -61,7 +61,8 @@ create or replace table thesis_date_reviewed (
 );
 
 insert into thesis_date_reviewed values
-    (4375, 2009, 9, 'human-confirmed: title page (September 2009) is right; deposited in Skemman late');
+    (4375, 2009, 9, 'human-confirmed: title page (September 2009) is right; deposited in Skemman late'),
+    (45879, 2023, 8, 'human-confirmed: no date on the page (2017 is from an affiliation line); date_accepted stands');
 
 -- Months between a (year, month) and a date. A year with no month is a span: 0 anywhere in
 -- it, otherwise the distance to its nearer end.

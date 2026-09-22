@@ -7,7 +7,7 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-- **32 thesis dates the rule could not settle** (`status = 'unresolved'` in
+- **31 thesis dates the rule could not settle** (`status = 'unresolved'` in
   `v_thesis_titlepage_date`, `scripts/titlepage_dates.sql`; snapshot 2026-09-22).
 
   No date on the title page is within 3 months of `date_accepted`, and the latest access date
@@ -21,7 +21,6 @@ comment, this file's own history in git is the record).
 
   | Thesis | Title page | `date_accepted` | Gap (months) | Latest ref. | Used | Note |
   | --- | --- | --- | ---: | --- | --- | --- |
-  | [45879](https://skemman.is/handle/1946/45879) | 2017 | 2023-08 | 68 | – | 2017 | no real date on the page (see Resolved) |
   | [26946](https://skemman.is/handle/1946/26946) | 2011 | 2016-12 | 60 | – | 2011 |  |
   | [25622](https://skemman.is/handle/1946/25622) | 2012 | 2016-04 | 40 | 2016-04 | 2016-04 |  |
   | [40389](https://skemman.is/handle/1946/40389) | 2022-01 | 2020-01 | 24 | – | 2022-01 |  |
@@ -235,6 +234,9 @@ programme. Add a `discipline_override` if you ever learn their programme.)
 - **4375: the title page's September 2009 is the thesis date** (human-confirmed). It was
   deposited in Skemman late, hence `date_accepted` 2010-01. Recorded in `thesis_date_reviewed`
   (`scripts/titlepage_dates.sql`); status `confirmed`.
+- **45879: no usable date in the PDF, so `date_accepted` (2023-08) stands** (human-confirmed).
+  The 2017 the parser finds comes from an unrelated dual-degree affiliation line. Recorded in
+  `thesis_date_reviewed`; status `confirmed`.
 - **44740 (Verkefnastjórnun, HR) is not an MPM-to-licence case.** The author's licence is
   tæknifræðingur, and a tæknifræðingur licence needs its own tæknifræði degree: an MPM cannot
   be the qualifying degree. The match reflects earlier technologist training, unrelated to the
