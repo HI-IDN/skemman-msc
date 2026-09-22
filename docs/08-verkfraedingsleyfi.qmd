@@ -151,6 +151,8 @@ verkfræðingsleyfi og `r n_taekni_1992_93` tæknifræðingsleyfi, eftir `r n_ve
 #| file: ../R/tables/rq8-titilsida-dags.R
 ```
 
+### Dagsetningar í heimildunum
+
 Áður en höfundar eru tengdir við leyfislistana er dagsetning ritgerðarinnar samræmd. Leyfisdagur
 er tekinn beint af starfsleyfislistanum í Stjórnarráðsgögnum (`licensed_on`). Í Skemmu eru fleiri en ein
 dagsetning: `date_accepted` í OAI-lýsigögnum (`dc.date`), dagsetningin „Samþykkt“ á færslusíðunni
@@ -176,6 +178,8 @@ Titilsíðuárið fannst í `r n_titlepage_year` af `r n_titlepage_total` opnum 
 (`r pct_titilsida_thekja`%).
 Af þeim var árið innan árs frá `date_accepted` í `r n_titilsida_within1y` tilvikum
 (`r pct_titilsida_within1y`%); ósamræmið er því yfirleitt í degi eða mánuði, ekki í árinu sjálfu.
+
+### Nafnasamsvörun milli skráa
 
 Höfundur ritgerðar er síðan tengdur við listann í þremur þrepum (`scripts/licences.sql`), sterkasta
 sönnun fyrst: fullt nafn og fæðingarár (`full name`); fyrsta og síðasta nafn og fæðingarár þar
