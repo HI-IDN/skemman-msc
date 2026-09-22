@@ -194,8 +194,8 @@ fjögurra. Tveggja ára glugginn nær því langflestum án þess að teygja ors
 
 Níutíu prósent þeirra sem síðar fá leyfi hafa fengið það eftir `r q90_years` ár. Nýjasta
 leyfisdagsetningin í gögnunum er `r max_licence_date_label`; að frádregnum þessum biðtíma fæst
-`r q90_cutoff_label`. Eftirfylgnin nær því 90% reynslumörkunum fyrir ritgerðir fram á haust 2023,
-en ekki fyrir allan árgang 2023 og alls ekki fyrir 2024.
+`r q90_cutoff_label`. Eftirfylgnin nær að mestu fyrir allar ritgerðir í Skemmunni til og með
+ árganginum.
 
 Þegar nafn og fæðingarár passa vitum við að líklega er sama manneskja í báðum skrám. Við vitum
 þó ekki hvort ritgerðin sjálf leiddi til leyfisins. Í `r n_negative` tilvikum er leyfið skráð
@@ -340,10 +340,12 @@ Allar ritgerðirnar eru því flokkaðar sem náttúruvísindi. Ef nýtt leyfi b
   besta samsvörunarþrepið ganga fyrir hvar sem er í þýðinu (sjá "Hvernig samsvörunin er gerð" að
   ofan), sem leysir bæði staðfestu tilvikin, en útilokar ekki að tvo eins nöfnuðu deili líka
   samhæfu millinafni.
-- `date_accepted` kemur úr OAI-lýsigögnunum (`dc.date`) og er ekki alltaf sama dagsetning og
-  „Samþykkt" á Skemmu-síðu ritgerðarinnar sjálfrar -- staðfest dæmi: 12943
-  (@sec-verkfr-taeknifr), þar sem munurinn er 134 dagar. `lag_days` er því upp á daga ónákvæmt
-  í slíkum tilvikum, þótt flokkunin sjálf (fyrir/eftir) haldist rétt.
+- Í útreikningnum er notuð ein dagsetning, `date_accepted`, úr OAI-lýsigagnareitnum `dc.date`.
+  Þegar þar stendur aðeins ár og mánuður er dagurinn settur sem 1. dagur mánaðarins; við tökum
+  ekki lágmark úr titilsíðu, „Samþykkt" á Skemmu-síðu og OAI-gildinu. Titilsíðugögnin geyma hér
+  aðeins árið. `date_accepted` er því ekki alltaf sama dagsetning og „Samþykkt" á Skemmu-síðunni
+  sjálfri -- staðfest dæmi: 12943 (@sec-verkfr-taeknifr), þar sem munurinn er 134 dagar.
+  `lag_days` er því stundum ónákvæmt upp á daga, þótt flokkunin sjálf (fyrir/eftir) haldist rétt.
 
 ## Heimildir
 
