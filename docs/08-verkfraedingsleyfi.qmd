@@ -73,7 +73,7 @@ frá því upp úr 2010.
 #| file: ../R/tables/rq8-leyfishafar.R
 ```
 
-Á öllu tímabilinu er fjórðungur verkfræðinga kona (24,7%) en aðeins 5% tæknifræðinga (5,2%) --
+Á öllu tímabilinu er fjórðungur verkfræðinga kona en aðeins 5% tæknifræðinga --
 um fimm sinnum hærra hlutfall kvenna í verkfræði en í tæknifræði. Aldur við útgáfu er svipaður
 hjá báðum listum, um og innan við þrítugt að miðgildi, sem passar við að langflestir sæki um
 stuttu eftir að náminu lýkur (sjá @sec-hversu-fljott).

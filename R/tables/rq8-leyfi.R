@@ -81,9 +81,12 @@ t_rq8_bid <- d_rq8_bid |>
             `Miðgildi (ár)` = round(midgildi, 1),
             `Fjórðungsmörk (ár)` = ifelse(is.na(q1), NA_character_,
                                           sprintf("%s – %s", tala(q1), tala(q3)))) |>
-  knitr::kable(caption = sprintf(
+  knitr::kable(
+    align = c("l", "l", "l", "r", "r", "r", "r", "r"),
+    caption = sprintf(
     "Tími frá ritgerð til leyfis eftir grein (yfirgrein; undirgreinar taldar þar sem þær eru ekki sama heiti, verkfræðiritgerðir til og með %d; greinar með færri en %d ritgerðir sleppt). Miðgildi miðast við þá sem fengu leyfi.",
-    LEYFI_TIL, LEYFI_MIN_N))
+    LEYFI_TIL, LEYFI_MIN_N
+  ))
 
 # Which list. A licence from before the thesis is a BSc (tæknifræðingur) or an earlier degree.
 d_rq8_listar <- q("
