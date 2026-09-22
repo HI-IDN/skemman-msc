@@ -53,8 +53,11 @@ insert into thesis_author_name_override values
 
 create or replace view v_thesis_author as
 select m.thesis_id, m.university, m.yr,
-       coalesce(make_date(tp_date.year_on_page, coalesce(tp_date.month_on_page, 1), 1), m.date_accepted)
-                                                               as date_accepted,
+       case
+         when tp_date.year_on_page is null then m.date_accepted
+         when year(m.date_accepted) = tp_date.year_on_page then m.date_accepted
+         else make_date(tp_date.year_on_page, coalesce(tp_date.month_on_page, 1), 1)
+       end                                                     as date_accepted,
        p.id as person_id, coalesce(o.name, p.name) as name, p.year_born,
        name_key(coalesce(o.name, p.name))                       as nk,
        string_split(name_key(coalesce(o.name, p.name)), ' ')[1] as first_tok,

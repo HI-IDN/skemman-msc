@@ -152,14 +152,17 @@ verkfræðingsleyfi og `r n_taekni_1992_93` tæknifræðingsleyfi, eftir `r n_ve
 ```
 
 Áður en höfundar eru tengdir við leyfislistana er dagsetning ritgerðarinnar samræmd. Leyfisdagur
-er tekinn beint af starfsleyfislistanum í Stjórnarráðsgögnum (`licensed_on`); til dæmis er hann
-skráður sem sérstök dagsetning á færslu Helgu Ingimundardóttur. Í Skemmu eru fleiri en ein
+er tekinn beint af starfsleyfislistanum í Stjórnarráðsgögnum (`licensed_on`). Á færslu Helgu
+Ingimundardóttur sést til dæmis hráa dagsetningin `27.12.12`, sem er vistuð sem `2012-12-27`.
+Í Skemmu eru fleiri en ein
 dagsetning: `date_accepted` í OAI-lýsigögnum (`dc.date`), dagsetningin „Samþykkt“ á færslusíðunni
 og það sem lesa má af titilsíðunni sjálfri. Titilsíðan getur gefið `Copyright`-ár eða stað og
-mánuð, til dæmis „Reykjavík, júní 2025“. Við skoðum fyrst samræmi þessara Skemmu-dagsetninga;
-í samsvöruninni ræður titilsíðan þegar hún gefur ár (og mánuð þegar hann finnst), en ef hún gefur
-ekkert ár er `date_accepted` notað sem varadagsetning. Þegar metadata-dagsetningin er aðeins ár
-eða ár og mánuður er hún miðuð við fyrsta dag þess tímabils.
+mánuð, til dæmis „Reykjavík, júní 2025“. Við skoðum fyrst samræmi þessara Skemmu-dagsetninga.
+
+
+Ef titilsíðan gefur aðeins ár er það ekki sjálfkrafa túlkað sem 1. janúar. Sé nákvæm dagsetning í
+metadata og hún er á sama ári er hún notuð; annars er titilsíðuárið notað, með mánuði ef hann
+fannst en annars fyrsta degi ársins.
 
 Titilsíðuárið fannst í `r n_titlepage_year` af `r n_titlepage_total` ritgerðum (`r pct_titilsida_thekja`%).
 Af þeim var árið innan árs frá `date_accepted` í `r n_titilsida_within1y` tilvikum
