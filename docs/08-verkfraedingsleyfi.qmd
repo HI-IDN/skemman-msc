@@ -179,6 +179,11 @@ Titilsíðuárið fannst í `r n_titlepage_year` af `r n_titlepage_total` opnum 
 Af þeim var árið innan árs frá `date_accepted` í `r n_titilsida_within1y` tilvikum
 (`r pct_titilsida_within1y`%); ósamræmið er því yfirleitt í degi eða mánuði, ekki í árinu sjálfu.
 
+```{r rq8-titilsida-munur}
+#| file: ../R/plots/rq8-titilsida-munur.R
+#| fig-cap: "Mismunur milli dagsetningar á titilsíðu og `date_accepted` í Skemmu, mældur í mánuðum. Núll merkir sama mánuð; jákvæð gildi sýna að `date_accepted` er síðar."
+```
+
 ### Nafnasamsvörun milli skráa
 
 Höfundur ritgerðar er síðan tengdur við listann í þremur þrepum (`scripts/licences.sql`), sterkasta
