@@ -73,7 +73,7 @@ organisations:
   - {key: landsnet, name: Landsnet, aliases: ['Landsnet[is]'], sector: public_company}
   - {key: or, name: Orkuveita Reykjavíkur, aliases: ['Orkuveit(?:u|unnar|an) Reykjavíkur', 'Reykjav[ií]k Energy'], sector: public_company}
   - {key: veitur, name: Veitur, aliases: ['Veit(?:um|na)', 'Veitur Utilities'], sector: public_company}
-  - {key: on, name: Orka náttúrunnar, aliases: ['Orku náttúrunnar', 'ON Power'], sector: public_company}
+  - {key: orka_natturunnar, name: Orka náttúrunnar, aliases: ['Orku náttúrunnar', 'ON Power'], sector: public_company}
   - {key: carbfix, name: Carbfix, aliases: ['CarbFix'], sector: public_company}
   - {key: rarik, name: RARIK, sector: public_company}
   - {key: orkubu_vestfjarda, name: Orkubú Vestfjarða, aliases: ['Orkubú(?:i|s) Vestfjarða'], sector: public_company}

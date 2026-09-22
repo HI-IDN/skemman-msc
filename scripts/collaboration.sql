@@ -29,11 +29,37 @@ join organisation o using (org_key)
 where s.kind = 'known_org' and o.external
 group by all;
 
+-- One row per thesis and advisor: from the university or from outside it. The title page
+-- decides first -- it is the thesis's own statement of who supervised and where they work --
+-- then the acknowledgements. `unknown` means neither says; the advisor may well be staff
+-- (join v_thesis_advisor_unit, when the staff lists are loaded, to tell). Examiners are
+-- not here: they are impartial by design, not partners.
+create or replace view v_thesis_advisor_affiliation as
+select
+    a.thesis_id,
+    a.person_id,
+    a.name,
+    coalesce(a.titlepage_kind, a.ack_kind, 'unknown')            as kind,
+    case when a.titlepage_kind is not null then 'titlepage'
+         when a.ack_kind is not null then 'acknowledgements' end as source,
+    case when a.titlepage_kind is not null then a.titlepage_org_key
+         else a.ack_org_key end                                  as org_key,
+    o.sector,
+    case when a.titlepage_kind is not null then a.titlepage_employer
+         else a.ack_employer end                                 as employer,
+    a.titlepage_block,
+    a.ack_context
+from thesis_advisor_affiliation a
+left join organisation o
+    on o.org_key = case when a.titlepage_kind is not null then a.titlepage_org_key
+                        else a.ack_org_key end;
+
 -- One row per thesis in the population. `evidence` is the heuristic's verdict, weakest last.
 -- Organisations count only where the front matter names them: an abstract that mentions
 -- Landsvirkjun is usually about Landsvirkjun's power plants, not written with Landsvirkjun.
 --   named_partner     front matter names a company, public company or agency, or a company
---                     by its suffix -- the RQ4 sense of collaboration. How strongly is in
+--                     by its suffix, or an advisor works outside the universities -- the RQ4
+--                     sense of collaboration. How strongly is in
 --                     `partner_strength`:
 --                       involved  a partner's own sentence says it collaborated, hosted,
 --                                 supervised, or provided data or material
@@ -96,6 +122,15 @@ partner as (
                and o.sector in ('private', 'public_company', 'public_agency')))
     group by thesis_id
 ),
+adv as (
+    select
+        thesis_id,
+        count(*) filter (where kind = 'outside')    as n_outside_advisors,
+        string_agg(name || coalesce(' (' || employer || ')', ''), '; ')
+            filter (where kind = 'outside')          as outside_advisors
+    from v_thesis_advisor_affiliation
+    group by thesis_id
+),
 sec as (
     select
         thesis_id,
@@ -121,8 +156,11 @@ select
     coalesce(sig.has_org_suffix, false)           as has_org_suffix,
     coalesce(sig.has_collab_phrase, false)        as has_collab_phrase,
     coalesce(sig.has_funding_phrase, false)       as has_funding_phrase,
+    coalesce(adv.n_outside_advisors, 0) > 0       as has_outside_advisor,
+    adv.outside_advisors,
     case
-        when org.has_partner or sig.has_org_suffix            then 'named_partner'
+        when org.has_partner or sig.has_org_suffix
+             or adv.n_outside_advisors > 0                    then 'named_partner'
         when org.has_research_fund or org.has_international
              or sig.has_funding_phrase                        then 'funding_only'
         when org.has_university                               then 'academic_only'
@@ -133,7 +171,8 @@ select
         else 'no_text'
     end as evidence,
     case
-        when partner.best_rank <= 3 then 'involved'
+        -- An outside advisor is supervision by definition.
+        when partner.best_rank <= 3 or adv.n_outside_advisors > 0 then 'involved'
         when partner.best_rank = 4  then 'funded'
         when partner.best_rank = 5  then 'thanked'
     end as partner_strength
@@ -143,4 +182,5 @@ left join org using (thesis_id)
 left join abstract_org using (thesis_id)
 left join sig using (thesis_id)
 left join partner using (thesis_id)
+left join adv using (thesis_id)
 left join thesis_text_read t using (thesis_id);
