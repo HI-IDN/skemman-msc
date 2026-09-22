@@ -12,7 +12,8 @@ comment, this file's own history in git is the record).
 
   No date on the title page is within 3 months of `date_accepted`, and the latest access date
   in the references either doesn't exist or doesn't point anywhere. The book uses the date in
-  the **Used** column. For each: open the PDF and find the real date. If it is on the page in a
+  the **Used** column. **Gap** is months between the title page and `date_accepted`, largest
+  first; for a year with no month, it is counted to the nearer end of that year. For each: open the PDF and find the real date. If it is on the page in a
   form the parser misses, fix the parser. If the evidence isn't in the PDF at all, add the
   confirmed date to `thesis_date_reviewed` in `scripts/titlepage_dates.sql`.
 
