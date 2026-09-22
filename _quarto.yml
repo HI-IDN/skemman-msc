@@ -44,6 +44,7 @@ book:
     - docs/06-rq6-themes.qmd
     - docs/07-rq7-knowledge-transfer.qmd
     - docs/08-verkfraedingsleyfi.qmd
+    - docs/09-tengslanet.qmd
   appendices:
     - docs/vidauki-adferd.qmd
     - docs/schema.qmd

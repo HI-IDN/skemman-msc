@@ -1,0 +1,8 @@
+# Tengslanet leiðbeinenda
+
+Þessi síða afmarkar sig við MS-ritgerðir í verkfræði. Leiðbeinendur eru tengdir þegar þeir
+eru skráðir á sömu ritgerð; tengingin er vegin eftir fjölda sameiginlegra ritgerða.
+
+Í næsta skrefi verður tengslanetið sýnt með `ggnetwork`. Hnútar verða litaðir eftir tengslum
+við HÍ, HR, báða skólana, aðra háskóla eða fyrirtæki og óvissu. Flokkunin verður miðuð við
+það ár sem hver ritgerð var unnin, svo ferill leiðbeinanda sem skiptir um háskóla birtist rétt.
