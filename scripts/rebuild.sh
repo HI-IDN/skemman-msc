@@ -330,6 +330,10 @@ step_collaboration() {
     # in config/organisations.yaml. A heuristic layer: it finds and grades mentions, and the
     # LLM step (#12) reads them. Issue #11.
     run python scripts/load_collaboration.py --db "$DB"
+    # The company register's records for the organisations with a kennitala, from the cache
+    # only: fetching needs a personal API key and is run by hand
+    # (python scripts/fetch_fyrirtaekjaskra.py).
+    run python scripts/fetch_fyrirtaekjaskra.py --db "$DB" --cached-only
     run_sql scripts/collaboration.sql
 }
 

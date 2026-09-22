@@ -18,6 +18,10 @@
 #              university      a university, university programme or academic research centre
 #              international   EU, UN and other multinational bodies and programmes
 # external     false for the two universities' own units and funds; default true
+# kennitala    the organisation's kennitala, for scripts/fetch_fyrirtaekjaskra.py (#11), which
+#              reads its legal form, ÍSAT codes and registered municipality from the company
+#              register. Only Icelandic organisations have one; look it up by hand on
+#              skatturinn.is/fyrirtaekjaskra -- the register's robots.txt forbids scripting it.
 #
 # Order matters where two names start at the same place: the entry listed first wins. The
 # funds come first so "Landsvirkjun Energy Research Fund" is the fund, not "Landsvirkjun"
@@ -78,7 +82,7 @@ organisations:
   - {key: rarik, name: RARIK, sector: public_company}
   - {key: orkubu_vestfjarda, name: Orkubú Vestfjarða, aliases: ['Orkubú(?:i|s) Vestfjarða'], sector: public_company}
   - {key: isavia, name: Isavia, aliases: ['Isavia[s]', 'ISAVIA'], sector: public_company}
-  - {key: matis, name: Matís, aliases: ['Matís[s]', 'Matis'], sector: public_company}
+  - {key: matis, name: Matís, aliases: ['Matís[s]', 'Matis'], sector: public_company, kennitala: '6709060190'}
   - {key: landsbankinn, name: Landsbankinn, aliases: ['Landsbank(?:ann|anum|ans)'], sector: public_company}
 
   # --- government agencies and state institutes ----------------------------------------
