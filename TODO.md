@@ -7,11 +7,6 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-- **One remaining tier-3 licence match whose title page does not supply the licence holder's
-  middle name: Skemman id 18392.** First name, last name
-  and birth year match, but the title page still leaves no middle-name evidence to confirm or
-  contradict the licence identity. Review externally before treating individually as certain.
-
 - **One remaining Verkefnastjórnun thesis with a licence afterwards, skemman id 44740** (HR,
   professional; two authors). The match is specifically **Jón Steinar Guðlaugsson** (born 1986),
   not co-author Magnús Árni Gunnarsson (born 1981). Jón's identity match is solid: full name,
@@ -98,19 +93,26 @@ programme. Add a `discipline_override` if you ever learn their programme.)
 - **`date_accepted` can differ from Skemman's own "Samþykkt" date -- systemic, not a one-off.**
   97,7% of the whole population's `date_accepted` (2,427 of 2,484 theses) falls on the 1st of a
   month: OAI's `dc.date` is essentially never day-precise, so this is the norm, not the exception.
-  Three human-confirmed cases so far, all in the same direction (our `date_accepted` earlier than
+  Five human-confirmed cases so far, three in the same direction (our `date_accepted` earlier than
   the true Samþykkt date, sometimes by months): **12943** (134-day gap; true lag to the licence is
   8 days, not the 142 `lag_days` showed). **23679** (Skemman: Samþykkt 4.2.2016; our date_accepted
   ~2015-09-01) -- this one is a genuine sign flip: at 55 days our system called it "after" the
   thesis, but the true gap (verkfræðingur licence 26.10.15, before the real Samþykkt) is -101
   days, "before". **49145** (LinkedIn-confirmed programme ran to Jan 2025; Skemman Samþykkt
   3.2.2025) -- direction doesn't flip here (already "before"), but magnitude does: -243 real days,
-  not the -210 `lag_days` showed. Classification (before/after/late) is *usually* robust to this,
-  but 23679 shows it is not always -- how often a flip like that happens across the population is
-  unknown. Properly fixing this means scraping the real Samþykkt date from every Skemman item page
-  (~2,500 pages) -- a real project, not started, raised with the user but not yet decided. Noted in
-  the chapter now with the 97,7% figure, not just the single-case framing (`docs/08-verkfraedingsleyfi.qmd`,
-  @sec-dreifing and Takmarkanir).
+  not the -210 `lag_days` showed. **42892** (Skemman: Samþykkt 13.10.2022; our date_accepted
+  2022-09-01) -- the odd one out: `date_accepted` disagrees with Samþykkt by 42 days, but it
+  actually agrees with the title page ("September 2022") better than Samþykkt itself does, so we
+  keep 01.09.2022 as the primary date here rather than "correcting" it toward Samþykkt. **45831**
+  (Skemman: Samþykkt 27.9.2023; our date_accepted 2023-09-01) -- the reverse of 42892: here
+  `date_accepted` is the one that lines up with the real Samþykkt (26 days apart, same month),
+  while the title page ("October 2023") is the outlier, a month later than the actual Samþykkt --
+  we keep 27.9.2023, not the title-page month. Classification (before/after/late) is *usually*
+  robust to this, but 23679 shows it is not always -- how often a flip like that happens across the
+  population is unknown. Properly fixing this means scraping the real Samþykkt date from every
+  Skemman item page (~2,500 pages) -- a real project, not started, raised with the user but not yet
+  decided. Noted in the chapter now with the 97,7% figure, not just the single-case framing
+  (`docs/08-verkfraedingsleyfi.qmd`, @sec-dreifing and Takmarkanir).
 - **MPM and the engineer's title -- confirmed exception, 12943.** Author of this MPM (Verkefnastjórnun,
   HR) thesis received the verkfræðingur title 8 days after the thesis was accepted per Skemman's own
   date (see above), and has no other Skemman entry that could explain it independently (unlike 39936's
@@ -177,6 +179,41 @@ programme. Add a `discipline_override` if you ever learn their programme.)
 
 ## Resolved
 
+- **`year_on_page` gap_over_5y outliers (9 of 2,190 covered theses) -- two root causes, both fixed
+  at the source.** Every one of the 9 theses where `year_on_page` disagreed with `date_accepted`
+  by more than 5 years was human-reviewed against its cached title-page text
+  (`data/raw/pdf_text/<id>.txt`); `date_accepted` was correct in all 9, `year_on_page` was wrong,
+  for two distinct reasons:
+  1. **A year embedded in the thesis's own title or a birth-year byline, not a date line at all**
+     -- 42892 ("NACA 1920 vs. NACA 0018"), 42713 ("the 1996 eruption of Gjálp"), 31376 ("kreppunnar
+     á Íslandi 2008"), 36385 ("ÍST 85:2012"), 31388 ("...in Iceland in 2025"), 14063 (HR prints the
+     *author's* birth year, "(1975)", next to their name). Fixed by threading the thesis's
+     OAI-recorded title (`title_is`, `title_en`) into `parse_titlepage`/`_date_on_page` and
+     blanking a literal occurrence of it out of the front-matter window before searching for a
+     year at all (`_strip_known_titles`, whitespace-tolerant so a re-wrapped title still matches).
+  2. **A real date line the parser's regexes simply didn't recognise** -- 42960's title page states
+     "November2021" with no space between month and year (an extraction quirk specific to that
+     page; its other lines extract normally). Fixed with a new tier, a bare "Month+Year" line with
+     no Reykjavík anchor (`_MONTH_YEAR_LINE`, tried before the bare-year fallback), and by loosening
+     both it and `_DATED_CITY_LINE` to allow zero spaces between month and year.
+
+  After both fixes and a full `titlepage-load --cached-only` re-parse, gap_over_5y dropped from 9
+  to 2, and total `year_on_page` coverage rose from 2,190 to 2,195 theses (a few more picked up a
+  real year now that a title-embedded one no longer wins by default). The 2 remaining cases are
+  structurally unfixable by this parser and were confirmed correct via `date_accepted` alone:
+  **42892** -- its real date ("September 2022") is present on the page but pypdf's font-glyph
+  mapping garbles digits there specifically into letters ("september RPRR"), so no year is actually
+  extractable as text; **45879** -- the page follows neither title-page template (no Copyright
+  line, no dated Reykjavík line), so there is no real date signal to find at all; its `year_on_page`
+  (2017) is a stray year from an unrelated dual-degree affiliation line.
+
+  `skemman-harvester/src/skemman_scraper/titlepage_load.py`; 6 new regression tests
+  (`test_bare_month_year_line_with_no_space`, `test_dated_city_line_wins_over_a_bare_month_year_line`,
+  `test_a_year_in_the_thesis_title_is_not_read_as_the_page_date`,
+  `test_without_the_title_the_same_page_misreads_the_title_years_year` -- a same-page-without-the-fix
+  regression guard, `test_title_matching_tolerates_rewrapped_whitespace`,
+  `test_a_title_that_does_not_match_the_page_text_is_left_alone`); 99/99 passing.
+  DB re-parsed (`titlepage-load --cached-only`); not yet committed.
 - **22691 (Jón Einarsson) is not licence holder Jón Helgi Einarsson.** The thesis title page gives
   the full author name Jón Smári Einarsson, while the licence holder's education is BS Electrical
   Engineering (HÍ, 1984–1988) and MSEE Electrical Engineering (Purdue, 1988–1990). The incompatible
@@ -198,8 +235,12 @@ programme. Add a `discipline_override` if you ever learn their programme.)
 - **The supplied LinkedIn education history for a Tómas Þorsteinsson is not evidence for 18392.**
   That profile attended MR in 1990–1994 and completed a BSc in 1994–1997, whereas the thesis
   author and licence candidate for 18392 are recorded as born in 1988. It is therefore a different
-  generation/person. Thesis 18392 is itself an MSc in Byggingarverkfræði, not MPM, and its identity
-  match to "Tómas Joð Þorsteinsson" remains unresolved.
+  generation/person. Thesis 18392 is itself an MSc in Byggingarverkfræði, not MPM.
+- **18392 is Tómas Joð Þorsteinsson -- human-confirmed.** Government record: kennitala 081288-2169
+  (born 8.12.1988, matching the thesis's recorded birth year), verkfræðingur licence granted
+  04.11.2014. Skemman's Samþykkt is 26.5.2014, so the true lag is 162 days, comfortably within the
+  after-window -- confirmed as the correct match, not just tier-3 plausible. Added the full name to
+  `thesis_author_name_override` in `scripts/licences.sql`.
 - **23113 (Fannar Benedikt Guðmundsson) is not safely matched to licence holder Fannar
   Guðmundsson.** The title page confirms the middle name Benedikt, while the government list is
   treated as carrying the licence holder's full name. A domain-expert check found at least three
