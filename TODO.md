@@ -91,10 +91,10 @@ programme. Add a `discipline_override` if you ever learn their programme.)
   different middle names, incompatible (neither prefixes the other), so tier 2 does not apply either;
   correctly excluded entirely now, not just down-ranked. Together these dropped the "outside
   engineering with a licence afterwards" count from 5 to 3 (docs/08-verkfraedingsleyfi.qmd).
-- **Distribution work (resolved).** No fitted normal or lognormal distribution is used. Licence
-  years are shown as empirical counts and cumulative shares, and the lag plot uses empirical
-  quantiles only. The historical female and male series are not treated as stationary bell-shaped
-  populations; recent female counts are still affected by the truncated final years.
+- **Distribution work (resolved).** No parametric distribution is fitted. Licence years are shown
+  as empirical counts and cumulative shares, and the lag plot uses empirical quantiles only. The
+  historical female and male series are not treated as stationary populations; recent female
+  counts are still affected by the truncated final years.
 - **`date_accepted` can differ from Skemman's own "Samþykkt" date -- systemic, not a one-off.**
   97,7% of the whole population's `date_accepted` (2,427 of 2,484 theses) falls on the 1st of a
   month: OAI's `dc.date` is essentially never day-precise, so this is the norm, not the exception.

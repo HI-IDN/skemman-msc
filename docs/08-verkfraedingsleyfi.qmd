@@ -52,18 +52,21 @@ frekar en að giska. Af heildinni er kyn `r n_kyn_okunn` einstaklinga (`r pct_ky
 
 ```{r rq8-samanburdur}
 #| file: ../R/plots/rq8-samanburdur.R
+#| fig-cap: "Fjöldi nýrra starfsleyfa á ári á verkfræðinga- og tæknifræðingalistunum."
 ```
 
 ## Uppsafnað
 
 ```{r rq8-uppsafnad}
 #| file: ../R/plots/rq8-uppsafnad.R
+#| fig-cap: "Uppsafnaður fjöldi starfsleyfa á verkfræðinga- og tæknifræðingalistunum."
 ```
 
 ## Uppsafnað eftir kyni
 
 ```{r rq8-uppsafnad-kyn}
 #| file: ../R/plots/rq8-uppsafnad-kyn.R
+#| fig-cap: "Uppsafnaður fjöldi starfsleyfa eftir áætluðu kyni. Bláir kaflahemlar sýna verkfræðinga og tæknifræðinga; kynjaliturinn er sameiginlegur fyrir báða fleti."
 ```
 :::
 
@@ -113,6 +116,7 @@ kynjasamsetning þeirra sem fengu lögverndað starfsheiti á tímabilinu.
 
 ```{r rq8-afgreidslur}
 #| file: ../R/tables/rq8-afgreidslur.R
+#| fig-cap: "Fjöldi leyfa með sömu dagsetningu á árunum 2010–2025."
 ```
 
 Leyfin koma í lotum en ekki eftir föstu árlegu eða ársfjórðungslegu kerfi. Alls eru
@@ -215,12 +219,13 @@ sérstaklega sem eldri leyfi. Þar geta verið fyrri verkfræðimenntun, tvöfal
 
 Óháð staðfesting er þó möguleg: titilsíðan sjálf tilgreinir oft árið (t.d. „Copyright © 2025“ eða
 dagsett „Reykjavík, Júní 2025“), sótt beint af titilsíðunni sjálfri, ekki úr sömu lýsigögnum og
-`date_accepted`. Það ár er þekkt fyrir `r n_titilsida_within1y` af `r n_titlepage_year` ritgerðum
-(`r pct_titilsida_thekja`% þýðisins) og er innan árs frá `date_accepted` í `r pct_titilsida_within1y`%
-tilvika. Það bendir til að þótt daga- og mánaðarnákvæmni `date_accepted` sé oft ótraust, er árið
-sjálft nær alltaf rétt -- `r n_titilsida_gap_over5y` af `r n_titlepage_year` ritgerðum (undir 1%)
-skera sig úr með meira en fimm ára mun, og þau eru líklegri til að endurspegla stakar villur í
-titilsíðulestrinum sjálfum en almenna skekkju í `date_accepted`.
+`date_accepted`. Þetta ár er þekkt fyrir `r n_titlepage_year` af `r n_titlepage_total` ritgerðum
+(`r pct_titilsida_thekja`% þýðisins), og af þeim er það innan árs frá `date_accepted` í
+`r n_titilsida_within1y` tilvikum (`r pct_titilsida_within1y`%). Það bendir til að þótt daga- og
+mánaðarnákvæmni `date_accepted` sé oft ótraust, sé árið sjálft nær alltaf rétt -- aðeins
+`r n_titilsida_gap_over5y` af `r n_titlepage_year` ritgerðum (undir 1%) skera sig úr með meira en
+fimm ára mun, og þau eru líklegri til að endurspegla stakar villur í titilsíðulestrinum sjálfum
+en almenna skekkju í `date_accepted`.
 
 ```{r rq8-fyrri-leyfi}
 #| file: ../R/plots/rq8-fyrri-leyfi.R
@@ -290,6 +295,7 @@ koma innan árs -- sjá @sec-dreifing fyrir dreifinguna í heild og hvers vegna 
 
 ```{r rq8-bid}
 #| file: ../R/plots/rq8-bid.R
+#| fig-cap: "Hlutfall ritgerða þar sem höfundur fékk síðar starfsleyfi, eftir árgangi og skóla."
 ```
 
 Hlutfall þeirra sem fá leyfi er stöðugt í kringum 50–70% fram til 2023 og fellur svo. Fallið
