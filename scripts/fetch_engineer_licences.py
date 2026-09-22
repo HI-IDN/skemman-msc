@@ -32,6 +32,10 @@ MONTHS = {"janúar": 1, "febrúar": 2, "mars": 3, "apríl": 4, "maí": 5, "jún�
 # (kennitala or old-style birth date) anywhere; the name is whatever precedes it.
 ID = re.compile(r"(?<!\d)(\d{6}[-.\s]?\d{4})(?!\d)|f\.\s*(\d{1,2}\.\d{1,2}\.\d{2,4})")
 DATE = re.compile(r"Fær leyfi\s*(.*?)\.?\s*$")
+# A few source pages repeat the kennitala instead of a date after "Fær leyfi" (a typo on the
+# government's own page, not our parsing). raw_date must never carry an id, so anything shaped
+# like one is redacted defensively, on top of never being logged anywhere.
+ID_SHAPED = re.compile(r"(?<!\d)\d{6}[-.\s]?\d{4}(?!\d)")
 
 
 def parse_entry(text):
@@ -82,7 +86,7 @@ def fetch(url):
 
 
 def main():
-    rows, bad = [], []
+    rows, bad, not_licensed = [], [], 0
     for lst, url in LISTS.items():
         page = fetch(url)
         for p in re.findall(r"<p>(.*?)</p>", page, re.S):
@@ -96,14 +100,22 @@ def main():
             year, iso = licence_date(m["date"])
             if year is not None and not 1937 <= year <= 2026:  # typos in the source
                 year, iso = None, ""
+            if year is None:
+                # Some entries on the verkfræðingar/tæknifræðingar page are people the page itself
+                # says have never actually applied for the licence ("... hefur ekki sótt leyfi") --
+                # qualified, listed, but not licensed. Keeping them in engineer_licence would count
+                # them as licence holders, so they are dropped (a count only, no name or id logged).
+                not_licensed += 1
+                continue
             rows.append({"name": m["name"].strip(), "birth_year": birth_year(m["id"]),
                          "licence_year": year, "licence_date": iso, "list": lst,
-                         "raw_date": m["date"].strip()})
+                         "raw_date": ID_SHAPED.sub("<kt>", m["date"].strip())})
     with OUT.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, ["name", "birth_year", "licence_year", "licence_date", "list", "raw_date"])
         w.writeheader()
         w.writerows(rows)
-    print(f"{len(rows)} entries written to {OUT.name}; {len(bad)} unparsed", file=sys.stderr)
+    print(f"{len(rows)} entries written to {OUT.name}; "
+          f"{len(bad)} unparsed, {not_licensed} listed but not licensed (dropped)", file=sys.stderr)
     for b in bad[:15]:
         print("  unparsed:", b, file=sys.stderr)
 

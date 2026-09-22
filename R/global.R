@@ -28,6 +28,17 @@ suppressMessages({
   library(kableExtra)
 })
 
+# The book is Icelandic prose: a decimal is written with a comma, not a period. This is what
+# knitr's inline `r x` mechanism reads (format()/formatC() respect it; sprintf() and ggplot2/scales
+# axis labels do not and are unaffected either way -- those already print "." elsewhere in the
+# book and are out of scope here).
+options(OutDec = ",")
+
+#' A number formatted with an Icelandic decimal comma, for the few spots sprintf() has to be used
+#' directly (e.g. building a two-number range or a plot's own legend text) where OutDec above does
+#' not reach.
+tala <- function(x, digits = 1) sub(".", ",", sprintf(paste0("%.", digits, "f"), x), fixed = TRUE)
+
 # --- Project root ----------------------------------------------------------
 #
 # `source()` gives no reliable way to ask where the sourced file is, so walk up
@@ -74,6 +85,17 @@ display <- function(x) {
   if (isTRUE(getOption("knitr.in.progress"))) return(x)
   print(x)
   invisible(x)
+}
+
+#' The last cohort counted as "settled" for a right-censored, still-open list like
+#' engineer_licence, `buffer_years` after the thesis. Not simply the list's last year minus the
+#' buffer: the list runs only to whatever date it was last fetched, so a cohort's very last day
+#' also needs the full buffer to land inside that coverage, or it is pushed back one more year.
+#' Used by R/tables/rq8-leyfi.R and the rq8 plots that draw its dashed "settled" line independently.
+leyfi_til <- function(buffer_years, max_date_query) {
+  max_date <- q(max_date_query, quiet = TRUE)[[1]]
+  threshold <- max_date - buffer_years * 365
+  as.integer(format(threshold, "%Y")) - if (format(threshold, "%m-%d") == "12-31") 0L else 1L
 }
 
 # --- Look -------------------------------------------------------------------

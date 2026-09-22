@@ -68,3 +68,5 @@ logs/
 
 # R writes this when a script draws outside a graphics device
 Rplots.pdf
+tmp.out
+licences_by_year_sex.csv

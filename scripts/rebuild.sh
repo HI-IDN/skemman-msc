@@ -260,6 +260,13 @@ step_licences() {
     else
         echo "  skipped loading: data/processed/engineer_licences.csv is missing"              "(run scripts/fetch_engineer_licences.py)" >&2
     fi
+    # data/processed/mannanafnaskra.csv comes from scripts/fetch_mannanafnaskra.py, likewise by
+    # hand. Without it, v_licence_person.kyn just falls back to the surname-ending rule alone.
+    if [[ -f data/processed/mannanafnaskra.csv ]]; then
+        run_sql scripts/load_mannanafnaskra.sql
+    else
+        echo "  skipped loading: data/processed/mannanafnaskra.csv is missing"              "(run scripts/fetch_mannanafnaskra.py)" >&2
+    fi
     run_sql scripts/licences.sql
 }
 

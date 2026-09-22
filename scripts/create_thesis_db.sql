@@ -175,3 +175,17 @@ create table if not exists engineer_licence
     list         varchar,
     raw_date     varchar
 );
+
+-- Þjóðskrá's Mannanafnaskrá (the Icelandic given-name registry): a fallback for v_licence_person.kyn
+-- where the surname-ending rule can't classify someone. Filled by scripts/load_mannanafnaskra.sql
+-- from data/processed/mannanafnaskra.csv (scripts/fetch_mannanafnaskra.py); empty until then. About
+-- names, not people -- no privacy concern, unlike engineer_licence.
+create table if not exists mannanafnaskra_name
+(
+    id      integer,
+    name    varchar,  -- lowercase, as the registry itself gives it
+    type    varchar,  -- 'DR'/'RDR' boy, 'ST'/'RST' girl, other = millinafn or unclassifiable
+    status  varchar,  -- 'Sam' samþykkt, 'Haf' hafnað
+    verdict varchar,
+    url     varchar
+);

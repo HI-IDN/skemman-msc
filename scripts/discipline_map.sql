@@ -144,12 +144,12 @@ insert into discipline_keyword (keyword_norm, discipline, category, priority) va
 ('gervigreind og máltækni',        'Máltækni',                   'engineering', 12),
 ('language technology',            'Máltækni',                   'engineering', 10),
 
--- Construction management -- an engineering MSc (human-confirmed via 10906: an 85-page MSc
--- thesis, the engineering counterpart of the professional programmes; industrial-engineering
--- related or closely adjacent), NOT a professional master's like MPM. Same category as the
--- other verkfraedi disciplines; HI already files it under UmBygg in discipline_unit.
-('framkvæmdastjórnun',             'Framkvæmdastjórnun',         'engineering', 15),
-('construction management',        'Framkvæmdastjórnun',         'engineering', 15),
+-- Framkvæmdastjórnun is the Icelandic term for MPM -- a professional programme, not engineering
+-- (human-confirmed; reverses an earlier call made from a single 85-page thesis, 10906, judged
+-- "the engineering counterpart of the professional programmes" on length alone). Same category
+-- as Verkefnastjórnun, its more common keyword for the same kind of programme.
+('framkvæmdastjórnun',             'Framkvæmdastjórnun',         'professional', 15),
+('construction management',        'Framkvæmdastjórnun',         'professional', 15),
 
 -- Energy, additional spellings
 ('sjálfbær orkuvísindi - reyst',   'Sjálfbær orkuvísindi',              'science', 12),
@@ -656,8 +656,7 @@ on conflict (thesis_id) do update set
 -- that, the keywords) says -- Mekatróník, Fjármálaverkfræði, Raforkuverkfræði -- and this table
 -- says which broader discipline each rolls up into, for comparing HI and HR (which name and
 -- split their programmes differently). A discipline with no row is its own umbrella.
--- Judgment calls, revisit freely: Framkvæmdastjórnun is "industrial-engineering related or
--- closely adjacent". At HI the Rafmagns- og tölvuverkfræði deild has three tracks
+-- Judgment calls, revisit freely: at HI the Rafmagns- og tölvuverkfræði deild has three tracks
 -- (læknisfræðileg verkfræði = HR's Heilbrigðisverkfræði, rafmagnsverkfræði, tölvuverkfræði)
 -- and its MS lists renewable energy as a main track, hence both roll up to Rafmagnsverkfræði.
 --
@@ -688,7 +687,8 @@ insert into discipline_group (discipline, umbrella, note) values
 ('Fjármálaverkfræði',   'Iðnaðarverkfræði', 'a study line inside the industrial engineering department'),
 ('Rekstrarverkfræði',   'Iðnaðarverkfræði', 'engineering management'),
 ('Ákvarðanaverkfræði',  'Iðnaðarverkfræði', 'decision engineering'),
-('Framkvæmdastjórnun',  'Iðnaðarverkfræði', 'construction management; industrial-engineering related or adjacent'),
+-- Framkvæmdastjórnun (MPM) is 'professional', not 'engineering' (see the discipline_keyword
+-- comment above), so it does not belong in this engineering-only umbrella table any more.
 ('Mekatróník',          'Vélaverkfræði',    'mechatronics'),
 ('Hátækniverkfræði',    'Vélaverkfræði',    'HR high-tech engineering'),
 ('Raforkuverkfræði',    'Rafmagnsverkfræði', 'electric power engineering; HI: a track of Rafmagns- og tölvuverkfræði'),
@@ -1038,7 +1038,7 @@ select
         when d.university = 'Háskólinn í Reykjavík' then
             case
                 when m.study_category like 'Dip %'                    then 'Iðnfræði (diplóma)'
-                when d.discipline = 'Verkefnastjórnun'                then 'MPM'
+                when d.discipline in ('Verkefnastjórnun', 'Framkvæmdastjórnun') then 'MPM'
                 when d.discipline = 'Íþróttavísindi'                  then 'Íþróttafræði'
                 when m.study_category like '%Tölvunarfræðideild%'     then 'Tölvunarfræðideild'
                 when d.category = 'engineering'                       then 'Verkfræðideild'
@@ -1051,7 +1051,7 @@ select
     case
         when d.university = 'Háskólinn í Reykjavík'
             then coalesce(m.study_category, '') not like 'Dip %'  -- NULL for old theses
-                 and coalesce(d.discipline, '') not in ('Verkefnastjórnun', 'Íþróttavísindi')
+                 and coalesce(d.discipline, '') not in ('Verkefnastjórnun', 'Framkvæmdastjórnun', 'Íþróttavísindi')
                  and (d.category = 'engineering'
                       or coalesce(m.study_category, '') like '%Tölvunarfræðideild%')
         else coalesce(u.in_core, false)

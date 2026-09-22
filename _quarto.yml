@@ -7,6 +7,8 @@ project:
     # any depth, and pulls in skemman-harvester/docs/img/hi as well.
     - /img/hi
 
+bibliography: references.bib
+
 book:
   title: "Meistararitgerðir í verkfræði og tæknigreinum"
   repo-url: https://github.com/HI-IDN/icelandic-thesis-comparison
