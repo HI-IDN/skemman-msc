@@ -39,10 +39,8 @@ p_rq8_uppsafnad_kyn <- ggplot(d_rq8_uppsafnad_kyn, aes(ar, uppsafnad, colour = k
   labs(x = NULL, y = "Uppsafnað", colour = NULL) +
   guides(colour = guide_legend(position = "bottom")) +
   theme(
-    strip.text = element_text(face = "bold", colour = "white", hjust = 0),
-    strip.background = element_rect(fill = "#10099F", colour = NA)
+    strip.text = element_text(face = "bold", hjust = 0),
+    strip.background = element_rect(fill = "#eeedff", colour = NA)
   )
 
-# Interactive (plotly): see rq8-samanburdur.R for why.
-display(plotly::ggplotly(p_rq8_uppsafnad_kyn, tooltip = c("x", "y", "colour")) |>
-          plotly::layout(legend = list(orientation = "h", x = 0, y = -0.1)))
+display(p_rq8_uppsafnad_kyn)

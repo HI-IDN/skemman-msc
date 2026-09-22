@@ -37,8 +37,8 @@ heimild um hvaða ritgerðir eru verkfræði.
 Áður en ritgerðir eru dregnar inn er rétt að skoða listana eina og sér: hversu margir fá
 starfsheitin á ári, og hvernig fjöldi verkfræðinga ber saman við fjölda tæknifræðinga.
 
-Hvorugur listinn segir kyn. Myndirnar hér að neðan nota því varlega áætlað kyn út frá nafnahefð,
-en þetta er ekki kyn viðkomandi í dag; aðferðin og óvissan eru útskýrðar í @sec-takmarkanir.
+Hvorugur listinn segir kyn. Myndirnar hér að neðan ganga því út frá kyni eins og það verður lesið
+úr nafnahefð í gögnunum; aðferðin og óvissan eru útskýrðar í @sec-takmarkanir.
 
 ::: {.panel-tabset}
 ## Nýir á ári
@@ -59,7 +59,7 @@ en þetta er ekki kyn viðkomandi í dag; aðferðin og óvissan eru útskýrða
 
 ```{r rq8-uppsafnad-kyn}
 #| file: ../R/plots/rq8-uppsafnad-kyn.R
-#| fig-cap: "Uppsafnaður fjöldi starfsleyfa eftir áætluðu kyni. Bláir kaflahemlar sýna verkfræðinga og tæknifræðinga; kynjaliturinn er sameiginlegur fyrir báða fleti."
+#| fig-cap: "Uppsafnaður fjöldi starfsleyfa eftir áætluðu kyni. Ljósbláir kaflahemlar sýna Verkfræðinga og Tæknifræðinga; kynjaliturinn er sameiginlegur fyrir báða fleti."
 ```
 :::
 
@@ -335,8 +335,7 @@ Allar ritgerðirnar eru því flokkaðar sem náttúruvísindi. Ef nýtt leyfi b
 - **Kyn er áætlað út frá nafni, ekki skráð kyn.** Fyrst er leitað að íslenskum endingum
   (-son/-dóttir); ef þær duga ekki eru eiginnöfn flett upp í Mannanafnaskrá Þjóðskrár
   [@manna_nafnaskra]. Óákveðin, tvíræð eða erlend nöfn eru ekki neydd í flokk. Þessi aðferð
-  skilur `r n_kyn_okunn` einstaklinga (`r pct_kyn_okunn`%) eftir óákveðna og segir ekkert um
-  kynvitund eða kyn viðkomandi í dag.
+  skilur `r n_kyn_okunn` einstaklinga (`r pct_kyn_okunn`%) eftir óákveðna.
 - Nafnasamsvörun getur ruglað tveimur ólíkum mönnum með sama fyrsta og síðasta nafn og fæðingarár
   -- staðfest dæmi: "Helgi Guðjónsson" (18555, Líffræði) á móti "Helgi Þór Guðjónsson" (28751,
   verkfræði), og "Elín Guðný Gunnarsdóttir" (33545, Verkefnastjórnun) á móti "Elín Birna
