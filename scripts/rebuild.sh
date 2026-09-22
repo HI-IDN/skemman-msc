@@ -37,7 +37,7 @@ CONFIG="config/collections.yaml"
 
 # Every step, in the order they have to run. A phase is a selection from this
 # list, so combining phases never reorders anything.
-ALL_STEPS=(init oai xoai metadata people files titlepage access parse population dates licences disciplines advisors figures)
+ALL_STEPS=(init oai xoai metadata people files titlepage access parse population dates licences disciplines advisors collaboration figures)
 
 # Fetching from Skemman. `files` is here as well as in dataprocessing: the
 # title-page download needs the PDF URLs that files-load writes, so fetching
@@ -46,7 +46,7 @@ PRE=(init oai xoai files titlepage access)
 # Deriving from data/raw alone. Nothing here makes a request.
 DATA=(init metadata people files parse)
 # Defining the population and the study's views over it.
-POST=(population dates licences disciplines advisors)
+POST=(population dates licences disciplines advisors collaboration)
 # Running the R.
 VIS=(figures)
 
@@ -322,6 +322,15 @@ step_advisors() {
     else
         echo "  skipped: data/processed/hi_staff_units.csv or hr_staff_units.csv is missing"              "(run scripts/scrape_hi_staff.py and scripts/scrape_hr_staff.py)" >&2
     fi
+}
+
+step_collaboration() {
+    echo "[collaboration] Outside organisations and funders named in acknowledgements and prefaces. No network."
+    # Reads the first pages the title-page step keeps in data/raw/pdf_text/, and the gazetteer
+    # in config/organisations.yaml. A heuristic layer: it finds and grades mentions, and the
+    # LLM step (#12) reads them. Issue #11.
+    run python scripts/load_collaboration.py --db "$DB"
+    run_sql scripts/collaboration.sql
 }
 
 step_figures() {

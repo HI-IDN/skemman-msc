@@ -1,0 +1,111 @@
+# Outside organisations named in thesis front matter, for scripts/load_collaboration.py (#11).
+#
+# Seeded from the names that recur in the acknowledgements and prefaces of engineering
+# master's theses, not from a list of Icelandic companies: an organisation is here because
+# theses name it. Anything not listed is still caught, less precisely, by the company-suffix
+# and wording signals, and later by the LLM step (#12).
+#
+# key          stable identifier, used in the database
+# name         matched literally, as a whole word, case-sensitively
+# aliases      regular expressions, also whole-word and case-sensitive -- Icelandic case
+#              endings ("Eflu", "Vegagerðinni") and English names go here
+# sector       private         privately owned company
+#              public_company  company owned by the state or a municipality (ohf., sf.,
+#                              or a subsidiary of one) -- kept apart from private because
+#                              the largest partners are of this kind
+#              public_agency   government agency, ministry, municipality, or state institute
+#              research_fund   a fund that awards grants, whoever owns it
+#              university      a university, university programme or academic research centre
+#              international   EU, UN and other multinational bodies and programmes
+# external     false for the two universities' own units and funds; default true
+#
+# Order matters where two names start at the same place: the entry listed first wins. The
+# funds come first so "Landsvirkjun Energy Research Fund" is the fund, not "Landsvirkjun"
+# followed by stray words. A name inside a longer one that starts earlier -- "Landsvirkjunar"
+# in "Orkurannsóknasjóður Landsvirkjunar" -- is never matched separately.
+
+organisations:
+
+  # --- funds ---------------------------------------------------------------------------
+  - {key: rannis, name: Rannís, aliases: ['RANN[IÍ]S', 'Rannis', 'Icelandic Centre for Research', 'Rannsóknamiðstöð(?:var)? Íslands'], sector: research_fund}
+  - {key: irf, name: Icelandic Research Fund, aliases: ['Rannsóknar?sjóð(?:ur|i|s)(?! Háskóla| Vegagerðar| Landsvirkj)'], sector: research_fund}
+  - {key: tds, name: Technology Development Fund, aliases: ['Tækniþróunarsjóð(?:ur|i|s)'], sector: research_fund}
+  - {key: lv_fund, name: Landsvirkjun Energy Research Fund, aliases: ["Landsvirkjun(?:'s)? Energy Research Fund", 'Orkurannsóknar?sjóð(?:ur|i|s) Landsvirkjunar'], sector: research_fund}
+  - {key: vor, name: VOR, aliases: ['VOR[ -]Reykjav[ií]k Energy (?:Environmental and Energy )?Research Fund', 'Reykjav[ií]k Energy (?:Environmental and Energy )?Research Fund', 'Vísinda- og rannsóknar?sjóð(?:ur|i|s) (?:Orkuveitu Reykjavíkur|OR)'], sector: research_fund}
+  - {key: vegagerdin_fund, name: Rannsóknasjóður Vegagerðarinnar, aliases: ['Rannsóknar?sjóð(?:ur|i|s) Vegagerðarinnar', 'Road (?:Administration )?Research Fund'], sector: research_fund}
+  - {key: hi_fund, name: University of Iceland Research Fund, aliases: ['Rannsóknar?sjóð(?:ur|i|s) Háskóla Íslands'], sector: research_fund, external: false}
+
+  # --- private companies -------------------------------------------------------------
+  - {key: verkis, name: Verkís, aliases: ['Verkís[is]', 'Verkis', 'VERKÍS'], sector: private}
+  - {key: efla, name: EFLA, aliases: ['Efl[au]', 'EFLU', 'Verkfræðistof(?:an|unni|unnar) Efl[au]'], sector: private}
+  - {key: mannvit, name: Mannvit, aliases: ['Mannvit[is]', 'MANNVIT'], sector: private}
+  - {key: vso, name: VSÓ, aliases: ['VSÓ Ráðgjöf', 'VSO Consulting'], sector: private}
+  - {key: cowi, name: COWI, sector: private}
+  - {key: vatnaskil, name: Vatnaskil, aliases: ['Vatnaskil(?:um|a)'], sector: private}
+  - {key: ossur, name: Össur, aliases: ['Össur(?:i|ar)', 'Ossur', 'Embla Medical'], sector: private}
+  - {key: marel, name: Marel, aliases: ['Marels'], sector: private}
+  - {key: icelandair, name: Icelandair, aliases: ['Icelandair(?: Group)?'], sector: private}
+  - {key: alcoa, name: Alcoa, aliases: ['Alcoa Fjarðaál', 'Fjarðaál(?:i|s)?'], sector: private}
+  - {key: isal, name: ISAL, aliases: ['Rio Tinto(?: Alcan)?(?: Iceland)?', 'Álverið í Straumsvík'], sector: private}
+  - {key: nordural, name: Norðurál, aliases: ['Norðurál(?:i|s)', 'Century Aluminum'], sector: private}
+  - {key: hs_orka, name: HS Orka, aliases: ['HS Orku'], sector: private}
+  - {key: siminn, name: Síminn, aliases: ['Símann', 'Símanum', 'Símans'], sector: private}
+  - {key: samey, name: Samey, sector: private}
+  - {key: teledyne_gavia, name: Teledyne Gavia, aliases: ['Hafmynd'], sector: private}
+  - {key: advania, name: Advania, sector: private}
+  - {key: nyherji, name: Nýherji, aliases: ['Nýherja'], sector: private}
+  - {key: mideind, name: Miðeind, sector: private}
+  - {key: lysi, name: Lýsi, aliases: ['Lýsis'], sector: private}
+  - {key: loftmyndir, name: Loftmyndir, aliases: ['Loftmynd(?:um|a)'], sector: private}
+  - {key: vis, name: VÍS, aliases: ['Vátryggingafélag Íslands'], sector: private}
+  - {key: eimskip, name: Eimskip, aliases: ['Eimskips'], sector: private}
+  - {key: samskip, name: Samskip, aliases: ['Samskipa'], sector: private}
+  - {key: controlant, name: Controlant, sector: private}
+  - {key: ccp, name: CCP, aliases: ['CCP Games'], sector: private}
+  - {key: arion, name: Arion, aliases: ['Arion [Bb]anki', 'Arion [Bb]anka'], sector: private}
+  - {key: hnit, name: Hnit, aliases: ['Verkfræðistof(?:an|unni|unnar) Hnit'], sector: private}
+  - {key: valka, name: Valka, aliases: ['Völku', 'Völk(?:u|unnar)'], sector: private}
+  - {key: decode, name: deCODE, aliases: ['Íslensk erfðagreining', 'Íslenskri erfðagreiningu', 'Íslenskrar erfðagreiningar', 'Amgen'], sector: private}
+  - {key: limtre_virnet, name: Límtré Vírnet, aliases: ['Límtré-Vírnet'], sector: private}
+
+  # --- companies owned by the state or a municipality ---------------------------------
+  - {key: landsvirkjun, name: Landsvirkjun, aliases: ['Landsvirkjunar', 'National Power Company(?: of Iceland)?'], sector: public_company}
+  - {key: landsnet, name: Landsnet, aliases: ['Landsnet[is]'], sector: public_company}
+  - {key: or, name: Orkuveita Reykjavíkur, aliases: ['Orkuveit(?:u|unnar|an) Reykjavíkur', 'Reykjav[ií]k Energy'], sector: public_company}
+  - {key: veitur, name: Veitur, aliases: ['Veit(?:um|na)', 'Veitur Utilities'], sector: public_company}
+  - {key: on, name: Orka náttúrunnar, aliases: ['Orku náttúrunnar', 'ON Power'], sector: public_company}
+  - {key: carbfix, name: Carbfix, aliases: ['CarbFix'], sector: public_company}
+  - {key: rarik, name: RARIK, sector: public_company}
+  - {key: orkubu_vestfjarda, name: Orkubú Vestfjarða, aliases: ['Orkubú(?:i|s) Vestfjarða'], sector: public_company}
+  - {key: isavia, name: Isavia, aliases: ['Isavia[s]', 'ISAVIA'], sector: public_company}
+  - {key: matis, name: Matís, aliases: ['Matís[s]', 'Matis'], sector: public_company}
+  - {key: landsbankinn, name: Landsbankinn, aliases: ['Landsbank(?:ann|anum|ans)'], sector: public_company}
+
+  # --- government agencies and state institutes ----------------------------------------
+  - {key: vegagerdin, name: Vegagerðin, aliases: ['Vegagerð(?:ina|inni|arinnar)', '(?:Icelandic )?Road (?:and Coastal )?Administration'], sector: public_agency}
+  - {key: nmi, name: Nýsköpunarmiðstöð Íslands, aliases: ['Nýsköpunarmiðstöð(?:var)? Íslands', 'Innovation Cent(?:er|re) Iceland', 'NMÍ'], sector: public_agency}
+  - {key: isor, name: ÍSOR, aliases: ['Íslenskar orkurannsóknir', 'Iceland GeoSurvey'], sector: public_agency}
+  - {key: orkustofnun, name: Orkustofnun, aliases: ['Orkustofnunar', 'National Energy Authority'], sector: public_agency}
+  - {key: vedurstofan, name: Veðurstofa Íslands, aliases: ['Veðurstof(?:u|an|unnar)(?: Íslands)?', 'Icelandic Meteorological Office'], sector: public_agency}
+  - {key: samgongustofa, name: Samgöngustofa, aliases: ['Samgöngustof(?:u|unnar)', 'Icelandic Transport Authority'], sector: public_agency}
+  - {key: thjodskra, name: Þjóðskrá Íslands, aliases: ['Registers Iceland'], sector: public_agency}
+  - {key: hafro, name: Hafrannsóknastofnun, aliases: ['Hafrannsóknastofnun(?:ar)?', 'Marine (?:and Freshwater )?Research Institute'], sector: public_agency}
+  - {key: landspitali, name: Landspítali, aliases: ['Landspítal(?:a|ans)', 'National University Hospital(?: of Iceland)?', 'Icelandic Blood Bank', 'Blóðbank(?:inn|anum|ans)'], sector: public_agency}
+  - {key: skipulagsstofnun, name: Skipulagsstofnun, aliases: ['Skipulagsstofnun(?:ar)?', 'National Planning Agency'], sector: public_agency}
+  - {key: reykjavikurborg, name: Reykjavíkurborg, aliases: ['Reykjavíkurborgar', 'City of Reykjav[ií]k'], sector: public_agency}
+  - {key: government, name: Government of Iceland, aliases: ['Icelandic Ministry of [A-Z]\w+(?: and [A-Z]\w+)?', 'Ministry of [A-Z]\w+(?: and [A-Z]\w+)? of Iceland', '\w+ráðuneyti(?:ð|nu|sins)?'], sector: public_agency}
+
+  # --- international -------------------------------------------------------------------
+  - {key: eu, name: European Union, aliases: ['Horizon (?:2020|Europe)', 'European Research Council', 'Evrópusamband(?:ið|inu|sins)'], sector: international}
+  - {key: unu_gtp, name: UNU-GTP, aliases: ['United Nations University Geothermal Training Programme', 'UNU Geothermal Training Programme', 'GRÓ[ -]GTP', 'UNU'], sector: international}
+  - {key: nordic, name: NordForsk, aliases: ['Nordic Energy Research', 'Nordic Innovation'], sector: international}
+  - {key: nasa, name: NASA, sector: international}
+
+  # --- universities and research centres abroad ---------------------------------------
+  # Outside collaboration, but academic: kept out of `named_partner` in the views. Also
+  # where a student did an earlier degree, which only the LLM step can tell apart.
+  - {key: foreign_university, name: ETH Zurich, aliases: ['ETH Zürich', 'DTU', 'NTNU', 'KTH', 'Chalmers', 'Technical University of [A-Z]\w+', 'University of (?!Iceland\b|Reykjav|Akureyri\b)[A-Z]\w+', '(?!Reykjav|Bifröst)[A-Z]\w+ University(?! of Iceland| College)', 'Jülich Supercomputing Centre', 'JSC'], sector: university}
+
+  # --- the two universities' own programmes --------------------------------------------
+  - {key: reyst, name: REYST, sector: university, external: false}
+  - {key: ise, name: Iceland School of Energy, sector: university, external: false}

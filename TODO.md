@@ -16,40 +16,40 @@ comment, this file's own history in git is the record).
   form the parser misses, fix the parser. If the evidence isn't in the PDF at all, add the
   confirmed date to `thesis_date_reviewed` in `scripts/titlepage_dates.sql`.
 
-  | Thesis | Title page | `date_accepted` | Latest ref. | Used | Note |
-  | --- | --- | --- | --- | --- | --- |
-  | [5569](https://skemman.is/handle/1946/5569) | 2010-01 | 2010-06 | – | 2010-01 |  |
-  | [9874](https://skemman.is/handle/1946/9874) | 2011-02 | 2011-08 | 2011-05 | 2011-08 |  |
-  | [9878](https://skemman.is/handle/1946/9878) | 2010-12 | 2011-08 | – | 2010-12 |  |
-  | [13208](https://skemman.is/handle/1946/13208) | 2012-05 | 2012-09 | – | 2012-05 |  |
-  | [13273](https://skemman.is/handle/1946/13273) | 2012-05 | 2012-09 | 2012-07 | 2012-09 |  |
-  | [20526](https://skemman.is/handle/1946/20526) | 2015-01 | 2014-01 | – | 2015-01 |  |
-  | [25622](https://skemman.is/handle/1946/25622) | 2012 | 2016-04 | 2016-04 | 2016-04 |  |
-  | [25644](https://skemman.is/handle/1946/25644) | 2016-04 | 2015-04 | – | 2016-04 |  |
-  | [26713](https://skemman.is/handle/1946/26713) | 2016-07 | 2017-01 | – | 2016-07 |  |
-  | [26946](https://skemman.is/handle/1946/26946) | 2011 | 2016-12 | – | 2011 |  |
-  | [26948](https://skemman.is/handle/1946/26948) | 2017-01 | 2017-11 | – | 2017-01 |  |
-  | [29224](https://skemman.is/handle/1946/29224) | 2016 | 2017-06 | 2017-04 | 2017-06 |  |
-  | [29539](https://skemman.is/handle/1946/29539) | 2017-06 | 2018-06 | – | 2017-06 |  |
-  | [29741](https://skemman.is/handle/1946/29741) | 2017-08 | 2017-12 | – | 2017-08 |  |
-  | [34926](https://skemman.is/handle/1946/34926) | 2019-08 | 2020-01 | – | 2019-08 | page also has "15/01/2020" (numeric format not read) |
-  | [36557](https://skemman.is/handle/1946/36557) | 2020-12 | 2020-06 | 2020-04 | 2020-12 |  |
-  | [37118](https://skemman.is/handle/1946/37118) | 2020-05 | 2020-09 | – | 2020-05 |  |
-  | [39922](https://skemman.is/handle/1946/39922) | 2021-05 | 2021-09 | – | 2021-05 |  |
-  | [40087](https://skemman.is/handle/1946/40087) | 2021-06 | 2021-10 | – | 2021-06 |  |
-  | [40389](https://skemman.is/handle/1946/40389) | 2022-01 | 2020-01 | – | 2022-01 |  |
-  | [42892](https://skemman.is/handle/1946/42892) | 1920 | 2022-09 | – | 1920 | PDF font garbles the digits (see Resolved) |
-  | [42960](https://skemman.is/handle/1946/42960) | 2021-11 | 2022-10 | – | 2021-11 |  |
-  | [45879](https://skemman.is/handle/1946/45879) | 2017 | 2023-08 | – | 2017 | no real date on the page (see Resolved) |
-  | [47680](https://skemman.is/handle/1946/47680) | 2022 | 2024-06 | – | 2023 | academic year "2022/2023" |
-  | [47681](https://skemman.is/handle/1946/47681) | 2023-05 | 2024-05 | – | 2023-05 |  |
-  | [47695](https://skemman.is/handle/1946/47695) | 2022 | 2024-06 | – | 2023 | academic year "2022/2023" |
-  | [47762](https://skemman.is/handle/1946/47762) | 2022 | 2024-06 | – | 2023 | academic year "2022/2023" |
-  | [50075](https://skemman.is/handle/1946/50075) | 2025-01 | 2025-05 | 2021-10 | 2025-01 |  |
-  | [50206](https://skemman.is/handle/1946/50206) | 2025-05 | 2025-01 | – | 2025-05 |  |
-  | [50719](https://skemman.is/handle/1946/50719) | 2023 | 2025-05 | – | 2024 |  |
-  | [50766](https://skemman.is/handle/1946/50766) | 2024 | 2025-06 | 2025-04 | 2025-06 |  |
-  | [51993](https://skemman.is/handle/1946/51993) | 2025-10 | 2026-02 | – | 2025-10 |  |
+  | Thesis | Title page | `date_accepted` | Gap (months) | Latest ref. | Used | Note |
+  | --- | --- | --- | ---: | --- | --- | --- |
+  | [42892](https://skemman.is/handle/1946/42892) | 1920 | 2022-09 | 1221 | – | 1920 | PDF font garbles the digits (see Resolved) |
+  | [45879](https://skemman.is/handle/1946/45879) | 2017 | 2023-08 | 68 | – | 2017 | no real date on the page (see Resolved) |
+  | [26946](https://skemman.is/handle/1946/26946) | 2011 | 2016-12 | 60 | – | 2011 |  |
+  | [25622](https://skemman.is/handle/1946/25622) | 2012 | 2016-04 | 40 | 2016-04 | 2016-04 |  |
+  | [40389](https://skemman.is/handle/1946/40389) | 2022-01 | 2020-01 | 24 | – | 2022-01 |  |
+  | [47680](https://skemman.is/handle/1946/47680) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
+  | [47695](https://skemman.is/handle/1946/47695) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
+  | [47762](https://skemman.is/handle/1946/47762) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
+  | [50719](https://skemman.is/handle/1946/50719) | 2023 | 2025-05 | 17 | – | 2024 |  |
+  | [20526](https://skemman.is/handle/1946/20526) | 2015-01 | 2014-01 | 12 | – | 2015-01 |  |
+  | [25644](https://skemman.is/handle/1946/25644) | 2016-04 | 2015-04 | 12 | – | 2016-04 |  |
+  | [29539](https://skemman.is/handle/1946/29539) | 2017-06 | 2018-06 | 12 | – | 2017-06 |  |
+  | [47681](https://skemman.is/handle/1946/47681) | 2023-05 | 2024-05 | 12 | – | 2023-05 |  |
+  | [42960](https://skemman.is/handle/1946/42960) | 2021-11 | 2022-10 | 11 | – | 2021-11 |  |
+  | [26948](https://skemman.is/handle/1946/26948) | 2017-01 | 2017-11 | 10 | – | 2017-01 |  |
+  | [9878](https://skemman.is/handle/1946/9878) | 2010-12 | 2011-08 | 8 | – | 2010-12 |  |
+  | [9874](https://skemman.is/handle/1946/9874) | 2011-02 | 2011-08 | 6 | 2011-05 | 2011-08 |  |
+  | [26713](https://skemman.is/handle/1946/26713) | 2016-07 | 2017-01 | 6 | – | 2016-07 |  |
+  | [29224](https://skemman.is/handle/1946/29224) | 2016 | 2017-06 | 6 | 2017-04 | 2017-06 |  |
+  | [36557](https://skemman.is/handle/1946/36557) | 2020-12 | 2020-06 | 6 | 2020-04 | 2020-12 |  |
+  | [50766](https://skemman.is/handle/1946/50766) | 2024 | 2025-06 | 6 | 2025-04 | 2025-06 |  |
+  | [5569](https://skemman.is/handle/1946/5569) | 2010-01 | 2010-06 | 5 | – | 2010-01 |  |
+  | [34926](https://skemman.is/handle/1946/34926) | 2019-08 | 2020-01 | 5 | – | 2019-08 | page also has "15/01/2020" (numeric format not read) |
+  | [13208](https://skemman.is/handle/1946/13208) | 2012-05 | 2012-09 | 4 | – | 2012-05 |  |
+  | [13273](https://skemman.is/handle/1946/13273) | 2012-05 | 2012-09 | 4 | 2012-07 | 2012-09 |  |
+  | [29741](https://skemman.is/handle/1946/29741) | 2017-08 | 2017-12 | 4 | – | 2017-08 |  |
+  | [37118](https://skemman.is/handle/1946/37118) | 2020-05 | 2020-09 | 4 | – | 2020-05 |  |
+  | [39922](https://skemman.is/handle/1946/39922) | 2021-05 | 2021-09 | 4 | – | 2021-05 |  |
+  | [40087](https://skemman.is/handle/1946/40087) | 2021-06 | 2021-10 | 4 | – | 2021-06 |  |
+  | [50075](https://skemman.is/handle/1946/50075) | 2025-01 | 2025-05 | 4 | 2021-10 | 2025-01 |  |
+  | [50206](https://skemman.is/handle/1946/50206) | 2025-05 | 2025-01 | 4 | – | 2025-05 |  |
+  | [51993](https://skemman.is/handle/1946/51993) | 2025-10 | 2026-02 | 4 | – | 2025-10 |  |
 
   The 14 theses fixed by hand earlier are now handled by the rule and agree with the manual
   month except **20552** (rule 2015-01 from a year typo backed by a reference read 2015-01-02;
@@ -58,6 +58,16 @@ comment, this file's own history in git is the record).
 (Two HR theses, 50850 and 50913, take their advisor's field, Orkuverkfræði, by design:
 silicon/ferrosilicon materials-process work, but neither school has a chemical-engineering
 programme. Add a `discipline_override` if you ever learn their programme.)
+
+- **Sectors in `config/organisations.yaml` that are judgement calls (#11).** RQ5 splits partners
+  by who owns them, and these were assigned without a source: **Matís** and **Landsbankinn** as
+  `public_company` (state-owned ohf./bank); **Isavia**, **RARIK**, **Orkubú Vestfjarða**,
+  **Landsnet** as `public_company`; **Carbfix**, **Veitur**, **Orka náttúrunnar** as
+  `public_company` because they are Orkuveita Reykjavíkur subsidiaries; **ÍSOR** and
+  **Nýsköpunarmiðstöð Íslands** as `public_agency`; **UNU-GTP** as `international`;
+  **REYST** as one of the universities' own programmes (`external: false`). **HS Veitur** is left
+  out entirely -- part municipal, part private. Correct any in the YAML; the next
+  `rebuild.sh --only collaboration` picks it up.
 
 ## In progress / ideas (no action needed from you yet)
 
@@ -212,7 +222,9 @@ programme. Add a `discipline_override` if you ever learn their programme.)
   academics: 416 of 2,022 advisors have no birth year (typical of external supervisors), and
   `sponsor` is empty for every thesis. Classifying advisors as academic vs. industry, and by employer
   (title-page advisor lines and acknowledgements name the company), is the missing piece for RQ5 and
-  RQ7 and would tighten the advisor-department coverage claim. Not started.
+  RQ7 and would tighten the advisor-department coverage claim. Partly started through the
+  acknowledgements: `v_thesis_collaboration` (#11) grades an organisation `supervision` when its
+  own sentence says someone there advised.
 - **Research question:** how often do advisors supervise within vs. across their own faculty?
 
 ## Resolved
