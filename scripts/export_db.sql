@@ -30,4 +30,7 @@ copy thesis_keywords to 'data/db/thesis_keywords.parquet' (format parquet, compr
 -- anything about faculty, credits or thesis length.
 copy thesis_titlepage         to 'data/db/thesis_titlepage.parquet'         (format parquet, compression zstd);
 copy thesis_titlepage_failure to 'data/db/thesis_titlepage_failure.parquet' (format parquet, compression zstd);
+copy thesis_titlepage_date    to 'data/db/thesis_titlepage_date.parquet'    (format parquet, compression zstd);
+copy thesis_access_date       to 'data/db/thesis_access_date.parquet'       (format parquet, compression zstd);
+copy thesis_fulltext_scan     to 'data/db/thesis_fulltext_scan.parquet'     (format parquet, compression zstd);
 copy thesis_file              to 'data/db/thesis_file.parquet'              (format parquet, compression zstd);

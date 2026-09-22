@@ -7,6 +7,36 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
+- **33 thesis dates the rule in `scripts/titlepage_dates.sql` could not settle** (status
+  `unresolved` in `v_thesis_titlepage_date`, snapshot 2026-09-22). No date on the title page is
+  within 3 months of `date_accepted`, and the full text's reference access dates ("refs", the
+  latest one) either do not exist or support nothing. The book uses the best guess after "->"
+  (when absent, the page date is kept). Check the PDF; if the right date is on the page in a
+  form the parser misses, fix the parser rather than naming the thesis anywhere.
+  4375 (page 2009-09, accepted 2010-01); 5569 (page 2010-01, accepted 2010-06); 9874 (page
+  2011-02, accepted 2011-08, refs 2011-05 -> 2011-08); 9878 (page 2010-12, accepted 2011-08);
+  13208 (page 2012-05, accepted 2012-09); 13273 (page 2012-05, accepted 2012-09, refs 2012-07
+  -> 2012-09); 20526 (page 2015-01, accepted 2014-01); 25622 (page 2012, accepted 2016-04, refs
+  2016-04 -> 2016-04); 25644 (page 2016-04, accepted 2015-04); 26713 (page 2016-07, accepted
+  2017-01); 26946 (page 2011, accepted 2016-12); 26948 (page 2017-01, accepted 2017-11); 29224
+  (page 2016, accepted 2017-06, refs 2017-04 -> 2017-06); 29539 (page 2017-06, accepted
+  2018-06); 29741 (page 2017-08, accepted 2017-12); 34926 (page 2019-08, accepted 2020-01;
+  the page also has "15/01/2020", a numeric date the parser does not read); 36557 (page
+  2020-12, accepted 2020-06, refs 2020-04); 37118 (page 2020-05, accepted 2020-09); 39922 (page
+  2021-05, accepted 2021-09); 40087 (page 2021-06, accepted 2021-10); 40389 (page 2022-01,
+  accepted 2020-01); 42892 (page 1920, accepted 2022-09; digits garbled by the PDF font, see
+  Resolved); 42960 (page 2021-11, accepted 2022-10); 45879 (page 2017, accepted 2023-08; no
+  real date on the page, see Resolved); 47680, 47695, 47762 (page 2022, accepted 2024-06 ->
+  2023, academic year "2022/2023"); 47681 (page 2023-05, accepted 2024-05); 50075 (page
+  2025-01, accepted 2025-05, refs 2021-10); 50206 (page 2025-05, accepted 2025-01); 50719 (page
+  2023, accepted 2025-05 -> 2024); 50766 (page 2024, accepted 2025-06, refs 2025-04 -> 2025-06);
+  51993 (page 2025-10, accepted 2026-02).
+  The 14 theses corrected by hand earlier (45798, 13273, 25756, 4445, 16100, 31309, 20552,
+  28984, 40090, 36418, 25644, 43316, 37525, 49125) are now handled by the rule, and the
+  hand-written `case` lists were removed from the R scripts. The rule agrees with the manual
+  month in all but two: 20552 gets 2015-01 (a year typo backed by a reference read 2015-01-02;
+  manual 2015-02), and 25644 is unresolved with the page's 2016-04 kept (manual 2016-05).
+
 - **One remaining Verkefnastjórnun thesis with a licence afterwards, skemman id 44740** (HR,
   professional; two authors). The match is specifically **Jón Steinar Guðlaugsson** (born 1986),
   not co-author Magnús Árni Gunnarsson (born 1981). Jón's identity match is solid: full name,

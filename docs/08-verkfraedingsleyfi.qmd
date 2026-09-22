@@ -179,6 +179,18 @@ Titilsíðuárið fannst í `r n_titlepage_year` af `r n_titlepage_total` opnum 
 Af þeim var árið innan árs frá `date_accepted` í `r n_titilsida_within1y` tilvikum
 (`r pct_titilsida_within1y`%); ósamræmið er því yfirleitt í degi eða mánuði, ekki í árinu sjálfu.
 
+Titilsíða gefur stundum fleiri en eina dagsetningu: dagsetningu úr eldra sniðmáti við hlið
+`Copyright`-ársins, drög og varnardag, eða ártal sem er einu ári af. Síðan ein sker ekki úr um
+hver þeirra er dagsetning ritgerðarinnar, svo valið fylgir reglu (`scripts/titlepage_dates.sql`)
+en ekki handvirkum leiðréttingum. Sé besti lestur síðunnar innan þriggja mánaða frá
+`date_accepted` er hann notaður. Annars er valin sú dagsetning á síðunni, eða samsetning mánaðar
+og árs sem bæði standa á henni, sem næst er `date_accepted`; það átti við í
+`r n_titilsida_other_date` ritgerðum. Dugi það ekki er öll ritgerðin lesin og nýjasta
+aðgangsdagsetningin í heimildaskránni („accessed“, „retrieved“, „sótt“) höfð til hliðsjónar:
+ritgerðin var ekki kláruð fyrr en þá. Það réð úrslitum í `r n_titilsida_access_date` ritgerðum
+til viðbótar. `r n_titilsida_unresolved` eru enn óljósar; þar er notuð sú dagsetning síðunnar sem
+næst er `date_accepted` og heimildaskráin útilokar ekki, og þær bíða handvirkrar yfirferðar.
+
 ```{r rq8-titilsida-munur}
 #| file: ../R/plots/rq8-titilsida-munur.R
 #| fig-cap: "Mismunur milli dagsetningar á titilsíðu og `date_accepted` í Skemmu, mældur í mánuðum þar sem titilsíðan gefur bæði ár og mánuð. Núll merkir sama mánuð; jákvæð gildi sýna að `date_accepted` er síðar."

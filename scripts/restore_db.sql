@@ -17,6 +17,9 @@ create or replace table keywords        as select * from 'data/db/keywords.parqu
 create or replace table thesis_keywords as select * from 'data/db/thesis_keywords.parquet';
 create or replace table thesis_titlepage         as select * from 'data/db/thesis_titlepage.parquet';
 create or replace table thesis_titlepage_failure as select * from 'data/db/thesis_titlepage_failure.parquet';
+create or replace table thesis_titlepage_date    as select * from 'data/db/thesis_titlepage_date.parquet';
+create or replace table thesis_access_date       as select * from 'data/db/thesis_access_date.parquet';
+create or replace table thesis_fulltext_scan     as select * from 'data/db/thesis_fulltext_scan.parquet';
 create or replace table thesis_file              as select * from 'data/db/thesis_file.parquet';
 
 -- The sequences must not hand out ids that already exist in the restored tables.

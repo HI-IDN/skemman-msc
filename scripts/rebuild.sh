@@ -37,7 +37,7 @@ CONFIG="config/collections.yaml"
 
 # Every step, in the order they have to run. A phase is a selection from this
 # list, so combining phases never reorders anything.
-ALL_STEPS=(init oai xoai metadata people files titlepage access parse population licences disciplines advisors figures)
+ALL_STEPS=(init oai xoai metadata people files titlepage access parse population dates licences disciplines advisors figures)
 
 # Fetching from Skemman. `files` is here as well as in dataprocessing: the
 # title-page download needs the PDF URLs that files-load writes, so fetching
@@ -46,7 +46,7 @@ PRE=(init oai xoai files titlepage access)
 # Deriving from data/raw alone. Nothing here makes a request.
 DATA=(init metadata people files parse)
 # Defining the population and the study's views over it.
-POST=(population licences disciplines advisors)
+POST=(population dates licences disciplines advisors)
 # Running the R.
 VIS=(figures)
 
@@ -249,6 +249,29 @@ print(a["year_start"], a["year_end"], a["stable_start"], a["stable_end"])
     echo "  years $ANALYSIS_YEAR_START-$ANALYSIS_YEAR_END, whole years" \
          "$ANALYSIS_STABLE_START-$ANALYSIS_STABLE_END, from $CONFIG"
     run_sql scripts/population.sql
+}
+
+step_dates() {
+    echo "[dates] Choose each thesis's own date among the dates its title page states."
+    run_sql scripts/titlepage_dates.sql
+    # Where neither the page nor date_accepted settles it, the thesis's references can: read
+    # the whole PDF of just those, once -- the full text is cached, so this fetches only
+    # what is new. The only step after preprocessing that may make a request.
+    if [[ $DRY_RUN -eq 1 ]]; then
+        echo "  \$ skemman access-dates --db $DB --ids <needs_fulltext>"
+        return 0
+    fi
+    local ids
+    ids="$(duckdb "$DB" -noheader -list -c "
+        select coalesce(string_agg(thesis_id, ','), '')
+        from v_thesis_titlepage_date where needs_fulltext")"
+    if [[ -z "$ids" ]]; then
+        echo "  every date is settled or its references already read."
+        return 0
+    fi
+    echo "  $(( $(tr -cd ',' <<< "$ids" | wc -c) + 1 )) theses to read in full"
+    run "$SKEMMAN" access-dates --db "$DB" --ids "$ids"
+    run_sql scripts/titlepage_dates.sql
 }
 
 step_licences() {

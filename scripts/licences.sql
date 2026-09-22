@@ -76,7 +76,7 @@ select m.thesis_id, m.university, m.yr,
 from v_thesis_msc m
 join thesis_people tp on tp.thesis_id = m.thesis_id and tp.role = 'author'
 join people p on p.id = tp.person_id
-left join thesis_titlepage tp_date on tp_date.thesis_id = m.thesis_id
+left join v_thesis_titlepage_date tp_date on tp_date.thesis_id = m.thesis_id
 left join thesis_author_name_override o on o.thesis_id = m.thesis_id
 where p.year_born is not null;
 
