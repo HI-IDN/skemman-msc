@@ -33,9 +33,10 @@ ar_fyrsta_kvk_taekni <- min(d_rq8_uppsafnad_kyn$ar[
 
 p_rq8_uppsafnad_kyn <- ggplot(d_rq8_uppsafnad_kyn, aes(ar, uppsafnad, colour = kyn)) +
   geom_line(linewidth = 0.9) +
-  facet_wrap(~ list, ncol = 1, scales = "free_y") +
+  facet_wrap(~ list, ncol = 1) +
   scale_colour_manual(values = c(Karlar = "#10099F", Konur = "#d61f69", `óþekkt kyn` = "grey60")) +
   scale_x_continuous(breaks = seq(1960, 2025, 10)) +
+  scale_y_continuous(limits = c(0, 3000), breaks = c(0, 1000, 2000, 3000)) +
   labs(x = NULL, y = "Uppsafnað", colour = NULL) +
   guides(colour = guide_legend(position = "bottom")) +
   theme(
