@@ -1,11 +1,5 @@
-# RQ8 -- licences that predate the matched thesis by more than the 60-day grace period, EXCLUDING
-# a thesis that also has an "after" match: that is the ordinary tæknifræðingur-before /
-# verkfræðingur-after progression of the same degree (already counted as "bæði" in
-# R/tables/rq8-leyfi.R), not a separate earlier credential. What is left here is genuinely a
-# different, earlier licence with no later match for this same thesis -- someone already
-# credentialled, later writing an unrelated thesis (human-confirmed cases: 23749, licensed
-# verkfræðingur in 1988, this thesis from 2016; 49145, licensed on an earlier, unrelated degree
-# mid-way through an unrelated MSc that finished later).
+# RQ8 -- all licences that predate the matched thesis. Small negative lags may be date-ordering
+# noise; large negative lags are more consistent with earlier education or a later upload.
 #
 #   source("R/global.R")
 #   source("R/plots/rq8-fyrri-leyfi.R")
@@ -21,11 +15,7 @@ d_rq8_fyrri_leyfi <- q("
               else 'Aðrar ritgerðir' end as hopur
   from v_thesis_author_licence a
   join v_thesis_discipline d using (thesis_id)
-  where a.lag_days < -60
-    and not exists (
-      select 1 from v_thesis_author_licence a2
-      where a2.thesis_id = a.thesis_id and a2.rel = 'after'
-    )", quiet = TRUE) |>
+  where a.lag_days < 0", quiet = TRUE) |>
   mutate(hopur = factor(
     hopur,
     levels = c("Verkfræðiritgerð", "MPM", "Aðrar ritgerðir")
@@ -40,7 +30,7 @@ p_rq8_fyrri_leyfi <- ggplot(d_rq8_fyrri_leyfi, aes(ar_adur, fill = hopur)) +
   )) +
   scale_x_continuous(expand = expansion(mult = c(0, 0.03))) +
   labs(
-    x = "Ár frá leyfisveitingu að síðari, ótengdri ritgerð",
+    x = "Ár frá leyfisveitingu að skráðum skiladegi ritgerðar",
     y = "Fjöldi samsvarana",
     fill = NULL
   )
