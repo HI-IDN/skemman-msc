@@ -26,8 +26,10 @@
 --                   the page really states -- a page date backed by the references stands
 --                   even when date_accepted disagrees.
 --   4. unresolved   Nothing settles it. The best guess is the page date nearest
---                   date_accepted that its references do not rule out (none earlier than
---                   L), else -- every page date ruled out -- date_accepted itself. These
+--                   date_accepted that its references do not rule out -- none earlier than
+--                   L, nor than the newest year the reference list cites twice or more --
+--                   else date_accepted, or the month after that bound when date_accepted
+--                   is earlier than it (25622: read 20 April 2016, so May 2016). These
 --                   are listed for a person to check (TODO.md). needs_fulltext marks the
 --                   ones whose references have not been read yet:
 --                   `bash scripts/rebuild.sh --only dates` reads them.
@@ -50,6 +52,7 @@ create table if not exists thesis_access_date (
 create table if not exists thesis_fulltext_scan (
     thesis_id integer, n_pages integer, text_chars integer, n_dates integer, scanned_at timestamp
 );
+alter table thesis_fulltext_scan add column if not exists latest_cited_year integer;
 
 -- Human-reviewed thesis dates, with what the review found. Same pattern as
 -- thesis_author_name_override in licences.sql.
@@ -62,7 +65,11 @@ create or replace table thesis_date_reviewed (
 
 insert into thesis_date_reviewed values
     (4375, 2009, 9, 'human-confirmed: title page (September 2009) is right; deposited in Skemman late'),
-    (45879, 2023, 8, 'human-confirmed: no date on the page (2017 is from an affiliation line); date_accepted stands');
+    (45879, 2023, 8, 'human-confirmed: no date on the page (2017 is from an affiliation line); date_accepted stands'),
+    (40389, 2022, 1, 'human-confirmed: title page and Samthykkt 25.1.2022 agree; OAI dc.date 2020-01 is wrong'),
+    (39426, 2021, 6, 'human-confirmed: title page and Samthykkt 23.6.2021 agree; OAI dc.date 2020-06 is wrong'),
+    (47680, 2024, 6, 'human-confirmed: Samthykkt 12.6.2024 and references from 2024; page gives only 2022/2023'),
+    (25622, 2016, 5, 'human-confirmed: references read 20.4.2016, so May 2016 at the earliest');
 
 -- Months between a (year, month) and a date. A year with no month is a span: 0 anywhere in
 -- it, otherwise the distance to its nearer end.
@@ -115,19 +122,25 @@ join v_thesis_msc m using (thesis_id);
 create or replace view v_thesis_titlepage_date as
 with near as (select 3 as months),
 bound as (
-    select s.thesis_id, max(a.accessed_on) as accessed_max
+    select s.thesis_id, max(a.accessed_on) as accessed_max,
+           any_value(s.latest_cited_year) as cited_max,
+           -- The earliest the thesis can be: after its last access date, and no older than
+           -- the newest year its reference list cites (twice or more).
+           greatest(max(a.accessed_on),
+                    make_date(any_value(s.latest_cited_year), 1, 1)) as not_before
     from thesis_fulltext_scan s
     left join thesis_access_date a using (thesis_id)
     group by s.thesis_id
 ),
 c as (
-    select c.*, b.thesis_id is not null as scanned, b.accessed_max,
+    select c.*, b.thesis_id is not null as scanned, b.accessed_max, b.not_before,
            -- Supported by the references: in the six months from the latest access date on.
            b.accessed_max is not null
              and c.ends_on >= b.accessed_max
              and c.starts_on <= b.accessed_max + interval 6 month  as supported,
-           -- Not ruled out by them: no earlier than the latest access date.
-           b.accessed_max is null or c.ends_on >= b.accessed_max    as possible
+           -- Not ruled out by them: no earlier than the latest access date or the newest
+           -- year cited. A cited year only rules out; it is too coarse to support a month.
+           b.not_before is null or c.ends_on >= b.not_before        as possible
     from v_titlepage_date_candidate c
     join v_titlepage_date_candidate p on p.thesis_id = c.thesis_id and p.kind = 'primary'
     left join bound b on b.thesis_id = c.thesis_id
@@ -170,14 +183,15 @@ guess as (
 picked as (
     select p.thesis_id,
            -- When the references rule out every date the page states, date_accepted is
-           -- the only date left standing.
-           coalesce(r.year, s1.year, s2.year, s3.year, g.year, year(a.date_accepted)) as year,
+           -- what is left -- unless they rule it out too, and then the month after the
+           -- bound is the earliest the thesis can be (25622: read 20 April, so May).
+           coalesce(r.year, s1.year, s2.year, s3.year, g.year, year(fallback)) as year,
            case when r.thesis_id  is not null then r.month
                 when s1.thesis_id is not null then s1.month
                 when s2.thesis_id is not null then s2.month
                 when s3.thesis_id is not null then s3.month
                 when g.thesis_id  is not null then g.month
-                else month(a.date_accepted) end                        as month,
+                else month(fallback) end                               as month,
            coalesce(case when r.thesis_id is not null then 'reviewed' end,
                     s1.kind, s2.kind, s3.kind, g.kind, 'date_accepted') as kind,
            case when r.thesis_id  is not null then 'confirmed'
@@ -193,7 +207,10 @@ picked as (
     left join step3 s3 using (thesis_id)
     left join guess g  using (thesis_id)
     left join thesis_date_reviewed r using (thesis_id)
-    join v_thesis_msc a using (thesis_id)
+    join v_thesis_msc a using (thesis_id),
+    lateral (select case when p.not_before > a.date_accepted
+                         then date_trunc('month', p.not_before) + interval 1 month
+                         else a.date_accepted end as fallback)
     where p.kind = 'primary'
 )
 select p.thesis_id,
@@ -206,4 +223,11 @@ select p.thesis_id,
        p.accessed_max,
        p.status = 'unresolved' and not p.scanned   as needs_fulltext
 from picked p
-join v_thesis_msc m using (thesis_id);
+join v_thesis_msc m using (thesis_id)
+-- A reviewed date stands even where the page gives no date at all.
+union all
+select r.thesis_id, r.year, r.month, 'reviewed', 'confirmed',
+       months_off(r.year, r.month, m.date_accepted), null, null, null, false
+from thesis_date_reviewed r
+join v_thesis_msc m using (thesis_id)
+where r.thesis_id not in (select thesis_id from picked);

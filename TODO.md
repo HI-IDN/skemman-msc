@@ -7,51 +7,46 @@ comment, this file's own history in git is the record).
 
 ## Open -- needs your verification
 
-- **31 thesis dates the rule could not settle** (`status = 'unresolved'` in
+- **24 thesis dates the rule could not settle** (`status = 'unresolved'` in
   `v_thesis_titlepage_date`, `scripts/titlepage_dates.sql`; snapshot 2026-09-22).
 
-  No date on the title page is within 3 months of `date_accepted`, and the latest access date
-  in the references either doesn't exist or doesn't point anywhere. The book uses the date in
-  the **Used** column. **Gap** is months between the title page and `date_accepted`, largest
-  first; for a year with no month, it is counted to the nearer end of that year.
+  No date on the title page is within 3 months of `date_accepted`, and the references settle
+  nothing. **Latest access** is the newest "accessed/sótt" date; **Newest cited** is the newest
+  year the reference list cites at least twice. The thesis is no older than either. The book
+  uses the date in the **Used** column. **Gap** is months between the title page and
+  `date_accepted`, largest first; for a year with no month, it is counted to the nearer end of
+  that year.
 
   For each: open the PDF and find the real date. If it is on the page in a form the parser
   misses, fix the parser. If the evidence isn't in the PDF at all, add the confirmed date to
   `thesis_date_reviewed` in `scripts/titlepage_dates.sql`.
 
-  | Thesis | Title page | `date_accepted` | Gap (months) | Latest ref. | Used | Note |
-  | --- | --- | --- | ---: | --- | --- | --- |
-  | [26946](https://skemman.is/handle/1946/26946) | 2011 | 2016-12 | 60 | – | 2011 |  |
-  | [25622](https://skemman.is/handle/1946/25622) | 2012 | 2016-04 | 40 | 2016-04 | 2016-04 |  |
-  | [40389](https://skemman.is/handle/1946/40389) | 2022-01 | 2020-01 | 24 | – | 2022-01 |  |
-  | [47680](https://skemman.is/handle/1946/47680) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
-  | [47695](https://skemman.is/handle/1946/47695) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
-  | [47762](https://skemman.is/handle/1946/47762) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
-  | [50719](https://skemman.is/handle/1946/50719) | 2023 | 2025-05 | 17 | – | 2024 |  |
-  | [39426](https://skemman.is/handle/1946/39426) | 2021-06 | 2020-06 | 12 | – | 2021-06 | page says June 2021 four times; no access dates |
-  | [20526](https://skemman.is/handle/1946/20526) | 2015-01 | 2014-01 | 12 | – | 2015-01 |  |
-  | [25644](https://skemman.is/handle/1946/25644) | 2016-04 | 2015-04 | 12 | – | 2016-04 |  |
-  | [29539](https://skemman.is/handle/1946/29539) | 2017-06 | 2018-06 | 12 | – | 2017-06 |  |
-  | [47681](https://skemman.is/handle/1946/47681) | 2023-05 | 2024-05 | 12 | – | 2023-05 |  |
-  | [42960](https://skemman.is/handle/1946/42960) | 2021-11 | 2022-10 | 11 | – | 2021-11 |  |
-  | [26948](https://skemman.is/handle/1946/26948) | 2017-01 | 2017-11 | 10 | – | 2017-01 |  |
-  | [9878](https://skemman.is/handle/1946/9878) | 2010-12 | 2011-08 | 8 | – | 2010-12 |  |
-  | [9874](https://skemman.is/handle/1946/9874) | 2011-02 | 2011-08 | 6 | 2011-05 | 2011-08 |  |
-  | [26713](https://skemman.is/handle/1946/26713) | 2016-07 | 2017-01 | 6 | – | 2016-07 |  |
-  | [29224](https://skemman.is/handle/1946/29224) | 2016 | 2017-06 | 6 | 2017-04 | 2017-06 |  |
-  | [36557](https://skemman.is/handle/1946/36557) | 2020-12 | 2020-06 | 6 | 2020-04 | 2020-12 |  |
-  | [50766](https://skemman.is/handle/1946/50766) | 2024 | 2025-06 | 6 | 2025-04 | 2025-06 |  |
-  | [5569](https://skemman.is/handle/1946/5569) | 2010-01 | 2010-06 | 5 | – | 2010-01 |  |
-  | [34926](https://skemman.is/handle/1946/34926) | 2019-08 | 2020-01 | 5 | – | 2019-08 | page also has "15/01/2020" (numeric format not read) |
-  | [13208](https://skemman.is/handle/1946/13208) | 2012-05 | 2012-09 | 4 | – | 2012-05 |  |
-  | [13273](https://skemman.is/handle/1946/13273) | 2012-05 | 2012-09 | 4 | 2012-07 | 2012-09 |  |
-  | [29741](https://skemman.is/handle/1946/29741) | 2017-08 | 2017-12 | 4 | – | 2017-08 |  |
-  | [37118](https://skemman.is/handle/1946/37118) | 2020-05 | 2020-09 | 4 | – | 2020-05 |  |
-  | [39922](https://skemman.is/handle/1946/39922) | 2021-05 | 2021-09 | 4 | – | 2021-05 |  |
-  | [40087](https://skemman.is/handle/1946/40087) | 2021-06 | 2021-10 | 4 | – | 2021-06 |  |
-  | [50075](https://skemman.is/handle/1946/50075) | 2025-01 | 2025-05 | 4 | 2021-10 | 2025-01 |  |
-  | [50206](https://skemman.is/handle/1946/50206) | 2025-05 | 2025-01 | 4 | – | 2025-05 |  |
-  | [51993](https://skemman.is/handle/1946/51993) | 2025-10 | 2026-02 | 4 | – | 2025-10 |  |
+  | Thesis | Title page | `date_accepted` | Gap (months) | Latest access | Newest cited | Used | Note |
+  | --- | --- | --- | ---: | --- | --- | --- | --- |
+  | [47695](https://skemman.is/handle/1946/47695) | 2022 | 2024-06 | 18 | – | 2023 | 2023 | academic year "2022/2023" |
+  | [47762](https://skemman.is/handle/1946/47762) | 2022 | 2024-06 | 18 | – | 2020 | 2023 | academic year "2022/2023" |
+  | [50719](https://skemman.is/handle/1946/50719) | 2023 | 2025-05 | 17 | – | 2024 | 2024 |  |
+  | [20526](https://skemman.is/handle/1946/20526) | 2015-01 | 2014-01 | 12 | – | – | 2015-01 | exactly 1 year: check Samþykkt (OAI date off, as 40389/39426) |
+  | [25644](https://skemman.is/handle/1946/25644) | 2016-04 | 2015-04 | 12 | – | – | 2016-04 | exactly 1 year: check Samþykkt (OAI date off, as 40389/39426) |
+  | [29539](https://skemman.is/handle/1946/29539) | 2017-06 | 2018-06 | 12 | – | 2016 | 2017-06 | exactly 1 year: check Samþykkt (OAI date off, as 40389/39426) |
+  | [47681](https://skemman.is/handle/1946/47681) | 2023-05 | 2024-05 | 12 | – | 2021 | 2023-05 | exactly 1 year: check Samþykkt (OAI date off, as 40389/39426) |
+  | [42960](https://skemman.is/handle/1946/42960) | 2021-11 | 2022-10 | 11 | – | 2020 | 2021-11 |  |
+  | [26948](https://skemman.is/handle/1946/26948) | 2017-01 | 2017-11 | 10 | – | 2016 | 2017-01 |  |
+  | [9878](https://skemman.is/handle/1946/9878) | 2010-12 | 2011-08 | 8 | – | 2010 | 2010-12 |  |
+  | [9874](https://skemman.is/handle/1946/9874) | 2011-02 | 2011-08 | 6 | 2011-05 | 2011 | 2011-08 |  |
+  | [26713](https://skemman.is/handle/1946/26713) | 2016-07 | 2017-01 | 6 | – | – | 2016-07 |  |
+  | [36557](https://skemman.is/handle/1946/36557) | 2020-12 | 2020-06 | 6 | 2020-04 | 2019 | 2020-12 |  |
+  | [5569](https://skemman.is/handle/1946/5569) | 2010-01 | 2010-06 | 5 | – | 2009 | 2010-01 |  |
+  | [34926](https://skemman.is/handle/1946/34926) | 2019-08 | 2020-01 | 5 | – | 2018 | 2019-08 | page also has "15/01/2020" (numeric format not read) |
+  | [13208](https://skemman.is/handle/1946/13208) | 2012-05 | 2012-09 | 4 | – | 2012 | 2012-05 |  |
+  | [13273](https://skemman.is/handle/1946/13273) | 2012-05 | 2012-09 | 4 | 2012-07 | 2012 | 2012-09 |  |
+  | [29741](https://skemman.is/handle/1946/29741) | 2017-08 | 2017-12 | 4 | – | 2017 | 2017-08 |  |
+  | [37118](https://skemman.is/handle/1946/37118) | 2020-05 | 2020-09 | 4 | – | – | 2020-05 |  |
+  | [39922](https://skemman.is/handle/1946/39922) | 2021-05 | 2021-09 | 4 | – | – | 2021-05 |  |
+  | [40087](https://skemman.is/handle/1946/40087) | 2021-06 | 2021-10 | 4 | – | – | 2021-06 |  |
+  | [50075](https://skemman.is/handle/1946/50075) | 2025-01 | 2025-05 | 4 | 2021-10 | – | 2025-01 |  |
+  | [50206](https://skemman.is/handle/1946/50206) | 2025-05 | 2025-01 | 4 | – | 2021 | 2025-05 |  |
+  | [51993](https://skemman.is/handle/1946/51993) | 2025-10 | 2026-02 | 4 | – | 2016 | 2025-10 |  |
 
   The 14 theses fixed by hand earlier are now handled by the rule and agree with the manual
   month except **20552** (rule 2015-01 from a year typo backed by a reference read 2015-01-02;
@@ -237,6 +232,17 @@ programme. Add a `discipline_override` if you ever learn their programme.)
 - **45879: no usable date in the PDF, so `date_accepted` (2023-08) stands** (human-confirmed).
   The 2017 the parser finds comes from an unrelated dual-degree affiliation line. Recorded in
   `thesis_date_reviewed`; status `confirmed`.
+- **40389 and 39426: Skemman's OAI `dc.date` is a year early** (human-confirmed). The title page
+  and the item page's Samþykkt agree (25.1.2022; 23.6.2021); `dc.date` says 2020-01 and 2020-06.
+  Recorded in `thesis_date_reviewed`. The same one-year slip may explain the other unresolved
+  theses with a gap of exactly 12 months.
+- **47680: 2024-06** (human-confirmed: Samþykkt 12.6.2024, references from 2024; the page gives
+  only the academic year 2022/2023). **25622: 2016-05** (human-confirmed: references read
+  20.4.2016; its page date was a citation year from the abstract). Both in `thesis_date_reviewed`.
+- **26946: December 2016, read off the page now.** Its font writes digits as glyph names
+  ("201/six.taboldstyle"); the parser decodes them. The 2011 it used came from the abstract, and
+  bare years after the abstract heading are no longer read. 29224 and 50766 lost their
+  abstract-year page dates the same way, so they now use `date_accepted` directly.
 - **44740 (Verkefnastjórnun, HR) is not an MPM-to-licence case.** The author's licence is
   tæknifræðingur, and a tæknifræðingur licence needs its own tæknifræði degree: an MPM cannot
   be the qualifying degree. The match reflects earlier technologist training, unrelated to the
