@@ -28,8 +28,8 @@ t_rq8_dagsetningar <- tibble::tibble(
     "Helga Ingimundardóttir: leyfi 27.12.12",
     "date_accepted / dc.date: 18.2.2010",
     "Samþykkt: 18.2.2010",
-    "Titilsíða: ár eða mánuður ef það finnst",
-    "18.2.2010 → 27.12.2012"
+    "Reykjavík, February 2008",
+    "18.2.2010 → 27.12.2012 (34 mán.)"
   )
 ) |>
   knitr::kable(caption = "Dagsetningarheimildir í samsvörun ritgerða og starfsleyfa.")
