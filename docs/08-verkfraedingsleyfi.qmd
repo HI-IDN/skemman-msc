@@ -2,91 +2,350 @@
 
 ```{r rq8-setup}
 #| include: false
+if (.Platform$OS.type == "windows") {
+  suppressWarnings(Sys.setlocale("LC_CTYPE", "English_United States.utf8"))
+}
 source("../R/global.R")
+require_table("v_licence_person")
+
+# Needed for an inline number early in the chapter, before the "Skrárnar sjálfar" table further
+# down defines it properly (R/tables/rq8-leyfishafar.R, which recomputes the same thing).
+.kyn_snemma <- q("select count(*) filter (where kyn is null) as n, count(*) as alls
+                  from v_licence_person", quiet = TRUE)
+n_kyn_okunn <- .kyn_snemma$n
+pct_kyn_okunn <- round(100 * .kyn_snemma$n / .kyn_snemma$alls, 1)
 ```
 
 > Hversu margar meistararitgerðir enda í opinberu starfsleyfi verkfræðings eða tæknifræðings,
 > og hversu fljótt?
 
-Starfsheitið *verkfræðingur* er lögverndað. Stjórnarráðið birtir lista yfir þá sem hafa
-fengið leyfið ([verkfræðingar](https://www.stjornarradid.is/verkefni/idnadur-og-nyskopun/starfsleyfi-og-oryggi/verkfraedingar/),
-[tæknifræðingar](https://www.stjornarradid.is/verkefni/idnadur-og-nyskopun/starfsleyfi-og-oryggi/taeknifraedingar/)),
-með fæðingarári og leyfisdegi. Það gefur ytra mælitæki á það sem meistaranámið skilar, og
-líka sjálfstæða heimild um hvaða ritgerðir eru verkfræði.
+Starfsheitin *verkfræðingur* og *tæknifræðingur* eru lögvernduð: samkvæmt lögum nr. 8/1996
+um löggildingu nokkurra starfsheita sérfræðinga í tækni- og hönnunargreinum
+[@log_verkfraediheiti_1996] mega aðeins þeir kalla sig því sem fengið hafa til þess leyfi
+ráðherra, að fenginni umsögn Verkfræðingafélags Íslands (VFÍ) um að námið teljist fullnaðarpróf
+í greininni. Umsóknin er afgreidd um leið og umsókn um aðild að VFÍ og kostar umsýslugjald
+(12.000 kr. hjá ráðuneytinu; VFÍ tekur ekkert gjald fyrir sitt framlag) -- sem er ein ástæða
+þess að ekki allir með gráðuna sækja um.
+
+Stjórnarráðið birtir lista yfir þá sem hafa fengið leyfið
+[@stjornarradid_verkfraedingar; @stjornarradid_taeknifraedingar], með fæðingarári og
+leyfisdegi. Það gefur ytra mælitæki á það sem meistaranámið skilar, og líka sjálfstæða
+heimild um hvaða ritgerðir eru verkfræði.
+
+## Skrárnar sjálfar
+
+Áður en ritgerðir eru dregnar inn er rétt að skoða listana eina og sér: hversu margir fá
+starfsheitin á ári, og hvernig fjöldi verkfræðinga ber saman við fjölda tæknifræðinga.
+
+Hvorugur listinn segir kyn. Hér er það lesið í tveimur þrepum, hvorugt um kyn viðkomandi í dag,
+bæði um nafnavenju: fyrst íslenska feðra-/mæðranafnaendingin (-son / -dóttir); þar sem hún finnst
+ekki er hvert eiginnafn (öll nöfn nema það síðasta) flett upp í Mannanafnaskrá Þjóðskrár
+[@manna_nafnaskra], sem heldur skrá yfir hvaða samþykktu eiginnöfn eru drengjanöfn og hvaða
+stúlknanöfn. Nafn sem er skráð sem hvort tveggja (t.d. "Alex"), eða þar sem nöfnin tvö benda í
+sitt hvora áttina, er látið standa óákveðið frekar en giskað á. Erlend nöfn eru að mestu utan
+gildissviðs Mannanafnaskrár -- fyrir þau er engin sambærileg opinber skrá sem hægt er að fletta
+upp með sömu vissu, svo þau standa einfaldlega óákveðin; það er meðvitað val að láta þau vera
+frekar en að giska. Af heildinni er kyn `r n_kyn_okunn` einstaklinga (`r pct_kyn_okunn`%) enn óákveðið eftir bæði þrepin.
+
+::: {.panel-tabset}
+## Nýir á ári
+
+```{r rq8-samanburdur}
+#| file: ../R/plots/rq8-samanburdur.R
+```
+
+## Uppsafnað
+
+```{r rq8-uppsafnad}
+#| file: ../R/plots/rq8-uppsafnad.R
+```
+
+## Uppsafnað eftir kyni
+
+```{r rq8-uppsafnad-kyn}
+#| file: ../R/plots/rq8-uppsafnad-kyn.R
+```
+:::
+
+Gögnin hefjast árið `r ar_fyrsta_verk` á verkfræðingalistanum og `r ar_fyrsta_taekni` á
+tæknifræðingalistanum. Fyrsta konan birtist árið `r ar_fyrsta_kvk_verk` meðal verkfræðinga og
+`r ar_fyrsta_kvk_taekni` meðal tæknifræðinga.
+Fjöldinn vex svo nokkurn veginn stöðugt hjá báðum kynjum, en mun hraðar hjá konum
+frá því upp úr 2010.
+
+```{r rq8-leyfishafar}
+#| file: ../R/tables/rq8-leyfishafar.R
+```
+
+Á öllu tímabilinu er fjórðungur verkfræðinga kona (24,7%) en aðeins 5% tæknifræðinga (5,2%) --
+um fimm sinnum hærra hlutfall kvenna í verkfræði en í tæknifræði. Aldur við útgáfu er svipaður
+hjá báðum listum, um og innan við þrítugt að miðgildi, sem passar við að langflestir sæki um
+stuttu eftir að náminu lýkur (sjá @sec-hversu-fljott).
+
+### Hversu ólíkir eru hóparnir?
+
+Kynjasamsetning listanna hefur breyst yfir sögulegan tíma. Hér er hún borin saman með hlutfalli
+kvenna meðal þeirra sem hafa þekkt kyn á hverju ári. Punktarnir sýna hlutfallið og stærð þeirra
+hve margir liggja að baki. Gráa bilið er næmnigreining á áhrifum óþekkta hópsins: neðri mörkin
+fást ef öll óþekkt kyn eru talin karlar og efri mörkin ef þau eru öll talin konur.
+
+```{r rq8-kyn-dreifing}
+#| file: ../R/plots/rq8-kyn-dreifing.R
+#| fig-cap: "Árlegt hlutfall kvenna meðal þeirra sem hafa þekkt kyn. Grátt bil sýnir lægsta og hæsta mögulega hlutfall miðað við óþekkt kyn; ólokna síðasta árinu er sleppt."
+```
+
+Samanburðurinn sýnir skýra árgangabreytingu sem heildartalan felur. Konur eru
+`r pct_kvk_verk`% allra verkfræðinga með þekkt kyn frá upphafi, en `r pct_recent_verk`% á
+rannsóknartímabili Skemmu (`r recent_label`; ólokna árinu 2026 er sleppt). Hjá tæknifræðingum
+hækka samsvarandi tölur úr
+`r pct_kvk_taekni`% í `r pct_recent_taekni`%. Nýliðun í verkfræði er því mun nær jöfnu kynjahlutfalli
+en uppsafnaði listinn, sem geymir marga eldri og að mestu karlkyns árganga. Tæknifræðingahópurinn
+er enn mjög karllægur þótt hlutfall kvenna hafi einnig hækkað þar.
+
+Óþekkt kyn breytir ekki meginniðurstöðunni en setur henni mörk. Fyrir verkfræðinga árin
+`r recent_label` er hlutfall kvenna `r pct_recent_verk`% meðal þekktra kynja og getur í ýtrustu
+tilvikum legið frá `r recent_verk_lower`% til `r recent_verk_upper`% þegar óþekktu færslurnar eru
+settar allar öðrum megin. Þetta bil lýsir vöntun í gögnunum, ekki úrtaksóvissu. Einstök ár sveiflast,
+svo niðurstaðan byggist á öllu rannsóknartímabilinu fremur en einum toppi eða dal. Þetta er
+kynjasamsetning þeirra sem fengu lögverndað starfsheiti á tímabilinu.
+
+### Hvenær eru leyfin veitt?
+
+```{r rq8-afgreidslur}
+#| file: ../R/tables/rq8-afgreidslur.R
+```
+
+Leyfin koma í lotum en ekki eftir föstu árlegu eða ársfjórðungslegu kerfi. Alls eru
+`r afgreidsludagar_allir` ólíkar dagsetningar; á hverri eru `r leyfi_dag_medaltal` leyfi að meðaltali
+en aðeins `r leyfi_dag_midgildi` að miðgildi. Á `r pct_eitt_leyfi`% dagsetninga er aðeins eitt leyfi
+og á `r pct_tvo_eda_faerri`% eru tvö eða færri. Það sést því enginn lágmarksfjöldi sem þurfi að
+safnast upp áður en leyfi er gefið út.
+
+Á rannsóknartímabili Skemmu sést breyting í átt að stærri og færri lotum, en ekki jöfn leitni frá
+ári til árs. Árin 2010–2017 voru `r eldri_dagar_a_ari` afgreiðsludagar á ári að meðaltali og
+miðgildi lotu `r eldri_lota_midgildi` leyfi.
+Árin 2018–2025 voru dagarnir `r nyir_dagar_a_ari` á ári og miðgildi lotu
+`r ny_lota_midgildi` leyfi (fjórðungsmörk `r ny_lota_q1`–`r ny_lota_q3`). Árið 2025 sker sig mest
+úr: `r n_leyfi_2025` leyfi bera aðeins `r n_dagar_2025` dagsetningar. Þetta er það næsta sem
+gögnin komast svari við því hve marga „nefndin tekur fyrir í einu“. Listarnir birta þó aðeins
+leyfisdag, ekki fundargerðir eða
+afgreiðsluferli, svo sameiginleg dagsetning er ekki endilega einn formlegur nefndarfundur.
+
+Mynstrið samræmist því að leyfi hafi fyrst verið veitt meira eftir þörfum en síðar safnað í
+stærri lotur þegar umsóknum fjölgaði. Fyrir 1990 var aðeins eitt leyfi á
+`r fyrri_eins_manns_lotur`% afgreiðsludaga, en 2018–2025 var hlutfallið komið niður í
+`r nyrri_eins_manns_lotur`%. Gögnin styðja þó ekki að loturnar hafi orðið reglulegri í tíma:
+miðgildi milli afgreiðsludaga jókst úr `r eldra_bil_midgildi` dögum 2010–2017 í
+`r nyrra_bil_midgildi` daga 2018–2025. Varfærna niðurstaðan er því stærri og færri lotur, ekki
+fast mánaðarlegt fundakerfi; skýringin um afgreiðslu eftir þörfum er trúverðug tilgáta en ekki
+eitthvað sem leyfislistarnir einir geta staðfest.
+
+Eldri gögnin eru óreglulegri og þarf að lesa sem sögulega skrá fremur en samfellda tímaröð.
+Árin 1992–1993 eru sérstaklega grunsamleg: samanlagt eru aðeins `r n_verk_1992_93`
+verkfræðingsleyfi og `r n_taekni_1992_93` tæknifræðingsleyfi, eftir `r n_verk_1991` og
+`r n_taekni_1991` árið 1991. Árið 1994 eru tölurnar enn aðeins `r n_verk_1994` og
+`r n_taekni_1994`. Þar sem báðir listarnir lækka samtímis og taka síðan við sér aftur bendir
+þetta frekar til eyðu eða breyttrar skráningar í frumheimild en raunverulegs hruns í útgáfu leyfa.
 
 ## Hvernig samsvörunin er gerð
 
-Höfundur ritgerðar er tengdur við listann eftir fullu nafni og fæðingarári
-(`scripts/licences.sql`); ef millinöfn eru rituð ólíkt í heimildunum dugar fyrsta og síðasta
-nafn með sama fæðingarári. Leyfi telst *koma í kjölfar* ritgerðarinnar ef það er veitt frá 60
-dögum fyrir til sex árum eftir að ritgerðinni var skilað. Kennitalan, sem birt er á listunum,
-er aðeins lesin til að ná í fæðingarárið og er hvergi vistuð; hér birtast eingöngu samtölur.
+Höfundur ritgerðar er tengdur við listann í þremur þrepum (`scripts/licences.sql`), sterkasta
+sönnun fyrst: fullt nafn og fæðingarár (`full name`); fyrsta og síðasta nafn og fæðingarár þar
+sem millinöfnin eru samhæf -- annað er upphafsstafur eða skammstöfun hins, t.d. "Tómas P." fyrir
+"Tómas Philip" (`compatible middle name`, sama regla og `advisor_identity` í
+`scripts/advisor_units.sql`); og loks fyrsta og síðasta nafn og fæðingarár þar sem millinafn
+vantar á aðra hliðina (`first and last name`, veikasta þrepið). Hvert leyfi telst aðeins til
+þess þreps sem best passar hvar sem er í þýðinu, ekki bara innan einnar ritgerðar -- annars gæti
+veikt samsvörun við eina ritgerð staðið óhögguð þótt sterk samsvörun við aðra segði að leyfið
+tilheyrði í raun einhverjum öðrum. Leyfi telst *koma í kjölfar* ritgerðarinnar ef það er veitt
+eftir skráðan skiladag og innan tveggja ára -- @sec-dreifing sýnir hvers vegna tveggja ára
+glugginn er dreginn þar sem hann er. Það er líklegt að einhverjar ritgerðir hafi verið skráðar í
+Skemmu eftir að sótt var um starfsleyfi, til dæmis vegna seinagangs við innsendingu eða síðari
+uppfærslu á færslu. Kennitalan, sem birt er á listunum, er aðeins lesin til að ná í fæðingarárið
+og er hvergi vistuð; hér birtast eingöngu samtölur.
 
 Þrír fyrirvarar gilda um allar tölur í kaflanum:
 
 - **Leyfi sannar að til sé verkfræðigráða, ekki að þessi ritgerð hafi verið hún.** Höfundur
   getur átt leyfi frá fyrra námi (sjá „áður en ritgerð var skilað“ hér að neðan).
 - **Engin samsvörun þýðir ekki að leyfi vanti; talan er neðri mörk.** Umsókn kostar og ekki allir sækja um.
-- **Nýjustu árgangarnir eru hægrahnitaðir.** Listarnir ná til mitts árs 2026; árgangur sem
-  lauk 2024 hefur haft tvö ár til að sækja um. Miðgildi og hlutföll eru því aðeins reiknuð
-  fyrir árganga til og með 2020, sem hafa haft öll sex árin.
+- **Nýjustu árgangarnir hafa ekki enn haft nægan tíma til að sækja um.** Listarnir ná til mitts árs 2026; árgangur sem
+  lauk 2024 hefur ekki enn haft sín tvö full ár til að sækja um. Miðgildi og hlutföll eru því
+  aðeins reiknuð fyrir árganga til og með 2023. Það er síðasta árið þar sem jafnvel síðasta
+  ritgerð ársins nær sínum tveimur fullu árum innan þess tímabils sem leyfislistarnir ná yfir.
 
-## Hversu margar ritgerðir enda í leyfi
+### Dreifing biðtímans {#sec-dreifing}
+
+```{r rq8-titilsida-dags}
+#| include: false
+#| file: ../R/tables/rq8-titilsida-dags.R
+```
+
+Fyrst gögnin sjálf, svo glugginn sem er dreginn af þeim -- ekki öfugt.
+
+```{r rq8-bid-dreifing}
+#| file: ../R/plots/rq8-bid-dreifing.R
+#| fig-cap: "Tími frá skráðum skiladegi ritgerðar til starfsleyfis. Neikvæð tilvik eru sýnd vinstra megin við núll; brotalínur sýna reynslumörk biðtímans og lengsta 5% biðarinnar er utan myndflatar."
+```
+
+Leyfi sem eru dagsett fyrir skráðan skiladag ritgerðar sjást vinstra megin við núlllínuna. Það
+getur stafað af því að ritgerðin hafi verið send seint inn í Skemmu eða færslan uppfærð síðar,
+frekar en að starfsleyfið hafi í raun verið veitt áður en náminu lauk. Gögnin gera ekki kleift að
+greina það örugglega. Flest leyfi koma annars fljótt og fjöldinn sem bíður lengur fjarar hratt út. Brotalínurnar sýna beint
+hvenær 50%, 80%, 90% og 95% þeirra sem á annað borð fá leyfi eru komin með það: mörkin eru
+`r q50_years`, `r q80_years`, `r q90_years` og `r q95_years` ár. Af þeim `r n_positive_lag`
+leyfum sem koma á eftir ritgerð koma `r pct_innan_2`% innan tveggja ára og `r pct_innan_4`% innan
+fjögurra. Tveggja ára glugginn nær því langflestum án þess að teygja orsakatenginguna langt fram
+í tímann; það sem kemur síðar er áfram talið með sem „seint“ fremur en fellt út.
+
+Níutíu prósent þeirra sem síðar fá leyfi hafa fengið það eftir `r q90_years` ár. Nýjasta
+leyfisdagsetningin í gögnunum er `r max_licence_date_label`; að frádregnum þessum biðtíma fæst
+`r q90_cutoff_label`. Eftirfylgnin nær því 90% reynslumörkunum fyrir ritgerðir fram á haust 2023,
+en ekki fyrir allan árgang 2023 og alls ekki fyrir 2024.
+
+Þegar nafn og fæðingarár passa vitum við að líklega er sama manneskja í báðum skrám. Við vitum
+þó ekki hvort ritgerðin sjálf leiddi til leyfisins. Í `r n_negative` tilvikum er leyfið skráð
+áður en ritgerðin er skráð sem samþykkt og þau eru því ekki talin sem leyfi sem ritgerðin leiddi
+til. Það getur einfaldlega þýtt að ritgerðin hafi verið send seint inn í Skemmu eða færslan
+uppfærð síðar. `date_accepted` kemur úr lýsigögnum Skemmu, er oft aðeins mánaðarlega nákvæmt og
+er skráð sem fyrsti dagur mánaðar í 97,7% tilvika; dagsetningarnar einar skera því ekki alltaf
+úr um rétta röðina. `r n_prior_licence` tilvik þar sem munurinn er meiri en 60 dagar eru sýnd
+sérstaklega sem eldri leyfi. Þar geta verið fyrri verkfræðimenntun, tvöfaldar meistaragráður eða
+önnur menntun sem tengist síðari ritgerðinni ekki.
+
+Óháð staðfesting er þó möguleg: titilsíðan sjálf tilgreinir oft árið (t.d. „Copyright © 2025“ eða
+dagsett „Reykjavík, Júní 2025“), sótt beint af titilsíðunni sjálfri, ekki úr sömu lýsigögnum og
+`date_accepted`. Það ár er þekkt fyrir `r n_titilsida_within1y` af `r n_titlepage_year` ritgerðum
+(`r pct_titilsida_thekja`% þýðisins) og er innan árs frá `date_accepted` í `r pct_titilsida_within1y`%
+tilvika. Það bendir til að þótt daga- og mánaðarnákvæmni `date_accepted` sé oft ótraust, er árið
+sjálft nær alltaf rétt -- `r n_titilsida_gap_over5y` af `r n_titlepage_year` ritgerðum (undir 1%)
+skera sig úr með meira en fimm ára mun, og þau eru líklegri til að endurspegla stakar villur í
+titilsíðulestrinum sjálfum en almenna skekkju í `date_accepted`.
+
+```{r rq8-fyrri-leyfi}
+#| file: ../R/plots/rq8-fyrri-leyfi.R
+#| fig-cap: "Aðeins ritgerðir án síðara samsvarandi leyfis — annars er um að ræða sömu tæknifræðingur-fyrst/verkfræðingur-svo framvindu og er þegar talin sem „bæði“."
+```
+
+Af þeim `r n_fyrri_leyfi_alls` tilvikum sem eftir standa þegar sama-ritgerðar "bæði" tilvikum er
+sleppt (þau eru þegar talin með í töflunni um hvaða skrá höfundur er á, hér að ofan) eru
+`r n_fyrri_leyfi_mpm` verkefnastjórnunar/framkvæmdastjórnunarritgerðir (MPM) og
+`r n_fyrri_leyfi_verk` verkfræðiritgerðir. Bæði sýna sömu söguna: fólk sem var þegar orðið
+verkfræðingur eða tæknifræðingur sótti sér síðar frekari menntun, ýmist MPM-viðbót eða aðra,
+oft ótengda, verkfræðigrein -- ekki að námið sjálft hafi leitt til leyfisins. Til að átta okkur á
+annmörkum samsvörunarinnar voru nokkur sértilvik skoðuð handvirkt, meðal annars með því að bera
+saman opinberar LinkedIn-upplýsingar um menntun við tímasetningar ritgerðar og leyfis. Sú yfirferð
+styður að eldri leyfi endurspegli oft fyrri menntun, en hún getur ekki gefið almennilega vissu um
+orsök í öllum tilvikum.
+
+## Hvaða ritgerðir hafa samsvörun við leyfi
 
 ```{r rq8-tables}
 #| file: ../R/tables/rq8-leyfi.R
 ```
 
-Af verkfræðiritgerðum til og með 2020 fá 62% höfunda hjá HÍ og 50% hjá HR leyfi í kjölfarið.
-Utan verkfræðiflokksins er leiðin nánast lokuð: aðeins fimm ritgerðir af öllu þýðinu (þrjár
-í verkefnastjórnun hjá HR, ein í tölfræði og ein í líffræði hjá HÍ) enda í leyfi. Það svarar
-því hversu margir komast í verkfræðingsleyfi eftir meistaranám utan verkfræðideildanna:
-mjög fáir.
+Af verkfræðiritgerðum til og með `r LEYFI_TIL` fá `r pct_hlutfall_hi`% höfunda hjá HÍ og
+`r pct_hlutfall_hr`% hjá HR leyfi í kjölfarið. Utan verkfræðiflokksins er leiðin nánast lokuð:
+aðeins `r n_utan_alls` ritgerðir af öllu þýðinu (`r n_utan_mpm` í verkefnastjórnun/
+framkvæmdastjórnun hjá HR, og `r n_utan_tolfraedi` í tölfræði hjá HÍ) passa við nýtt leyfi
+innan tveggja ára. Tölfræðiritgerðin er ekki dæmi um að MAS-námið hafi leitt til leyfis:
+höfundurinn hafði áður lokið verkfræðinámi við Politecnico di Milano og sótti síðar um íslenskt
+starfsleyfi. Leyfið tengist því ekki MAS-gráðunni þótt það komi `r lag_dagar_39936` dögum eftir
+ritgerðina.
 
-Munur á greinum er meiri en munur á skólum. Byggingarverkfræði endar í leyfi í 88% tilvika
-hjá báðum skólum, en Tölvunarfræði er með 0% hjá HÍ og HR (leyfi vantar hjá öllum 92) og
-Orkuverkfræði hjá HR með 22%. HR Umhverfisverkfræði (11 ritgerðir) fær ekkert leyfi; allar
+Eftir standa `r n_utan_mpm` stjórnunartengdar ritgerðir, tvær í verkefnastjórnun og ein í
+framkvæmdastjórnun, þar sem nýtt starfsleyfi fylgir ritgerðinni innan tímagluggans. Þær eru því
+líkleg dæmi um að námið hafi fullnægt eða lokið þeirri menntun sem þurfti til starfsleyfis.
+Gögnin sýna þó ekki hvaða próf nefndin lagði til grundvallar og sanna því ekki orsakatenginguna
+ein og sér. Varfærna niðurstaðan er að þrjú slík tilvik finnist í gögnunum, en MAS-tilvikið sé
+staðfest tímaleg samsvörun án orsakatengsla.
+
+Munur á greinum er meiri en munur á skólum. Byggingarverkfræði endar í leyfi í `r pct_bygg_hi`%
+tilvika hjá HÍ og `r pct_bygg_hr`% hjá HR -- hæst allra greina hjá báðum -- en Tölvunarfræði er
+nánast alltaf 0% (`r n_tolvun_hi` HÍ-ritgerðir, engin með leyfi; `r n_tolvun_hr` hjá HR,
+`r n_tolvun_hr_leyfi` með leyfi) og Orkuverkfræði hjá HR er með `r pct_orku_hr`%. Tölvunarfræði
+er ekki óvænt: hún er skyld grein, ekki verkfræðigrein sjálf í skilningi laga nr. 8/1996, svo
+brautskráðir þaðan eiga ekki kost á lögvernduðu heitunum hér að ofan og því nær ekkert að sækja
+um. Orkuverkfræði er líklega annars eðlis: hún er að hluta þverfagleg, líkt og Sjálfbær
+orkuvísindi hjá HÍ, og því sumt verkfræði og sumt nátengt en ekki verkfræði samkvæmt reglum
+nr. 1105/2015 um mat á umsóknum um leyfi til að kalla sig verkfræðing
+[@reglur_1105_2015] -- þess vegna er hlutfallið hvorki 0% né í hæstu greinunum. Reglurnar meta
+námsefnið sjálft, ekki heiti námslínunnar: fólk sem lokið hefur t.d. "mathematical modelling"
+frá DTU hefur fengið verkfræðingsheitið úti á þeim grunni, þótt námið teljist frekar hagnýt
+stærðfræði en hefðbundin verkfræði -- verkfræðimenntun og verkfræðigráða eru því ekki alltaf
+sami hlutur. HR Umhverfisverkfræði (`r n_umhverfi_hr` ritgerðir) fær ekkert leyfi; allar
 ritgerðirnar eru í línunni Skipulagsfræði og samgöngur sem flokkast undir Umhverfisverkfræði
-(sjá [umbrella-samsteypuna](vidauki-adferd.qmd)). Hvers vegna Tölvunarfræði endar aldrei í
-leyfi er ekki kannað hér.
+(sjá [umbrella-samsteypuna](vidauki-adferd.qmd)).
 
-## Hversu fljótt
+## Hversu fljótt {#sec-hversu-fljott}
+
+Röðin í töflunni hér að neðan er yfirgrein (`umbrella`), sem gerir HÍ og HR samanburðarhæf á
+sömu línu -- en yfirgreinin heitir ekki alltaf það sem skólinn kallar sína eigin línu. Röðin
+Iðnaðarverkfræði hjá HR er að mestu Rekstrarverkfræði; dálkurinn Undirgreinar segir hvað liggur
+að baki hverri röð hjá hvorum skóla.
 
 Miðgildið milli ritgerðar og leyfis er um hálft ár í öllum stóru greinunum, og flest leyfi
-koma innan árs. Undantekningin er rafmagnsverkfræði hjá HÍ, þar sem fjórðungsmörkin ná til
-3,5 ára, en þar eru aðeins átta höfundar með leyfi, svo það má ekki lesa mikið úr því.
+koma innan árs -- sjá @sec-dreifing fyrir dreifinguna í heild og hvers vegna glugginn í
+`scripts/licences.sql` er dreginn þar sem hann er.
 
 ```{r rq8-bid}
 #| file: ../R/plots/rq8-bid.R
 ```
 
-Hlutfall þeirra sem fá leyfi er stöðugt í kringum 50–70% fram til 2020 og fellur svo. Fallið er
-að mestu leyti hægrahnitun, ekki breytt hegðun: miðgildið er hálft ár, en árgangur 2025 hefur
+Hlutfall þeirra sem fá leyfi er stöðugt í kringum 50–70% fram til 2023 og fellur svo. Fallið
+stafar að mestu leyti af því að nýjustu árgangarnir hafa ekki enn haft nægan tíma til að sækja
+um, ekki af breyttri hegðun: miðgildið er hálft ár, en árgangur 2025 hefur
 ekki lokið því. Hjá HR er árgangur 2018 (14 af 52) áberandi lágur og þar er engin skýring
 í gögnunum.
 
 ```{r rq8-hlutfall}
 #| file: ../R/plots/rq8-hlutfall.R
+#| fig-cap: "Hlutfall ritgerða þar sem höfundur fékk síðar starfsleyfi. Punktastærð sýnir fjölda ritgerða og brotalínan síðasta árganginn sem telst hafa haft nægan tíma til að sækja um."
 ```
 
-## Verkfræðingar og tæknifræðingar
+## Verkfræðingar og tæknifræðingar {#sec-verkfr-taeknifr}
 
-Af 670 ritgerðum þar sem leyfi kemur í kjölfarið eru 612 verkfræðingar einir, 57 bæði
-verkfræðingar og tæknifræðingar og ein aðeins tæknifræðingur. Að auki eru 102 ritgerðir
-eftir höfunda sem áttu leyfi *áður* en ritgerðinni var skilað (í 52 þeirra kemur ekkert leyfi í
-kjölfarið); í 30 tilvikum er það tæknifræðingsleyfi eitt og sér. Ritgerðin er þá ekki endilega
+Af 667 ritgerðum þar sem leyfi kemur í kjölfarið eru 610 verkfræðingar einir, 56 bæði
+verkfræðingar og tæknifræðingar og ein aðeins tæknifræðingur. Að auki eru 101 ritgerðir
+eftir höfunda sem áttu leyfi *áður* en ritgerðinni var skilað (í 51 þeirra kemur ekkert leyfi í
+kjölfarið); í 31 tilvikum er það tæknifræðingsleyfi eitt og sér. Ritgerðin er þá ekki endilega
 ástæða leyfisins, sbr. fyrsta fyrirvarann.
+
+Eitt af verkefnastjórnunartilvikunum, [12943](https://skemman.is/handle/1946/12943), er, ólíkt
+tölfræðiritgerðinni, ekki hægt að afskrifa svona auðveldlega:
+(MPM, HR) er staðfest tilvik þar sem höfundur fékk verkfræðingsheitið átta dögum eftir að
+ritgerðin var samþykkt (Skemman segir „Samþykkt: 12.9.2012"; leyfið kom 20.09.2012) og á enga
+aðra færslu í Skemmu sem gæti útskýrt það. Hvort MPM-námið sjálft var talið fullnægjandi, eða
+höfundur hafði aðra menntun sem hvergi kemur fram hér, er ekki hægt að skera úr um með þessum
+gögnum -- en það er a.m.k. eitt tilvik þar sem sagan "MPM leiðir ekki til verkfræðingsheitis"
+er ekki alveg svo einföld. Dagsetningamunurinn (átta dagar á Skemmu-síðunni sjálfri á móti 142
+dögum sem `date_accepted` gefur hér, sótt úr OAI-lýsigögnunum) er sér takmörkun: sjá
+@sec-takmarkanir.
 
 ## Sjálfbær orkuvísindi
 
 Sjálfbær orkuvísindi eru þverfagleg lína sem telst til náttúruvísinda nema höfundur sæki síðar
 um verkfræðingsleyfi. Sú regla er í `v_thesis_discipline` (dálkurinn `licence_promoted`), en
 enginn af 42 ritgerðum línunnar á höfund með leyfi á listunum, svo hún breytir engu enn.
-Allar ritgerðirnar eru því flokkaðar sem náttúruvísindi. Reglan tekur gildi við næstu
-endurbyggingu eftir að nýtt leyfi birtist á listunum.
+Allar ritgerðirnar eru því flokkaðar sem náttúruvísindi. Ef nýtt leyfi birtist síðar á listunum
+þarf að keyra gagnagrunnsendurbyggingu til að reglan endurreikni flokkunina.
 
-## Takmarkanir
+## Takmarkanir {#sec-takmarkanir}
 
 - Höfundar án fæðingarárs (þrjár ritgerðir) geta ekki tengst listanum.
-- Nafnasamsvörun getur ruglað tveimur nafnnöfnum með sama fæðingarár; það er sjaldgæft en
-  ekki útilokað.
+- Nafnasamsvörun getur ruglað tveimur ólíkum mönnum með sama fyrsta og síðasta nafn og fæðingarár
+  -- staðfest dæmi: "Helgi Guðjónsson" (18555, Líffræði) á móti "Helgi Þór Guðjónsson" (28751,
+  verkfræði), og "Elín Guðný Gunnarsdóttir" (33545, Verkefnastjórnun) á móti "Elín Birna
+  Gunnarsdóttir" (leyfishafi), báðir fæddir sama ár í hvoru pari. `scripts/licences.sql` lætur nú
+  besta samsvörunarþrepið ganga fyrir hvar sem er í þýðinu (sjá "Hvernig samsvörunin er gerð" að
+  ofan), sem leysir bæði staðfestu tilvikin, en útilokar ekki að tvo eins nöfnuðu deili líka
+  samhæfu millinafni.
+- `date_accepted` kemur úr OAI-lýsigögnunum (`dc.date`) og er ekki alltaf sama dagsetning og
+  „Samþykkt" á Skemmu-síðu ritgerðarinnar sjálfrar -- staðfest dæmi: 12943
+  (@sec-verkfr-taeknifr), þar sem munurinn er 134 dagar. `lag_days` er því upp á daga ónákvæmt
+  í slíkum tilvikum, þótt flokkunin sjálf (fyrir/eftir) haldist rétt.
+
+## Heimildir
+
+::: {#refs}
+:::
