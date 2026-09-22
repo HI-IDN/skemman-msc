@@ -15,7 +15,7 @@ if (!exists(".root")) source("R/global.R")
 require_table("v_thesis_licence")
 
 # Same buffer as R/tables/rq8-leyfi.R (LEYFI_BUFFER), via the shared leyfi_til() in R/global.R.
-.leyfi_til <- leyfi_til(2L, "select max(licence_date) from engineer_licence")
+.leyfi_til <- leyfi_til(2.5, "select max(licence_date) from engineer_licence")
 
 d_rq8_bid_p <- q(sprintf("
   select d.university as skoli, d.umbrella as grein,

@@ -2,11 +2,11 @@
 #
 # An author is matched to the licence lists (verkfræðingar, tæknifræðingar) by name and birth
 # year (scripts/licences.sql). A licence counts as "after" when it is granted from 60 days before
-# to 2 years after the thesis was accepted -- see @sec-dreifing in docs/08-verkfraedingsleyfi.qmd
-# for why: 86% of positive-lag matches land within 2 years, and that shape, not a round number, is
+# to 2.5 years after the thesis was accepted -- see @sec-dreifing in docs/08-verkfraedingsleyfi.qmd
+# for why: 90% of positive-lag matches land within roughly 2.5 years, and that shape, not a round number, is
 # what the window is drawn from.
 #
-# LEYFI_BUFFER (also 2 years) sets LEYFI_TIL, the last cohort counted as settled -- not simply
+# LEYFI_BUFFER (also 2.5 years) sets LEYFI_TIL, the last cohort counted as settled -- not simply
 # max(licence_year) - buffer, because the lists only run to *mid* 2026: a thesis from late in
 # LEYFI_TIL's year needs its full 2-year window to land inside that coverage too, so a year whose
 # very last day, plus the buffer, would land after the last date on file is pushed back one more
@@ -19,8 +19,9 @@ if (!exists(".root")) source("R/global.R")
 require_table("v_thesis_licence")
 require_table("v_thesis_discipline")
 
-LEYFI_BUFFER <- 2L
+LEYFI_BUFFER <- 2.5
 LEYFI_TIL <- leyfi_til(LEYFI_BUFFER, "select max(licence_date) from engineer_licence")
+buffer_ar_label <- tala(LEYFI_BUFFER)  # for inline use, e.g. "innan `r buffer_ar_label` ára"
 LEYFI_MIN_N <- 8L   # fewest theses in a cell before its median is shown
 
 .leyfi <- "
@@ -106,7 +107,7 @@ t_rq8_listar <- tibble::tibble(
       "Bæði verkfræðings- og tæknifræðingsleyfi",
       "Aðeins tæknifræðingsleyfi",
       "Leyfi fyrir skiladag ritgerðar",
-      "Leyfi meira en tveimur árum eftir ritgerð"
+      "Leyfi meira en 2,5 árum eftir ritgerð"
     ),
     Ritgerðir = c(
       d_rq8_listar$bara_verk, d_rq8_listar$bada, d_rq8_listar$bara_taekni,
@@ -125,11 +126,17 @@ t_rq8_listar <- tibble::tibble(
     )
   )
 
-# The two ways in from outside the engineering departments.
+# The two ways in from outside the engineering departments. A tæknifræðingur licence requires its
+# own tæknifræði degree -- an MPM (professional: Verkefnastjórnun/Framkvæmdastjórnun) can't be the
+# qualifying degree for it, so a tæknifræðingur-only match there almost certainly reflects earlier,
+# unrelated technologist training rather than the MPM itself (confirmed human-reviewed case: 44740,
+# see TODO.md). A verkfræðingur match is kept, since a postgraduate MPM on top of an engineering
+# undergraduate degree can genuinely qualify (confirmed case: 12943).
 d_rq8_utan <- q("
   select d.university as skoli, d.category as flokkur, d.discipline as grein, count(*) as fjoldi
   from v_thesis_discipline d join v_thesis_licence l using (thesis_id)
   where l.licensed_after and d.category <> 'engineering'
+    and (d.category <> 'professional' or l.is_verkfraedingur)
   group by all order by fjoldi desc, 1", quiet = TRUE) |>
   mutate(flokkur = unname(flokkaheiti[flokkur])) |>
   rename(Skóli = skoli, Flokkur = flokkur, Grein = grein, Ritgerðir = fjoldi)
@@ -171,6 +178,9 @@ n_utan_alls <- sum(d_rq8_utan$Ritgerðir)
 n_utan_mpm <- sum(d_rq8_utan$Ritgerðir[d_rq8_utan$Grein %in% c("Verkefnastjórnun", "Framkvæmdastjórnun")])
 n_utan_tolfraedi <- sum(d_rq8_utan$Ritgerðir[d_rq8_utan$Grein == "Tölfræði"])
 stopifnot(n_utan_alls == n_utan_mpm + n_utan_tolfraedi)  # catches a new, unnamed category early
+n_utan_verkefnastjornun <- sum(d_rq8_utan$Ritgerðir[d_rq8_utan$Grein == "Verkefnastjórnun"])
+n_utan_framkvaemdastjornun <- sum(d_rq8_utan$Ritgerðir[d_rq8_utan$Grein == "Framkvæmdastjórnun"])
+stopifnot(n_utan_mpm == n_utan_verkefnastjornun + n_utan_framkvaemdastjornun)
 
 d_rq8_orku_hi <- q("
   select count(*) as n, count(*) filter (where l.licensed_after) as med

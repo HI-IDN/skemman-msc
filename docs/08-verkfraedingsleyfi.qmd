@@ -146,7 +146,26 @@ verkfræðingsleyfi og `r n_taekni_1992_93` tæknifræðingsleyfi, eftir `r n_ve
 
 ## Hvernig samsvörunin er gerð
 
-Höfundur ritgerðar er tengdur við listann í þremur þrepum (`scripts/licences.sql`), sterkasta
+```{r rq8-titilsida-dags}
+#| include: false
+#| file: ../R/tables/rq8-titilsida-dags.R
+```
+
+Áður en höfundar eru tengdir við leyfislistana er dagsetning ritgerðarinnar samræmd. Leyfisdagur
+er tekinn beint af starfsleyfislistanum í Stjórnarráðsgögnum (`licensed_on`); til dæmis er hann
+skráður sem sérstök dagsetning á færslu Helgu Ingimundardóttur. Í Skemmu eru fleiri en ein
+dagsetning: `date_accepted` í OAI-lýsigögnum (`dc.date`), dagsetningin „Samþykkt“ á færslusíðunni
+og það sem lesa má af titilsíðunni sjálfri. Titilsíðan getur gefið `Copyright`-ár eða stað og
+mánuð, til dæmis „Reykjavík, júní 2025“. Við skoðum fyrst samræmi þessara Skemmu-dagsetninga;
+í samsvöruninni ræður titilsíðan þegar hún gefur ár (og mánuð þegar hann finnst), en ef hún gefur
+ekkert ár er `date_accepted` notað sem varadagsetning. Þegar metadata-dagsetningin er aðeins ár
+eða ár og mánuður er hún miðuð við fyrsta dag þess tímabils.
+
+Titilsíðuárið fannst í `r n_titlepage_year` af `r n_titlepage_total` ritgerðum (`r pct_titilsida_thekja`%).
+Af þeim var árið innan árs frá `date_accepted` í `r n_titilsida_within1y` tilvikum
+(`r pct_titilsida_within1y`%); ósamræmið er því yfirleitt í degi eða mánuði, ekki í árinu sjálfu.
+
+Höfundur ritgerðar er síðan tengdur við listann í þremur þrepum (`scripts/licences.sql`), sterkasta
 sönnun fyrst: fullt nafn og fæðingarár (`full name`); fyrsta og síðasta nafn og fæðingarár þar
 sem millinöfnin eru samhæf -- annað er upphafsstafur eða skammstöfun hins, t.d. "Tómas P." fyrir
 "Tómas Philip" (`compatible middle name`, sama regla og `advisor_identity` í
@@ -155,8 +174,8 @@ vantar á aðra hliðina (`first and last name`, veikasta þrepið). Hvert leyfi
 þess þreps sem best passar hvar sem er í þýðinu, ekki bara innan einnar ritgerðar -- annars gæti
 veikt samsvörun við eina ritgerð staðið óhögguð þótt sterk samsvörun við aðra segði að leyfið
 tilheyrði í raun einhverjum öðrum. Leyfi telst *koma í kjölfar* ritgerðarinnar ef það er veitt
-eftir skráðan skiladag og innan tveggja ára. Það er þrengra en 90%-eftirfylgnin hér að neðan,
-sem nær um 2,5 ár; @sec-dreifing sýnir báða mælikvarðana. Það er líklegt að einhverjar ritgerðir hafi verið skráðar í
+eftir skráðan skiladag og innan 2,5 ára; @sec-dreifing sýnir hvers vegna þessi gluggi er valinn.
+Það er líklegt að einhverjar ritgerðir hafi verið skráðar í
 Skemmu eftir að sótt var um starfsleyfi, til dæmis vegna seinagangs við innsendingu eða síðari
 uppfærslu á færslu. Kennitalan, sem birt er á listunum, er aðeins lesin til að ná í fæðingarárið
 og er hvergi vistuð; hér birtast eingöngu samtölur.
@@ -171,11 +190,6 @@ og er hvergi vistuð; hér birtast eingöngu samtölur.
   vegna.
 
 ### Leyfi eftir ritgerð {#sec-dreifing}
-
-```{r rq8-titilsida-dags}
-#| include: false
-#| file: ../R/tables/rq8-titilsida-dags.R
-```
 
 Fyrst gögnin sjálf, svo glugginn sem er dreginn af þeim.
 
@@ -243,17 +257,22 @@ Af verkfræðiritgerðum til og með `r LEYFI_TIL` fá `r pct_hlutfall_hi`% höf
 `r pct_hlutfall_hr`% hjá HR leyfi í kjölfarið. Utan verkfræðiflokksins er leiðin nánast lokuð:
 aðeins `r n_utan_alls` ritgerðir af öllu þýðinu (`r n_utan_mpm` í verkefnastjórnun/
 framkvæmdastjórnun hjá HR, og `r n_utan_tolfraedi` í tölfræði hjá HÍ) passa við nýtt leyfi
-innan tveggja ára. Tölfræðiritgerðin er ekki dæmi um að MAS-námið hafi leitt til leyfis:
+innan 2,5 ára. Tölfræðiritgerðin er ekki dæmi um að MAS-námið hafi leitt til leyfis:
 höfundurinn hafði áður lokið verkfræðinámi við Politecnico di Milano og sótti síðar um íslenskt
 starfsleyfi. Leyfið tengist því ekki MAS-gráðunni þótt það komi `r lag_dagar_39936` dögum eftir
 ritgerðina.
 
-Eftir standa `r n_utan_mpm` stjórnunartengdar ritgerðir, tvær í verkefnastjórnun og ein í
-framkvæmdastjórnun, þar sem nýtt starfsleyfi fylgir ritgerðinni innan tímagluggans. Þær eru því
-líkleg dæmi um að námið hafi fullnægt eða lokið þeirri menntun sem þurfti til starfsleyfis.
-Gögnin sýna þó ekki hvaða próf nefndin lagði til grundvallar og sanna því ekki orsakatenginguna
-ein og sér. Varfærna niðurstaðan er að þrjú slík tilvik finnist í gögnunum, en MAS-tilvikið sé
-staðfest tímaleg samsvörun án orsakatengsla.
+Eftir standa `r n_utan_mpm` stjórnunartengdar ritgerðir, `r n_utan_verkefnastjornun` í
+verkefnastjórnun og `r n_utan_framkvaemdastjornun` í framkvæmdastjórnun, þar sem nýtt
+verkfræðingsleyfi fylgir ritgerðinni innan tímagluggans. Þær eru því líkleg dæmi um að námið hafi
+fullnægt eða lokið þeirri menntun sem þurfti til starfsleyfis. Gögnin sýna þó ekki hvaða próf
+nefndin lagði til grundvallar og sanna því ekki orsakatenginguna ein og sér. Varfærna niðurstaðan
+er að `r n_utan_mpm` slík tilvik finnist í gögnunum, en MAS-tilvikið sé staðfest tímaleg
+samsvörun án orsakatengsla. Krafan um verkfræðingsleyfi hér útilokar sjálfkrafa
+tæknifræðingsleyfi sem eina samsvörun hjá stjórnunartengdum ritgerðum: tæknifræðingsheitið
+krefst sérstaks tæknifræðináms sem MPM-nám getur ekki komið í staðinn fyrir, svo slík samsvörun
+endurspeglar nær örugglega ótengt fyrra nám, ekki MPM-gráðuna sjálfa (staðfest dæmi: 44740, sjá
+@sec-takmarkanir).
 
 Munur á greinum er meiri en munur á skólum. Byggingarverkfræði endar í leyfi í `r pct_bygg_hi`%
 tilvika hjá HÍ og `r pct_bygg_hr`% hjá HR -- hæst allra greina hjá báðum -- en Tölvunarfræði er
@@ -340,6 +359,11 @@ Allar ritgerðirnar eru því flokkaðar sem náttúruvísindi. Ef nýtt leyfi b
   besta samsvörunarþrepið ganga fyrir hvar sem er í þýðinu (sjá "Hvernig samsvörunin er gerð" að
   ofan), sem leysir bæði staðfestu tilvikin, en útilokar ekki að tvo eins nöfnuðu deili líka
   samhæfu millinafni.
+- Í `r n_utan_mpm`-talningunni í "Hvaða ritgerðir hafa samsvörun við leyfi" er stjórnunartengdum
+  ritgerðum (MPM) aðeins pöruð við verkfræðingsleyfi, ekki tæknifræðingsleyfi -- staðfest dæmi:
+  44740 (HR, Verkefnastjórnun), þar sem höfundurinn fékk tæknifræðingsleyfi 71 degi eftir
+  ritgerðina, en það er líklegast frá ótengdu fyrra tæknifræðinámi, enda getur MPM ekki sjálft
+  verið undirstaða tæknifræðingsheitis samkvæmt reglum nr. 1105/2015 [@reglur_1105_2015].
 - Í útreikningnum er notuð ein dagsetning, `date_accepted`, úr OAI-lýsigagnareitnum `dc.date`.
   Þegar þar stendur aðeins ár og mánuður er dagurinn settur sem 1. dagur mánaðarins; við tökum
   ekki lágmark úr titilsíðu, „Samþykkt" á Skemmu-síðu og OAI-gildinu. Titilsíðugögnin geyma hér

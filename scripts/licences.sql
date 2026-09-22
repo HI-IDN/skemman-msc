@@ -39,6 +39,7 @@ insert into thesis_author_name_override values
     (12769, 'Sandra Dís Dagbjartsdóttir',      'title page'),
     (17335, 'Sigurður Andrés Þorvarðarson',    'title page'),
     (17343, 'Samuel Nicholas Perkin',           'human-confirmed against licence identity'),
+    (18392, 'Tómas Joð Þorsteinsson',           'human-confirmed against licence identity'),
     (19382, 'Heimir Þór Gíslason',             'title page'),
     (22336, 'Elísabet Edda Guðbjörnsdóttir',   'title page'),
     (22691, 'Jón Smári Einarsson',              'title page'),
@@ -51,7 +52,9 @@ insert into thesis_author_name_override values
     (39445, 'Valur I Örnólfsson',               'title page');
 
 create or replace view v_thesis_author as
-select m.thesis_id, m.university, m.yr, m.date_accepted,
+select m.thesis_id, m.university, m.yr,
+       coalesce(make_date(tp_date.year_on_page, coalesce(tp_date.month_on_page, 1), 1), m.date_accepted)
+                                                               as date_accepted,
        p.id as person_id, coalesce(o.name, p.name) as name, p.year_born,
        name_key(coalesce(o.name, p.name))                       as nk,
        string_split(name_key(coalesce(o.name, p.name)), ' ')[1] as first_tok,
@@ -62,6 +65,7 @@ select m.thesis_id, m.university, m.yr, m.date_accepted,
 from v_thesis_msc m
 join thesis_people tp on tp.thesis_id = m.thesis_id and tp.role = 'author'
 join people p on p.id = tp.person_id
+left join thesis_titlepage tp_date on tp_date.thesis_id = m.thesis_id
 left join thesis_author_name_override o on o.thesis_id = m.thesis_id
 where p.year_born is not null;
 
@@ -151,13 +155,15 @@ left join v_licence_person_mannanafnaskra g
 create or replace view v_thesis_author_licence as
 with exact as (
     select a.thesis_id, a.person_id, l.name as licence_name, l.birth_year as licence_birth_year,
-           l.list, l.licence_year, l.licensed_on, 'full name' as how, 1 as tier
+           l.list, l.licence_year, l.licensed_on, a.date_accepted,
+           'full name' as how, 1 as tier
     from v_thesis_author a
     join v_licence_key l on l.nk = a.nk and l.birth_year = a.year_born
 ),
 compatible as (
     select a.thesis_id, a.person_id, l.name as licence_name, l.birth_year as licence_birth_year,
-           l.list, l.licence_year, l.licensed_on, 'compatible middle name' as how, 2 as tier
+           l.list, l.licence_year, l.licensed_on, a.date_accepted,
+           'compatible middle name' as how, 2 as tier
     from v_thesis_author a
     join v_licence_key l
       on l.first_tok = a.first_tok and l.last_tok = a.last_tok and l.birth_year = a.year_born
@@ -167,7 +173,8 @@ compatible as (
 ),
 loose as (
     select a.thesis_id, a.person_id, l.name as licence_name, l.birth_year as licence_birth_year,
-           l.list, l.licence_year, l.licensed_on, 'first and last name' as how, 3 as tier
+           l.list, l.licence_year, l.licensed_on, a.date_accepted,
+           'first and last name' as how, 3 as tier
     from v_thesis_author a
     join v_licence_key l
       on l.first_tok = a.first_tok and l.last_tok = a.last_tok and l.birth_year = a.year_born
@@ -200,13 +207,13 @@ hit as (
                 and b.best_tier = h.tier
 )
 select h.thesis_id, h.person_id, h.list, h.licence_year, h.licensed_on, h.how, h.tier,
-       m.university, m.yr, m.date_accepted,
-       date_diff('day', m.date_accepted, h.licensed_on) as lag_days,
+       m.university, m.yr, h.date_accepted,
+       date_diff('day', h.date_accepted, h.licensed_on) as lag_days,
        -- The 0/+2y window: positive lags are the evidence that a licence follows the thesis.
        -- Negative lags are retained separately because Skemman dates may reflect late uploads
        -- or later metadata updates; see @sec-dreifing in docs/08-verkfraedingsleyfi.qmd.
-       case when date_diff('day', m.date_accepted, h.licensed_on) < 0 then 'before'
-            when date_diff('day', m.date_accepted, h.licensed_on) <= 2 * 365 then 'after'
+       case when date_diff('day', h.date_accepted, h.licensed_on) < 0 then 'before'
+            when date_diff('day', h.date_accepted, h.licensed_on) <= 2.5 * 365 then 'after'
             else 'late' end as rel
 from hit h join v_thesis_msc m using (thesis_id);
 
