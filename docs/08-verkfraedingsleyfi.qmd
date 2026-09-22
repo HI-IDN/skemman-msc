@@ -159,6 +159,16 @@ dagsetning: `date_accepted` í OAI-lýsigögnum (`dc.date`), dagsetningin „Sam
 og það sem lesa má af titilsíðunni sjálfri. Titilsíðan getur gefið `Copyright`-ár eða stað og
 mánuð, til dæmis „Reykjavík, júní 2025“. Við skoðum fyrst samræmi þessara Skemmu-dagsetninga.
 
+```{r rq8-dagsetningar}
+#| file: ../R/tables/rq8-dagsetningar.R
+```
+
+Taflan aðgreinir heimildirnar áður en þær eru lagðar saman. `licensed_on` er dagsetningin sem
+Stjórnarráðið birtir fyrir veitingu starfsleyfis. `date_accepted` er OAI-gildið sem berst úr
+Skemmu; „Samþykkt“ á færslusíðunni og titilsíðan eru notuð til að kanna hvort sú dagsetning
+samræmist því sem stendur í frumgögnum. Útreikningurinn á biðtíma notar síðan eina samræmda
+dagsetningu ritgerðarinnar samkvæmt reglunni hér að neðan.
+
 
 Ef titilsíðan gefur aðeins ár er það ekki sjálfkrafa túlkað sem 1. janúar. Sé nákvæm dagsetning í
 metadata og hún er á sama ári er hún notuð; annars er titilsíðuárið notað, með mánuði ef hann
