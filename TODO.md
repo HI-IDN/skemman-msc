@@ -55,16 +55,6 @@ comment, this file's own history in git is the record).
   month except **20552** (rule 2015-01 from a year typo backed by a reference read 2015-01-02;
   manual 2015-02) and **25644** (in the table above; manual 2016-05).
 
-- **One remaining Verkefnastjórnun thesis with a licence afterwards, skemman id 44740** (HR,
-  professional; two authors). The match is specifically **Jón Steinar Guðlaugsson** (born 1986),
-  not co-author Magnús Árni Gunnarsson (born 1981). Jón's identity match is solid: full name,
-  birth year, tier 1; he received a **tæknifræðingur** licence 11.07.2023, 71 days after the
-  recorded thesis date. Because this is a technologist rather than engineer title, the likely
-  explanation is earlier qualifying technologist education, not that the MPM supplied the
-  qualification. Verify Jón's earlier education before treating the timing as causal.
-  (33545 was also in this list until the
-  three-tier matching below caught it as a different name collision -- see Resolved.)
-
 (Two HR theses, 50850 and 50913, take their advisor's field, Orkuverkfræði, by design:
 silicon/ferrosilicon materials-process work, but neither school has a chemical-engineering
 programme. Add a `discipline_override` if you ever learn their programme.)
@@ -227,6 +217,12 @@ programme. Add a `discipline_override` if you ever learn their programme.)
 
 ## Resolved
 
+- **44740 (Verkefnastjórnun, HR) is not an MPM-to-licence case.** The author's licence is
+  tæknifræðingur, and a tæknifræðingur licence needs its own tæknifræði degree: an MPM cannot
+  be the qualifying degree. The match reflects earlier technologist training, unrelated to the
+  thesis. Handled by rule, not by id, in `R/tables/rq8-leyfi.R` (commit 4109490): a
+  tæknifræðingur-only match on a professional (MPM) thesis is not counted as a licence that
+  followed the thesis. A verkfræðingur match on an MPM still counts (12943).
 - **`year_on_page` gap_over_5y outliers (9 of 2,190 covered theses) -- two root causes, both fixed
   at the source.** Every one of the 9 theses where `year_on_page` disagreed with `date_accepted`
   by more than 5 years was human-reviewed against its cached title-page text
