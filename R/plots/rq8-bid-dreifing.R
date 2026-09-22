@@ -59,10 +59,10 @@ q90_days <- as.integer(quantile(
 q90_cutoff_date <- .max_licence_date - q90_days
 q90_cutoff_label <- format_is_date(q90_cutoff_date)
 max_licence_date_label <- format_is_date(.max_licence_date)
-q50_years <- round(.quantiles$ar[.quantiles$prob == 0.50], 1)
-q80_years <- round(.quantiles$ar[.quantiles$prob == 0.80], 1)
-q90_years <- round(.quantiles$ar[.quantiles$prob == 0.90], 1)
-q95_years <- round(.quantiles$ar[.quantiles$prob == 0.95], 1)
+q50_months <- round(12 * .quantiles$ar[.quantiles$prob == 0.50])
+q80_months <- round(12 * .quantiles$ar[.quantiles$prob == 0.80])
+q90_months <- round(12 * .quantiles$ar[.quantiles$prob == 0.90])
+q95_months <- round(12 * .quantiles$ar[.quantiles$prob == 0.95])
 
 p_rq8_bid_dreifing <- ggplot(tibble(lag = .plot_lag), aes(lag)) +
   geom_histogram(

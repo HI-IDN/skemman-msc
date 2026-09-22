@@ -164,12 +164,11 @@ og er hvergi vistuð; hér birtast eingöngu samtölur.
 Þrír fyrirvarar gilda um allar tölur í kaflanum:
 
 - **Leyfi sannar að til sé verkfræðigráða, ekki að þessi ritgerð hafi verið hún.** Höfundur
-  getur átt leyfi frá fyrra námi (sjá „áður en ritgerð var skilað“ hér að neðan).
+  getur átt leyfi frá fyrra námi (sjá @sec-fyrri-leyfi).
 - **Engin samsvörun þýðir ekki að leyfi vanti; talan er neðri mörk.** Umsókn kostar og ekki allir sækja um.
-- **Nýjustu árgangarnir hafa ekki enn haft nægan tíma til að sækja um.** Listarnir ná til mitts árs 2026; árgangur sem
-  lauk 2024 hefur ekki enn haft sín tvö full ár til að sækja um. Miðgildi og hlutföll eru því
-  aðeins reiknuð fyrir árganga til og með 2023. Það er síðasta árið þar sem jafnvel síðasta
-  ritgerð ársins nær sínum tveimur fullu árum innan þess tímabils sem leyfislistarnir ná yfir.
+- **Nýjustu árgangarnir hafa ekki enn haft nægan tíma til að sækja um.** Miðgildi og hlutföll
+  eru því aðeins reiknuð fyrir árganga til og með 2023; 90%-greiningin hér að neðan sýnir hvers
+  vegna.
 
 ### Dreifing biðtímans {#sec-dreifing}
 
@@ -187,15 +186,16 @@ Fyrst gögnin sjálf, svo glugginn sem er dreginn af þeim.
 
 Flest leyfi koma fljótt og fjöldinn sem bíður lengur fjarar hratt út. Brotalínurnar sýna beint
 hvenær 50%, 80%, 90% og 95% þeirra sem á annað borð fá leyfi eru komin með það: mörkin eru
-`r q50_years`, `r q80_years`, `r q90_years` og `r q95_years` ár. Af þeim `r n_positive_lag`
+`r q50_months`, `r q80_months`, `r q90_months` og `r q95_months` mán. Af þeim `r n_positive_lag`
 leyfum sem koma á eftir ritgerð koma `r pct_innan_2`% innan tveggja ára og `r pct_innan_4`% innan
-fjögurra. Tveggja ára glugginn nær því langflestum án þess að teygja orsakatenginguna langt fram
-í tímann; það sem kemur síðar er áfram talið með sem „seint“ fremur en fellt út.
+fjögurra; það sem kemur síðar er áfram talið með sem „seint“ fremur en fellt út.
 
-Níutíu prósent þeirra sem síðar fá leyfi hafa fengið það eftir `r q90_years` ár. Nýjasta
+Níutíu prósent þeirra sem síðar fá leyfi hafa fengið það eftir `r q90_months` mán. Nýjasta
 leyfisdagsetningin í gögnunum er `r max_licence_date_label`; að frádregnum þessum biðtíma fæst
-`r q90_cutoff_label`. Eftirfylgnin nær að mestu fyrir allar ritgerðir í Skemmunni til og með
- árganginum.
+`r q90_cutoff_label`. Þess vegna nær eftirfylgnin að mestu til ritgerða í Skemmu til og með 2023
+árganginum.
+
+### Leyfi fyrir ritgerð {#sec-fyrri-leyfi}
 
 Þegar nafn og fæðingarár passa vitum við að líklega er sama manneskja í báðum skrám. Við vitum
 þó ekki hvort ritgerðin sjálf leiddi til leyfisins. Í `r n_negative` tilvikum er leyfið skráð
@@ -203,9 +203,10 @@ leyfisdagsetningin í gögnunum er `r max_licence_date_label`; að frádregnum �
 til. Það getur einfaldlega þýtt að ritgerðin hafi verið send seint inn í Skemmu eða færslan
 uppfærð síðar. `date_accepted` kemur úr lýsigögnum Skemmu, er oft aðeins mánaðarlega nákvæmt og
 er skráð sem fyrsti dagur mánaðar í 97,7% tilvika; dagsetningarnar einar skera því ekki alltaf
-úr um rétta röðina. `r n_prior_licence` tilvik þar sem munurinn er meiri en 60 dagar eru sýnd
-sérstaklega sem eldri leyfi. Þar geta verið fyrri verkfræðimenntun, tvöfaldar meistaragráður eða
-önnur menntun sem tengist síðari ritgerðinni ekki.
+úr um rétta röðina. Í aðalflokkuninni eru mörkin samt sett við 0 daga: leyfi sem er skráð fyrr
+telst ekki koma í kjölfar ritgerðarinnar. `r n_prior_licence` tilvik þar sem munurinn er meiri
+en 60 dagar eru sýnd sérstaklega hér að neðan sem eldri leyfi. Þar geta verið fyrri
+verkfræðimenntun, tvöfaldar meistaragráður eða önnur menntun sem tengist síðari ritgerðinni ekki.
 
 Óháð staðfesting er þó möguleg: titilsíðan sjálf tilgreinir oft árið (t.d. „Copyright © 2025“ eða
 dagsett „Reykjavík, Júní 2025“), sótt beint af titilsíðunni sjálfri, ekki úr sömu lýsigögnum og
