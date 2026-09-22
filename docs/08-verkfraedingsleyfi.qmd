@@ -255,7 +255,7 @@ en almenna skekkju í `date_accepted`.
 
 ```{r rq8-fyrri-leyfi}
 #| file: ../R/plots/rq8-fyrri-leyfi.R
-#| fig-cap: "Leyfi sem eru skráð fyrir skiladag ritgerðar, flokkuð eftir bili frá leyfisveitingu að ritgerð."
+#| fig-cap: "Verkfræðingsleyfi sem eru skráð fyrir skiladag ritgerðar, flokkuð eftir bili frá leyfisveitingu að ritgerð."
 ```
 
 Af þeim `r n_fyrri_leyfi_alls` fyrri leyfum sem myndin sýnir eru

@@ -15,7 +15,8 @@ d_rq8_fyrri_leyfi <- q("
               else 'Aðrar ritgerðir' end as hopur
   from v_thesis_author_licence a
   join v_thesis_discipline d using (thesis_id)
-  where a.lag_days < 0", quiet = TRUE) |>
+  where a.lag_days < 0
+    and a.list = 'verkfraedingur'", quiet = TRUE) |>
   mutate(hopur = factor(
     hopur,
     levels = c("Verkfræðiritgerð", "MPM", "Aðrar ritgerðir")
