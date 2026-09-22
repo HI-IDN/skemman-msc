@@ -155,8 +155,8 @@ vantar á aðra hliðina (`first and last name`, veikasta þrepið). Hvert leyfi
 þess þreps sem best passar hvar sem er í þýðinu, ekki bara innan einnar ritgerðar -- annars gæti
 veikt samsvörun við eina ritgerð staðið óhögguð þótt sterk samsvörun við aðra segði að leyfið
 tilheyrði í raun einhverjum öðrum. Leyfi telst *koma í kjölfar* ritgerðarinnar ef það er veitt
-eftir skráðan skiladag og innan tveggja ára -- @sec-dreifing sýnir hvers vegna tveggja ára
-glugginn er dreginn þar sem hann er. Það er líklegt að einhverjar ritgerðir hafi verið skráðar í
+eftir skráðan skiladag og innan tveggja ára. Það er þrengra en 90%-eftirfylgnin hér að neðan,
+sem nær um 2,5 ár; @sec-dreifing sýnir báða mælikvarðana. Það er líklegt að einhverjar ritgerðir hafi verið skráðar í
 Skemmu eftir að sótt var um starfsleyfi, til dæmis vegna seinagangs við innsendingu eða síðari
 uppfærslu á færslu. Kennitalan, sem birt er á listunum, er aðeins lesin til að ná í fæðingarárið
 og er hvergi vistuð; hér birtast eingöngu samtölur.
@@ -170,7 +170,7 @@ og er hvergi vistuð; hér birtast eingöngu samtölur.
   eru því aðeins reiknuð fyrir árganga til og með 2023; 90%-greiningin hér að neðan sýnir hvers
   vegna.
 
-### Dreifing biðtímans {#sec-dreifing}
+### Leyfi eftir ritgerð {#sec-dreifing}
 
 ```{r rq8-titilsida-dags}
 #| include: false
