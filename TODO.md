@@ -21,7 +21,6 @@ comment, this file's own history in git is the record).
 
   | Thesis | Title page | `date_accepted` | Gap (months) | Latest ref. | Used | Note |
   | --- | --- | --- | ---: | --- | --- | --- |
-  | [42892](https://skemman.is/handle/1946/42892) | 1920 | 2022-09 | 1221 | – | 1920 | PDF font garbles the digits (see Resolved) |
   | [45879](https://skemman.is/handle/1946/45879) | 2017 | 2023-08 | 68 | – | 2017 | no real date on the page (see Resolved) |
   | [26946](https://skemman.is/handle/1946/26946) | 2011 | 2016-12 | 60 | – | 2011 |  |
   | [25622](https://skemman.is/handle/1946/25622) | 2012 | 2016-04 | 40 | 2016-04 | 2016-04 |  |
@@ -30,6 +29,7 @@ comment, this file's own history in git is the record).
   | [47695](https://skemman.is/handle/1946/47695) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
   | [47762](https://skemman.is/handle/1946/47762) | 2022 | 2024-06 | 18 | – | 2023 | academic year "2022/2023" |
   | [50719](https://skemman.is/handle/1946/50719) | 2023 | 2025-05 | 17 | – | 2024 |  |
+  | [39426](https://skemman.is/handle/1946/39426) | 2021-06 | 2020-06 | 12 | – | 2021-06 | page says June 2021 four times; no access dates |
   | [20526](https://skemman.is/handle/1946/20526) | 2015-01 | 2014-01 | 12 | – | 2015-01 |  |
   | [25644](https://skemman.is/handle/1946/25644) | 2016-04 | 2015-04 | 12 | – | 2016-04 |  |
   | [29539](https://skemman.is/handle/1946/29539) | 2017-06 | 2018-06 | 12 | – | 2017-06 |  |
@@ -263,9 +263,10 @@ programme. Add a `discipline_override` if you ever learn their programme.)
   to 2, and total `year_on_page` coverage rose from 2,190 to 2,195 theses (a few more picked up a
   real year now that a title-embedded one no longer wins by default). The 2 remaining cases are
   structurally unfixable by this parser and were confirmed correct via `date_accepted` alone:
-  **42892** -- its real date ("September 2022") is present on the page but pypdf's font-glyph
-  mapping garbles digits there specifically into letters ("september RPRR"), so no year is actually
-  extractable as text; **45879** -- the page follows neither title-page template (no Copyright
+  **42892** -- *since fixed*: its title is printed twice and only the first copy was stripped,
+  and its font shifts digits up 32 code points ("september RPRR" = September 2022). Both handled
+  in the parser now (every title occurrence stripped; shifted digits decoded after a month name),
+  which also gave a date to 29 other theses that had none; **45879** -- the page follows neither title-page template (no Copyright
   line, no dated Reykjavík line), so there is no real date signal to find at all; its `year_on_page`
   (2017) is a stray year from an unrelated dual-degree affiliation line.
 
