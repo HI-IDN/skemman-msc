@@ -37,15 +37,8 @@ heimild um hvaða ritgerðir eru verkfræði.
 Áður en ritgerðir eru dregnar inn er rétt að skoða listana eina og sér: hversu margir fá
 starfsheitin á ári, og hvernig fjöldi verkfræðinga ber saman við fjölda tæknifræðinga.
 
-Hvorugur listinn segir kyn. Hér er það lesið í tveimur þrepum, hvorugt um kyn viðkomandi í dag,
-bæði um nafnavenju: fyrst íslenska feðra-/mæðranafnaendingin (-son / -dóttir); þar sem hún finnst
-ekki er hvert eiginnafn (öll nöfn nema það síðasta) flett upp í Mannanafnaskrá Þjóðskrár
-[@manna_nafnaskra], sem heldur skrá yfir hvaða samþykktu eiginnöfn eru drengjanöfn og hvaða
-stúlknanöfn. Nafn sem er skráð sem hvort tveggja (t.d. "Alex"), eða þar sem nöfnin tvö benda í
-sitt hvora áttina, er látið standa óákveðið frekar en giskað á. Erlend nöfn eru að mestu utan
-gildissviðs Mannanafnaskrár -- fyrir þau er engin sambærileg opinber skrá sem hægt er að fletta
-upp með sömu vissu, svo þau standa einfaldlega óákveðin; það er meðvitað val að láta þau vera
-frekar en að giska. Af heildinni er kyn `r n_kyn_okunn` einstaklinga (`r pct_kyn_okunn`%) enn óákveðið eftir bæði þrepin.
+Hvorugur listinn segir kyn. Myndirnar hér að neðan nota því varlega áætlað kyn út frá nafnahefð,
+en þetta er ekki kyn viðkomandi í dag; aðferðin og óvissan eru útskýrðar í @sec-takmarkanir.
 
 ::: {.panel-tabset}
 ## Nýir á ári
@@ -339,6 +332,11 @@ Allar ritgerðirnar eru því flokkaðar sem náttúruvísindi. Ef nýtt leyfi b
 ## Takmarkanir {#sec-takmarkanir}
 
 - Höfundar án fæðingarárs (þrjár ritgerðir) geta ekki tengst listanum.
+- **Kyn er áætlað út frá nafni, ekki skráð kyn.** Fyrst er leitað að íslenskum endingum
+  (-son/-dóttir); ef þær duga ekki eru eiginnöfn flett upp í Mannanafnaskrá Þjóðskrár
+  [@manna_nafnaskra]. Óákveðin, tvíræð eða erlend nöfn eru ekki neydd í flokk. Þessi aðferð
+  skilur `r n_kyn_okunn` einstaklinga (`r pct_kyn_okunn`%) eftir óákveðna og segir ekkert um
+  kynvitund eða kyn viðkomandi í dag.
 - Nafnasamsvörun getur ruglað tveimur ólíkum mönnum með sama fyrsta og síðasta nafn og fæðingarár
   -- staðfest dæmi: "Helgi Guðjónsson" (18555, Líffræði) á móti "Helgi Þór Guðjónsson" (28751,
   verkfræði), og "Elín Guðný Gunnarsdóttir" (33545, Verkefnastjórnun) á móti "Elín Birna
