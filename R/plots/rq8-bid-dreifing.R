@@ -39,7 +39,7 @@ n_prior_mpm_theses <- .negative$eldri_mpm_ritgerdir
 n_prior_mpm_weak <- .negative$veikar_mpm_ritgerdir
 
 .pos <- d_rq8_lag$lag_days[d_rq8_lag$lag_days > 0] / 365.25
-.plot_lag <- d_rq8_lag$lag_days[d_rq8_lag$lag_days >= -60] / 365.25
+.plot_lag <- d_rq8_lag$lag_days[d_rq8_lag$lag_days > 0] / 365.25
 .probs <- c(0.50, 0.80, 0.90, 0.95)
 .quantiles <- tibble(
   prob = .probs,
@@ -75,8 +75,7 @@ p_rq8_bid_dreifing <- ggplot(tibble(lag = .plot_lag), aes(lag)) +
     colour = "#d61f69",
     linewidth = 0.8
   ) +
-  geom_vline(xintercept = 0, colour = "grey30", linewidth = 0.6) +
-  coord_cartesian(xlim = c(-60 / 365.25, ceiling(max(.quantiles$ar)))) +
+  coord_cartesian(xlim = c(0, ceiling(max(.quantiles$ar)))) +
   scale_linetype_manual(values = c("dashed", "dotdash", "longdash", "dotted")) +
   labs(
     x = "Ár frá ritgerð til leyfis",

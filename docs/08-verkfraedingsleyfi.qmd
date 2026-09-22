@@ -178,17 +178,14 @@ og er hvergi vistuð; hér birtast eingöngu samtölur.
 #| file: ../R/tables/rq8-titilsida-dags.R
 ```
 
-Fyrst gögnin sjálf, svo glugginn sem er dreginn af þeim -- ekki öfugt.
+Fyrst gögnin sjálf, svo glugginn sem er dreginn af þeim.
 
 ```{r rq8-bid-dreifing}
 #| file: ../R/plots/rq8-bid-dreifing.R
-#| fig-cap: "Tími frá skráðum skiladegi ritgerðar til starfsleyfis. Neikvæð tilvik eru sýnd vinstra megin við núll; brotalínur sýna reynslumörk biðtímans og lengsta 5% biðarinnar er utan myndflatar."
+#| fig-cap: "Tími frá skráðum skiladegi ritgerðar til starfsleyfis, þegar leyfið kemur eftir ritgerðina. Brotalínur sýna reynslumörk biðtímans og lengsta 5% biðarinnar er utan myndflatar."
 ```
 
-Leyfi sem eru dagsett fyrir skráðan skiladag ritgerðar sjást vinstra megin við núlllínuna. Það
-getur stafað af því að ritgerðin hafi verið send seint inn í Skemmu eða færslan uppfærð síðar,
-frekar en að starfsleyfið hafi í raun verið veitt áður en náminu lauk. Gögnin gera ekki kleift að
-greina það örugglega. Flest leyfi koma annars fljótt og fjöldinn sem bíður lengur fjarar hratt út. Brotalínurnar sýna beint
+Flest leyfi koma fljótt og fjöldinn sem bíður lengur fjarar hratt út. Brotalínurnar sýna beint
 hvenær 50%, 80%, 90% og 95% þeirra sem á annað borð fá leyfi eru komin með það: mörkin eru
 `r q50_years`, `r q80_years`, `r q90_years` og `r q95_years` ár. Af þeim `r n_positive_lag`
 leyfum sem koma á eftir ritgerð koma `r pct_innan_2`% innan tveggja ára og `r pct_innan_4`% innan
