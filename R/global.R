@@ -11,7 +11,7 @@
 #'
 #'   source("R/global.R")
 #'   source("R/plots/rq1-ggplot.R")     # draws it
-#'   source("R/tables/rq1-table.R")     # shows it
+#'   source("R/tables/rq2-flokkar.R")   # shows it
 #'   draw_all()                         # every script in turn
 #'
 #' The population is defined once, in the database: v_thesis_msc holds the

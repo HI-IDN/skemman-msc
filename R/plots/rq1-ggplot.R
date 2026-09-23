@@ -4,6 +4,11 @@
 # database holds theses up to whenever it was last harvested, not to the end of
 # December. Both caveats belong in the caption, not in the data.
 #
+# Interactive (plotly): the yearly count table this replaced (R/tables/rq1-table.R,
+# removed) is redundant once a reader can hover a point and read the exact value --
+# see rq8-samanburdur.R for the same call made there. save_figures() skips it for the
+# static PNG/PDF export, since it is not a ggplot object; that is expected.
+#
 #   source("R/global.R")
 #   source("R/plots/rq1-ggplot.R")
 
@@ -24,4 +29,5 @@ p_rq1_volume <- ggplot(d_rq1_volume, aes(yr, n, colour = uni)) +
   scale_x_continuous(breaks = year_breaks()) +
   labs(x = NULL, y = "Fjöldi ritgerða", colour = NULL)
 
-display(p_rq1_volume)
+display(plotly::ggplotly(p_rq1_volume, tooltip = c("x", "y", "colour")) |>
+          plotly::layout(legend = list(orientation = "h", x = 0, y = -0.15)))

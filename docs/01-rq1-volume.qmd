@@ -3,16 +3,53 @@
 ```{r rq1-setup}
 #| include: false
 source("../R/global.R")
+
+.rq1_stable <- masters_by_year() |> filter(yr >= STABLE_FROM, yr <= STABLE_TO)
+.rq1_hi <- .rq1_stable |> filter(uni == "Háskóli Íslands")
+.rq1_hr <- .rq1_stable |> filter(uni == "Háskólinn í Reykjavík")
+n_ar_hi <- round(mean(.rq1_hi$n))
+n_ar_hr <- round(mean(.rq1_hr$n))
+
+# The truncation caveat, computed live rather than hardcoded -- the cut-off date
+# moves forward every time the harvest does (see R/tables/rq1-truncation.R's old
+# logic, folded in here instead of a table).
+.trunc <- q(sprintf("
+  select university as uni,
+         round(100.0 * sum(case when dayofyear(date_accepted) > dayofyear(date '%s')
+                          then 1 else 0 end) / count(*), 1) as pct
+  from v_thesis_msc
+  where in_stable_period
+  group by 1
+", format(latest_thesis, "%Y-%m-%d")), quiet = TRUE)
+pct_eftir_hi <- .trunc$pct[.trunc$uni == "Háskóli Íslands"]
+pct_eftir_hr <- .trunc$pct[.trunc$uni == "Háskólinn í Reykjavík"]
+latest_label <- sub(" [0-9]{4}$", "", format_is_date(latest_thesis))
+
+# Seasonal shares for "Hvenær er skilað?" -- HÍ's own known brautskráningardagar
+# (October, February, June) are external knowledge, not something the database
+# states; the *shares* below are the database's own numbers.
+.season <- masters() |>
+  filter(in_stable_period) |>
+  count(uni, man, name = "n") |>
+  group_by(uni) |>
+  mutate(hlutfall = round(100 * n / sum(n), 1)) |>
+  ungroup()
+season_hlutfall <- function(uni_nafn, manudir) {
+  .season |> filter(uni == uni_nafn, man %in% manudir) |> pull(hlutfall) |> sum() |> round(1)
+}
+hi_vor    <- season_hlutfall("Háskóli Íslands", 5:6)
+hi_haust  <- season_hlutfall("Háskóli Íslands", 9:10)
+hi_vetur  <- season_hlutfall("Háskóli Íslands", 1:2)
+hr_vor    <- season_hlutfall("Háskólinn í Reykjavík", 5:6)
+hr_januar <- season_hlutfall("Háskólinn í Reykjavík", 1)
 ```
 
 > Hvernig hefur fjöldi meistararitgerða í verkfræði og tæknigreinum þróast við HÍ og HR
 > frá 2010?
 
-## Fjöldi eftir ári og skóla
-
-```{r rq1-table}
-#| file: ../R/tables/rq1-table.R
-```
+Á stöðugu tímabili (`r stable_label`) skilar HÍ að meðaltali **`r n_ar_hi`** meistararitgerðum
+á ári og HR **`r n_ar_hr`**. Þróunin er ekki bein lína hjá hvorugum skólanum — myndin hér að
+neðan sýnir árin sem hún er, án þess að jafna hana út.
 
 ## Þróun yfir tímabilið
 
@@ -41,15 +78,28 @@ sýnir í hvaða mánuði ritgerðir berast Skemmunni, sem hlutfall af ársskilu
 umtalsverð haustskil í september og október. HR þjappar tæpum helmingi ársins í júní einan
 og á sérstakan ágústtopp sem HÍ hefur nánast ekki.
 
-```{r rq1-truncation}
-#| file: ../R/tables/rq1-truncation.R
-```
-
-::: {.callout-important title="Skerðingin á 2026 er ekki sú sama fyrir báða skóla"}
-Gögnin ná til 18. júní 2026. Á venjulegu ári á HR þá eftir að skila helmingi ársins en HÍ
-rúmum fjórðungi. Lokapunktur tímaraðarinnar vantelur því HR nærri tvöfalt meira en HÍ, og
-árin eru ekki samanburðarhæf fyrr en haustlotan 2026 er komin inn.
+::: {.callout-important title="Skerðingin á lokaárinu er ekki sú sama fyrir báða skóla"}
+Gögnin ná til `r latest_label`. Á venjulegu ári berst `r pct_eftir_hi`% af HÍ-skilum og
+`r pct_eftir_hr`% af HR-skilum eftir þann dag, svo lokapunktur tímaraðarinnar vantelur
+hvorn skóla um það hlutfall — og ekki jafnt: skólarnir dreifa skilum yfir árið á ólíkan
+hátt (næsti kafli), svo skerðingin er ekki sú sama fyrir báða.
 :::
+
+## 30 eða 60 einingar
+
+Meistararitgerð í verkfræði er annaðhvort 30 eða 60 ECTS-einingar. Einingafjöldinn er
+lesinn af titilsíðu (`thesis_titlepage.ects`), ekki úr lýsigögnum Skemmunnar. Hlutfallið
+ræðst frekar af námsleið en af ári: innan hvors skóla eru sumar námsleiðir nánast
+eingöngu með 30 eininga ritgerðir og aðrar nánast eingöngu með 60.
+
+```{r rq1-ects}
+#| fig-cap: >
+#|   Hlutfall meistararitgerða sem eru 30 ECTS-einingar (hinar eru 60), eftir námsleið og
+#|   skóla. Aðeins verkfræðigreinar og námsleiðir með a.m.k. 15 ritgerðir með skráðan
+#|   einingafjölda. Fagnám á borð við verkefnastjórnun (MPM) er undanskilið því það
+#|   notar annan einingakvarða.
+#| file: ../R/plots/rq1-ects.R
+```
 
 ## Niðurstöður
 
