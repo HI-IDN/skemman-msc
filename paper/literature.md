@@ -190,9 +190,6 @@ frameworks. Knowledge exchange remains the primary one.
 
 ## Open items
 
-- [x] 529 theses in [Asplund & Bengtsson (2020)](https://doi.org/10.1080/03043797.2019.1604632): all registered engineering MSc theses at LTH in 2016.
 - [ ] Check the 339/315/280/139/124 breakdown against the Asplund & Bengtsson PDF.
-- [x] Source for Mork, Hansen & Kleppe found (SEFI 2016, Tampere; no DOI).
-- [x] DTU, Aalto and LUT claims sourced. Keep them as institutional statements only.
 - [ ] Confirm Vuoriainen et al. 50(1), 26–50 (2025) once Crossref or the publisher shows it.
 - [ ] Run targeted searches for the three open research-gap items above.
