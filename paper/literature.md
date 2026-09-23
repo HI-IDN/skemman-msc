@@ -51,9 +51,9 @@ What each kind of evidence can support:
 | Framework | Strengths here | Limitations here | Role |
 |---|---|---|---|
 | Knowledge transfer / exchange in university–industry collaboration | Addresses actors, channels and kinds of knowledge flow; covers data, expertise, hiring, networks | Real impact needs data beyond metadata | **Primary** |
-| Academic engagement (Perkmann et al. 2013) | Covers more than patents and commercialisation, including consulting, joint work and informal ties | Mostly about academic staff, not students | Main support |
+| Academic engagement ([Perkmann et al. 2013](https://doi.org/10.1016/j.respol.2012.09.007)) | Covers more than patents and commercialisation, including consulting, joint work and informal ties | Mostly about academic staff, not students | Main support |
 | Boundary spanning | Treats the student and thesis as the link between two worlds | The quality of bridging is not visible in metadata | **Mechanism** |
-| Triple Helix (Etzkowitz & Leydesdorff 2000) | Suits Iceland, where universities, firms and public bodies are closely linked | Too system-level to explain single theses | Context and discussion |
+| Triple Helix ([Etzkowitz & Leydesdorff 2000](https://doi.org/10.1016/S0048-7333%2899%2900055-4)) | Suits Iceland, where universities, firms and public bodies are closely linked | Too system-level to explain single theses | Context and discussion |
 | Mode 2 (Gibbons et al. 1994) | Applied, distributed, interdisciplinary knowledge production | Very broad; hard to measure from metadata | Brief background |
 | Work-integrated learning | Links study, employability and real work settings | Shifts the focus to student learning, away from transfer | Secondary |
 | Engaged scholarship | Co-production of knowledge between research and practice | Aimed at research practice, not thesis data | Supporting concept |
@@ -64,7 +64,7 @@ What each kind of evidence can support:
 primary framework, and boundary spanning to explain how a thesis acts as the link.
 Recruitment and student mobility then become one channel of transfer. Use Triple Helix only
 for context: companies, agencies, hospitals and research institutes in the Icelandic
-system. Ankrah & Al-Tabbaa (2015) classify university–industry collaboration by form,
+system. [Ankrah & Al-Tabbaa (2015)](https://doi.org/10.1016/j.scaman.2015.02.003) classify university–industry collaboration by form,
 motive, process and outcome, which maps well onto the coding scale in the brief.
 
 **JEE note.** JEE reviewers will look for an education-research framing. Boundary spanning
@@ -80,15 +80,15 @@ and people without any patent or formal contract.
 
 | Study | Country | Design | Key finding | Verification |
 |---|---|---|---|---|
-| Asplund & Bengtsson (2020) | Sweden (Lund, LTH) | 529 engineering MSc theses from one year (2016), with telephone follow-up to collaborating firms | Theses are a widely used form of collaboration; firms value recruitment and access to technical knowledge; large regional firms prominent | DOI verified. Single-year design confirmed by the author's reading; 529 not yet checked |
-| Bengtsson & Asplund (2026) | Sweden | Census of 945 theses, survey of 150 firms, interviews with 14 study directors | **64% collaboration in engineering vs 6% in business**; engineering ties support recruitment and early-stage innovation screening | Verified from abstract |
-| Mamica (2020) | Poland | 150 interviews with students, supervisors and firms | Benefits of theses based on firms' real problems | DOI verified; figures unverified |
-| Kunttu (2017) | Finland | Nine long-term university–industry relationships | Student projects and theses as part of relationship-based learning and innovation | DOI verified; figures unverified |
+| [Asplund & Bengtsson (2020)](https://doi.org/10.1080/03043797.2019.1604632) | Sweden (Lund, LTH) | 529 engineering MSc theses from one year (2016), with telephone follow-up to collaborating firms | Theses are a widely used form of collaboration; firms value recruitment and access to technical knowledge; large regional firms prominent | DOI verified. Single-year design confirmed by the author's reading; 529 not yet checked |
+| [Bengtsson & Asplund (2026)](https://doi.org/10.1007/s44217-026-01559-x) | Sweden | Census of 945 theses, survey of 150 firms, interviews with 14 study directors | **64% collaboration in engineering vs 6% in business**; engineering ties support recruitment and early-stage innovation screening | Verified from abstract |
+| [Mamica (2020)](https://doi.org/10.13187/ejced.2020.1.76) | Poland | 150 interviews with students, supervisors and firms | Benefits of theses based on firms' real problems | DOI verified; figures unverified |
+| [Kunttu (2017)](https://doi.org/10.22215/timreview/1124) | Finland | Nine long-term university–industry relationships | Student projects and theses as part of relationship-based learning and innovation | DOI verified; figures unverified |
 | Mørk, Hansen & Kleppe | Norway | 30 master's-level collaborative projects over four years | Hybrid learning space between university and shop floor | **No reference given**: find the source |
-| Thune & Støren (2015) | Norway | Survey of 2,232 master's graduates (54% response) | 77% interacted with work organisations; project-based interaction linked to on-time completion and better labour-market outcomes | Verified from abstract. Measures interaction in general, not thesis collaboration |
-| Shah & Gillen (2024) | — | Systematic review of university–industry partnerships in engineering education | Capstones, theses, internships and WIL are common forms; barriers are time, supervision, communication, resources | DOI verified |
-| Vuoriainen et al. (2024) | Finland | Success factors for HE–industry collaboration in engineering education | "Six C's" | DOI verified; volume and pages still online-first |
-| Karlsdottir, Edvardsson & Heijstra (2021) | Iceland | University–industry collaboration in Iceland | Ties are informal, short-term and depend on personal networks | DOI verified |
+| [Thune & Støren (2015)](https://doi.org/10.1108/ET-10-2014-0126) | Norway | Survey of 2,232 master's graduates (54% response) | 77% interacted with work organisations; project-based interaction linked to on-time completion and better labour-market outcomes | Verified from abstract. Measures interaction in general, not thesis collaboration |
+| [Shah & Gillen (2024)](https://doi.org/10.1080/03043797.2023.2253741) | — | Systematic review of university–industry partnerships in engineering education | Capstones, theses, internships and WIL are common forms; barriers are time, supervision, communication, resources | DOI verified |
+| [Vuoriainen et al. (2024)](https://doi.org/10.1080/03043797.2024.2432440) | Finland | Success factors for HE–industry collaboration in engineering education | "Six C's" | DOI verified; volume and pages still online-first |
+| [Karlsdottir, Edvardsson & Heijstra (2021)](https://doi.org/10.1504/IJKBD.2021.119049) | Iceland | University–industry collaboration in Iceland | Ties are informal, short-term and depend on personal networks | DOI verified |
 
 **Closest precedent.** The Lund studies are the nearest match, and they differ from this one
 in a useful way. They look at one year of theses and go deep on the firm side, with a survey
@@ -100,9 +100,9 @@ longitudinal pattern, but cannot see what firms gained.
 | Country | Evidence | Strength | Use |
 |---|---|---|---|
 | Sweden | Lund studies above; KTH and Chalmers run formal schemes for industry-linked theses | Peer-reviewed, institution-level; not a national average | Best methodological comparison |
-| Norway | National graduate survey (Thune & Støren); NTNU supports theses with external partners and supervisors | National data on interaction in general; programme-level data on theses | Comparing kinds and intensity of interaction |
+| Norway | National graduate survey ([Thune & Støren](https://doi.org/10.1108/ET-10-2014-0126)); NTNU supports theses with external partners and supervisors | National data on interaction in general; programme-level data on theses | Comparing kinds and intensity of interaction |
 | Denmark | DTU reported that 42% of MSc students write with companies; SDU encourages company theses | Institutional and partly promotional; **unverified, no source given** | Context only |
-| Finland | Aalto supports theses with companies and often uses industry supervisors; LUT reports a high share of external projects; Kunttu (2017) | Institutional practice plus peer-reviewed qualitative work; **Aalto and LUT claims unverified** | Comparing processes and practice |
+| Finland | Aalto supports theses with companies and often uses industry supervisors; LUT reports a high share of external projects; [Kunttu (2017)](https://doi.org/10.22215/timreview/1124) | Institutional practice plus peer-reviewed qualitative work; **Aalto and LUT claims unverified** | Comparing processes and practice |
 
 There is no single reliable Nordic collaboration rate. Sweden gives the best direct
 comparison for theses, and Norway the strongest national data on student–workplace
@@ -190,7 +190,7 @@ frameworks. Knowledge exchange remains the primary one.
 
 ## Open items
 
-- [ ] Confirm the 529-thesis figure for Asplund & Bengtsson (2020).
+- [ ] Confirm the 529-thesis figure for [Asplund & Bengtsson (2020)](https://doi.org/10.1080/03043797.2019.1604632).
 - [ ] Find the source for Mørk, Hansen & Kleppe (Norway, 30 projects).
 - [ ] Find sources for the DTU (42%), Aalto and LUT claims, or drop them.
 - [ ] Confirm the final volume and pages for Vuoriainen et al.

@@ -13,7 +13,7 @@ It has been rewritten for an international engineering-education journal.
   theoretical framework, a clear contribution to engineering education research (not
   only to innovation policy), and careful statements about what the data can and cannot show.
 - **European Journal of Engineering Education (EJEE)** is the natural alternative. The
-  closest precedents (Asplund & Bengtsson 2020; Shah & Gillen 2024; Vuoriainen et al. 2024)
+  closest precedents ([Asplund & Bengtsson 2020](https://doi.org/10.1080/03043797.2019.1604632); [Shah & Gillen 2024](https://doi.org/10.1080/03043797.2023.2253741); [Vuoriainen et al. 2024](https://doi.org/10.1080/03043797.2024.2432440))
   were published there, so the paper would be in direct conversation with them.
 
 For either venue, the education angle has to lead: the thesis is a learning experience
@@ -70,7 +70,7 @@ draw on them as follows:
 | H6 | New topics (data science, AI, sustainability) become more visible over time | RQ6 (#9) | Titles, abstracts, keywords |
 | H7 | Theses are a useful but incomplete proxy for university–industry ties | Methods, limitations | Hand-coded validation sample |
 
-A benchmark for H1–H3: Bengtsson & Asplund (2026) report a 64% collaboration rate for
+A benchmark for H1–H3: [Bengtsson & Asplund (2026)](https://doi.org/10.1007/s44217-026-01559-x) report a 64% collaboration rate for
 engineering MSc theses at one Swedish university (6% for business). This is the only
 published thesis-level rate from a comparable setting that has been verified so far.
 
@@ -94,7 +94,7 @@ should be reported under both a narrow definition (levels 3–4) and a broad one
 ## Contribution and research gap
 
 This is **not** the first study to use master's theses to study knowledge transfer. The
-Swedish studies (Asplund & Bengtsson 2020; Bengtsson & Asplund 2026) and Mamica (2020) do
+Swedish studies ([Asplund & Bengtsson 2020](https://doi.org/10.1080/03043797.2019.1604632); [Bengtsson & Asplund 2026](https://doi.org/10.1007/s44217-026-01559-x)) and [Mamica (2020)](https://doi.org/10.13187/ejced.2020.1.76) do
 that directly. The defensible claim is narrower:
 
 > Earlier studies show that master's theses can be a channel for university–industry
@@ -117,7 +117,7 @@ What is specific to this study:
 - a broad partner definition: companies, public agencies, hospitals, research institutes;
 - metadata, text and network analysis combined;
 - a small innovation system. Earlier Icelandic work describes university–industry ties as
-  informal, short-term and dependent on personal networks (Karlsdottir et al. 2021), so
+  informal, short-term and dependent on personal networks ([Karlsdottir et al. 2021](https://doi.org/10.1504/IJKBD.2021.119049)), so
   the question is which part of those ties becomes visible in formal records.
 
 The gap statement must stay within what the literature review supports. See
