@@ -80,18 +80,18 @@ and people without any patent or formal contract.
 
 | Study | Country | Design | Key finding | Verification |
 |---|---|---|---|---|
-| [Asplund & Bengtsson (2020)](https://doi.org/10.1080/03043797.2019.1604632) | Sweden (Lund, LTH) | 529 engineering MSc theses from one year (2016), with telephone follow-up to collaborating firms | Theses are a widely used form of collaboration; firms value recruitment and access to technical knowledge; large regional firms prominent | DOI verified. Single-year design confirmed by the author's reading; 529 not yet checked |
+| [Asplund & Bengtsson (2020)](https://doi.org/10.1080/03043797.2019.1604632) | Sweden (Lund, LTH) | All 529 registered engineering MSc theses completed at the Faculty of Engineering LTH in 2016, supervised across 16 departments; follow-up survey of partner firms (139 responses) | 339 of 529 theses were collaborative; firms value recruitment and access to technical knowledge; large regional firms prominent | DOI verified. Single year confirmed by the author's reading. The 339/315/280/139/124 breakdown comes from Copilot: check against the PDF |
 | [Bengtsson & Asplund (2026)](https://doi.org/10.1007/s44217-026-01559-x) | Sweden | Census of 945 theses, survey of 150 firms, interviews with 14 study directors | **64% collaboration in engineering vs 6% in business**; engineering ties support recruitment and early-stage innovation screening | Verified from abstract |
 | [Mamica (2020)](https://doi.org/10.13187/ejced.2020.1.76) | Poland | 150 interviews with students, supervisors and firms | Benefits of theses based on firms' real problems | DOI verified; figures unverified |
 | [Kunttu (2017)](https://doi.org/10.22215/timreview/1124) | Finland | Nine long-term university–industry relationships | Student projects and theses as part of relationship-based learning and innovation | DOI verified; figures unverified |
-| Mørk, Hansen & Kleppe | Norway | 30 master's-level collaborative projects over four years | Hybrid learning space between university and shop floor | **No reference given**: find the source |
+| [Mork, Hansen & Kleppe (2016)](https://www.sefi.be/wp-content/uploads/2017/09/mork-university-industry-collaboration-concept-for-master-thesis-projects-learning-outcome-and-knowledge-t_a.pdf) | Norway (NTNU Ålesund) | Experience from 30 university–industry master's thesis projects over four years; triangulated with three teachers, two students, two industry managers | Hybrid learning space between university and shop floor | PDF verified: "thirty University-Industry master thesis projects completed over a period of four years". SEFI conference paper, no DOI. Practitioner account, not a sample |
 | [Thune & Støren (2015)](https://doi.org/10.1108/ET-10-2014-0126) | Norway | Survey of 2,232 master's graduates (54% response) | 77% interacted with work organisations; project-based interaction linked to on-time completion and better labour-market outcomes | Verified from abstract. Measures interaction in general, not thesis collaboration |
 | [Shah & Gillen (2024)](https://doi.org/10.1080/03043797.2023.2253741) | — | Systematic review of university–industry partnerships in engineering education | Capstones, theses, internships and WIL are common forms; barriers are time, supervision, communication, resources | DOI verified |
-| [Vuoriainen et al. (2024)](https://doi.org/10.1080/03043797.2024.2432440) | Finland | Success factors for HE–industry collaboration in engineering education | "Six C's" | DOI verified; volume and pages still online-first |
+| [Vuoriainen et al. (2024)](https://doi.org/10.1080/03043797.2024.2432440) | Finland | Systematic literature review of HE–industry collaboration in engineering education | "Six C's" | DOI verified. Copilot gives the final issue as 50(1), 26–50 (2025); Crossref still shows online-first |
 | [Karlsdottir, Edvardsson & Heijstra (2021)](https://doi.org/10.1504/IJKBD.2021.119049) | Iceland | University–industry collaboration in Iceland | Ties are informal, short-term and depend on personal networks | DOI verified |
 
 **Closest precedent.** The Lund studies are the nearest match, and they differ from this one
-in a useful way. They look at one year of theses and go deep on the firm side, with a survey
+in a useful way. They look at one year of theses (LTH, 2016) and go deep on the firm side, with a survey
 and telephone follow-up. This study covers theses from 2010 to 2026 and looks at the
 longitudinal pattern, but cannot see what firms gained.
 
@@ -100,9 +100,9 @@ longitudinal pattern, but cannot see what firms gained.
 | Country | Evidence | Strength | Use |
 |---|---|---|---|
 | Sweden | Lund studies above; KTH and Chalmers run formal schemes for industry-linked theses | Peer-reviewed, institution-level; not a national average | Best methodological comparison |
-| Norway | National graduate survey ([Thune & Støren](https://doi.org/10.1108/ET-10-2014-0126)); NTNU supports theses with external partners and supervisors | National data on interaction in general; programme-level data on theses | Comparing kinds and intensity of interaction |
-| Denmark | DTU reported that 42% of MSc students write with companies; SDU encourages company theses | Institutional and partly promotional; **unverified, no source given** | Context only |
-| Finland | Aalto supports theses with companies and often uses industry supervisors; LUT reports a high share of external projects; [Kunttu (2017)](https://doi.org/10.22215/timreview/1124) | Institutional practice plus peer-reviewed qualitative work; **Aalto and LUT claims unverified** | Comparing processes and practice |
+| Norway | National graduate survey ([Thune & Støren](https://doi.org/10.1108/ET-10-2014-0126)); 30 NTNU Ålesund thesis projects ([Mork et al. 2016](https://www.sefi.be/wp-content/uploads/2017/09/mork-university-industry-collaboration-concept-for-master-thesis-projects-learning-outcome-and-knowledge-t_a.pdf)) | National data on interaction in general; programme-level data on theses | Comparing kinds and intensity of interaction |
+| Denmark | [DTU news item (22 Nov 2021)](https://www.dtu.dk/english/news/all-news/nyhed?id=8682ae4a-f1fb-4fd6-adad-9e5b8dcea87f): "42 per cent of DTU's MSc students write their theses in collaboration with companies" | Verified quote. Institution-reported, promotional; no method, reference year or denominator. **Not a Danish national figure** | Context only |
+| Finland | Aalto: theses may be done with a company or other external organisation, and the company appoints an industry advisor ([corporate page](https://www.aalto.fi/en/corporate-collaboration/commission-a-masters-thesis); [School of Engineering guidelines](https://www.aalto.fi/sites/default/files/2024-12/Master%27s-Thesis-Guide_Updated_24082024_engl.pdf)). LUT: about 800 master's theses a year, "most of them are commissioned by companies or other organizations" ([LUT](https://www.lut.fi/en/companies/recruitment-and-student-work/masters-thesis); [IEM](https://www.lut.fi/en/industrial-engineering-and-management-services/masters-theses-for-companies)). [Kunttu (2017)](https://doi.org/10.22215/timreview/1124) | Institutional self-descriptions with no figures behind them, plus peer-reviewed qualitative work. LUT quote verified | Comparing processes and practice; no prevalence claims |
 
 There is no single reliable Nordic collaboration rate. Sweden gives the best direct
 comparison for theses, and Norway the strongest national data on student–workplace
@@ -190,8 +190,9 @@ frameworks. Knowledge exchange remains the primary one.
 
 ## Open items
 
-- [ ] Confirm the 529-thesis figure for [Asplund & Bengtsson (2020)](https://doi.org/10.1080/03043797.2019.1604632).
-- [ ] Find the source for Mørk, Hansen & Kleppe (Norway, 30 projects).
-- [ ] Find sources for the DTU (42%), Aalto and LUT claims, or drop them.
-- [ ] Confirm the final volume and pages for Vuoriainen et al.
+- [x] 529 theses in [Asplund & Bengtsson (2020)](https://doi.org/10.1080/03043797.2019.1604632): all registered engineering MSc theses at LTH in 2016.
+- [ ] Check the 339/315/280/139/124 breakdown against the Asplund & Bengtsson PDF.
+- [x] Source for Mork, Hansen & Kleppe found (SEFI 2016, Tampere; no DOI).
+- [x] DTU, Aalto and LUT claims sourced. Keep them as institutional statements only.
+- [ ] Confirm Vuoriainen et al. 50(1), 26–50 (2025) once Crossref or the publisher shows it.
 - [ ] Run targeted searches for the three open research-gap items above.
