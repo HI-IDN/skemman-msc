@@ -9,14 +9,37 @@ source("../R/global.R")
 eru skráðir á sömu ritgerð; tengingin er vegin eftir fjölda sameiginlegra ritgerða.
 
 Tengslanetið hér að neðan sýnir leiðbeinendur sem hafa leiðbeint sömu verkfræðilegu MS-ritgerð.
-Myndin notar `ggnetwork` [@ggnetwork]. Hnútar verða litaðir eftir tengslum
-við HÍ, HR, báða skólana, aðra háskóla eða fyrirtæki og óvissu. Flokkunin verður miðuð við
-það ár sem hver ritgerð var unnin, svo ferill leiðbeinanda sem skiptir um háskóla birtist rétt.
+Myndin notar `ggnetwork` [@ggnetwork]. Aðeins leiðbeinendur með a.m.k. eina línu
+koma fram; sá sem leiðbeinir alltaf einn og hefur ekki verið prófdómari hefur enga.
+
+Hver leiðbeinandi fær einn lit, eftir sterkustu vísbendingunni um vinnustað: fyrst
+starfsmannaskrár HÍ og HR (`v_advisor_unit`), þá vinnustaður utan háskóla sem titilsíða eða
+þakkarorð nefna (`v_thesis_advisor_affiliation`), þá háskóli sem titilsíðan nefnir. Annars er
+hann óviss. Starfsmannaskrárnar eru núverandi, ekki frá ári ritgerðarinnar: leiðbeinandi sem
+hefur skipt um vinnustað birtist þar sem hann er nú. Flokkun eftir ári hverrar ritgerðar bíður
+þess að til séu gögn um vinnustað á hverjum tíma.
 
 ```{r rq9-leidbeinenda-net}
 #| file: ../R/plots/rq9-leidbeinenda-net.R
-#| fig-cap: "Tengslanet leiðbeinenda á verkfræðilegum MS-ritgerðum; lína merkir sameiginlega ritgerð og línubreidd sýnir fjölda þeirra."
+#| fig-height: 8
+#| fig-cap: >
+#|   Tengslanet leiðbeinenda á verkfræðilegum MS-ritgerðum. Heil lína merkir sameiginlega
+#|   leiðbeiningu og línubreidd fjölda ritgerða; brotin lína tengir prófdómara við
+#|   leiðbeinendur ritgerðar sem hann dæmdi. Stærð hnúts er fjöldi ritgerða sem viðkomandi
+#|   leiðbeindi. Litur sýnir vinnustað samkvæmt núverandi starfsmannaskrám eða ritgerðunum
+#|   sjálfum; „Óvíst“ merkir að hvorugt segi til, ekki að leiðbeinandinn starfi utan
+#|   háskóla.
 ```
+
+Prófdómari er hlutlaus og ekki samstarfsaðili, en sá sem dæmir ritgerð nemanda þekkir
+leiðbeinandann. Brotnu línurnar sýna því kunningsskap, ekki samstarf. Prófdómari er aðeins
+skráður á titilsíðu `r rq9_examiners$theses` ritgerða af þeim sem hér eru, og nafn hans er
+ekki í `people`; því er það parað við leiðbeinanda eftir nafni. Það tókst fyrir
+`r rq9_examiners$matched` þeirra, sem gefur `r rq9_examiners$lines` brotnar línur. Hinir
+prófdómararnir hafa aldrei leiðbeint verkfræðilegri MS-ritgerð og eru ekki sýndir. Að lesa
+prófdómara úr öllum ritgerðunum er hluti af
+[#2](https://github.com/HI-IDN/skemman-msc/issues/2); þangað til er þessi hluti netsins
+langt frá því að vera tæmandi.
 
 ## Hver er „Kevin Bacon verkfræðinnar“?
 
